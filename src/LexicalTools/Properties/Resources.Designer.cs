@@ -122,5 +122,12 @@ namespace WeSay.LexicalTools.Properties {
 				return ((System.Drawing.Bitmap)(obj));
 			}
 		}
+
+		internal static String liftEntry2Html {
+			get {
+				String obj = ResourceManager.GetString("liftEntry2Html.xsl", resourceCulture);
+				return obj;
+			}
+		}
 	}
 }

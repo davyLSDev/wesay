@@ -18,6 +18,8 @@ namespace WeSay.LexicalTools
 
 		private NotesBarView _notesBar;
 		private LexEntry _currentRecord=null;
+		private const string _emptyEntryHtml =
+			"<html><head><style type=\"text/css\">body { background-color: #cbffb9; }</style></head><body></body></html>";
 
 		/// <summary>
 		/// designer only
@@ -73,12 +75,19 @@ namespace WeSay.LexicalTools
 			if (record == null)
 			{
 				_entryPreview.Rtf = string.Empty;
+				_entryHeaderBrowser.Navigate("javascript:{document.body.outerHTML='" + _emptyEntryHtml + "'}");
 			}
 			else
 			{
 				_entryPreview.Rtf = RtfRenderer.ToRtf(record,
 													  currentItemInFocus,
 													  lexEntryRepository);
+				ViewTemplate viewTemplate = (ViewTemplate)
+						WeSayWordsProject.Project.ServiceLocator.GetService(typeof(ViewTemplate));
+				string html = HtmlRenderer.ToHtml(record, currentItemInFocus, lexEntryRepository, viewTemplate);
+				_entryHeaderBrowser.Navigate("javascript:{document.body.outerHTML='" +
+					html.Replace("'","\'") + "'}");
+
 			}
 
 			if (record != _currentRecord)
@@ -120,8 +129,9 @@ namespace WeSay.LexicalTools
 				return;
 			_notesBar.Location=new Point(0, Height-_notesBar.Height);
 			int height = Height - _notesBar.Height;
-			_entryPreview.Visible = (height > 20);
-			_entryPreview.Height = height;
+			//_entryPreview.Visible = (height > 20);
+			//_entryPreview.Height = height;
+			_entryHeaderBrowser.Height = height;
 		}
 	}
 }

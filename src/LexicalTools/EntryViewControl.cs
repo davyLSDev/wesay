@@ -43,12 +43,14 @@ namespace WeSay.LexicalTools
 		{
 			_viewTemplate = null;
 			InitializeComponent();
-			Controls.Remove(_entryHeaderView);
-		   _entryHeaderView.Dispose();
-			_entryHeaderView = entryHeaderViewFactory();
+
+//            Controls.Remove(_entryHeaderView);
+//	          _entryHeaderView.Dispose();
+//            _entryHeaderView = entryHeaderViewFactory();
 		   _entryHeaderView.Dock = DockStyle.Top;
 		   _entryHeaderView.BackColor = BackColor;
-		   Controls.Add(_entryHeaderView);
+//           Controls.Add(_entryHeaderView);
+
 		   Controls.SetChildIndex(_panelEntry, 0);
 			Controls.SetChildIndex(_splitter, 1);
 		   Controls.SetChildIndex(_entryHeaderView, 2);
