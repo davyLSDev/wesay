@@ -55,8 +55,12 @@ namespace WeSay.ConfigTool
 			List<string> writingSystemIdsWithSpellCheckingInstalled = new List<string>();
 			try
 			{
-				using (Broker broker = new Broker())
+				using (Broker broker = Broker.Default)//new Broker()
 				{
+					foreach (DictionaryInfo di in broker.Dictionaries)
+					{
+						System.Diagnostics.Trace.TraceInformation(di.Language);
+					}
 					foreach (WritingSystem ws in BasilProject.Project.WritingSystems.Values)
 					{
 						try

@@ -6,24 +6,33 @@
 	  <FontName>Arial</FontName>
 	  <FontSize>12</FontSize>
 	  <Id>bth</Id>
+	  <IsAudio>False</IsAudio>
+	  <IsUnicode>True</IsUnicode>
 	  <RightToLeft>False</RightToLeft>
 	  <SortUsing>bth</SortUsing>
+	  <SpellCheckingId>bth</SpellCheckingId>
 	</WritingSystem>
 	<WritingSystem>
 	  <Abbreviation>ipa</Abbreviation>
 	  <FontName>Microsoft Sans Serif</FontName>
 	  <FontSize>12</FontSize>
 	  <Id>bth-fonipa</Id>
+	  <IsAudio>False</IsAudio>
+	  <IsUnicode>True</IsUnicode>
 	  <RightToLeft>False</RightToLeft>
 	  <SortUsing>bth-fonipa</SortUsing>
+	  <SpellCheckingId>bth-fonipa</SpellCheckingId>
 	</WritingSystem>
 	<WritingSystem>
 	  <Abbreviation>en</Abbreviation>
 	  <FontName>Microsoft Sans Serif</FontName>
 	  <FontSize>12</FontSize>
 	  <Id>en</Id>
+	  <IsAudio>False</IsAudio>
+	  <IsUnicode>True</IsUnicode>
 	  <RightToLeft>False</RightToLeft>
 	  <SortUsing>en</SortUsing>
+	  <SpellCheckingId>en</SpellCheckingId>
 	</WritingSystem>
   </members>
 </WritingSystemCollection>

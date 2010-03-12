@@ -33,7 +33,6 @@
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<TargetZone>LocalIntranet</TargetZone>
 	<GenerateManifests>true</GenerateManifests>
-	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -601,7 +600,6 @@
 	<None Include="Resources\Warning.bmp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\app.manifest" />
 	<None Include="Resources\userSpecific32x31.png" />
   </ItemGroup>
   <ItemGroup>
