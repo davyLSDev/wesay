@@ -17,7 +17,7 @@
 	<html>
 	  <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title><xsl:apply-templates select="//lexical-unit"/></title>
+		<title><xsl:apply-templates select="//lexical-unit/form/text"/></title>
 		 <link href="{concat($baseUrl, '/export/autoLayout.css')}" rel="stylesheet" type="text/css" media="all" />
 		 <link href="{concat($baseUrl, '/export/autoFonts.css')}" rel="stylesheet" type="text/css" media="all" />
 		 <style type="text/css">

@@ -47,12 +47,13 @@ namespace WeSay.LexicalTools
 			XmlWriter htmlWriter = new XmlTextWriter(htmlTextWriter);
 			transform.Transform(entryXmlReader, xsltArgs, htmlWriter);
 			html = htmlTextWriter.ToString();
+
 #if DEBUG
 			// temp hack
 			try
 			{
 				string temp = System.Environment.GetEnvironmentVariable("TEMP");
-				if (temp.Length == 0) temp = "/tmp";
+				if (temp == null || temp.Length == 0) temp = "/tmp/";
 				System.IO.File.WriteAllText(Path.Combine(temp, "LexicalEntry.xml"), xml);
 				System.IO.File.WriteAllText(Path.Combine(temp, "LexicalEntry.html"), html);
 			}

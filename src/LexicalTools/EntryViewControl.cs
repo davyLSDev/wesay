@@ -59,14 +59,22 @@ namespace WeSay.LexicalTools
 
 		   _splitter.ControlToHide = _entryHeaderView;
 			RefreshEntryDetail();
+			Palaso.Reporting.Logger.WriteEvent("EntryViewControl constructed");
 		}
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
+			Palaso.Reporting.Logger.WriteEvent("EntryViewControl Handle Destroyed");
 			if (_cleanupTimer != null)
 			{
 				_cleanupTimer.Dispose();
 			}
 			base.OnHandleDestroyed(e);
+		}
+
+		public void PrepareToDispose()
+		{
+			   // PrepareToDispose is necessary because the Mono WebBrowser is very fragile
+				_entryHeaderView.PrepareToDispose();
 		}
 
 		public void SelectOnCorrectControl()

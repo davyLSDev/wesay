@@ -753,6 +753,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			Palaso.Reporting.Logger.WriteMinorEvent("DictionaryControl Dispose start");
 			if (disposing && !IsDisposed)
 			{
 				_recordsListBox.SelectedIndexChanged -= OnRecordSelectionChanged;
@@ -767,9 +768,12 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			}
 			if (disposing && (components != null))
 			{
+				// PrepareToDispose is necessary because the Mono WebBrowser is very fragile
+				_entryViewControl.PrepareToDispose();
 				components.Dispose();
 			}
 			base.Dispose(disposing);
+			Palaso.Reporting.Logger.WriteMinorEvent("DictionaryControl Dispose end");
 		}
 	}
 }
