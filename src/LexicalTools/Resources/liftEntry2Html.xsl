@@ -5,7 +5,7 @@
   <xsl:param name="optionslist-writing-system" select="'en'"/>
 
   <xsl:param name="headword-writing-system" select="//entry/field[@type='headword']/form/@lang"/>
-  <xsl:param name="include-notes" select="false()"/>
+  <xsl:param name="include-notes" select="true()"/>
   <xsl:param name="group-by-grammatical-info" select="false()"/>
 
   <xsl:variable name="entries-with-BaseForm-relation-rendered-as-subentries-of-base" select="true()"/>
@@ -18,14 +18,18 @@
 	  <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title><xsl:apply-templates select="//lexical-unit"/></title>
-		 <link href="export/autoLayout.css" rel="stylesheet" type="text/css" media="all" />
-		 <link href="export/autoFonts.css" rel="stylesheet" type="text/css" media="all" />
+		 <link href="{concat($baseUrl, '/export/autoLayout.css')}" rel="stylesheet" type="text/css" media="all" />
+		 <link href="{concat($baseUrl, '/export/autoFonts.css')}" rel="stylesheet" type="text/css" media="all" />
 		 <style type="text/css">
-		 body { background-color: #cbffb9; }
-		 <xsl:value-of select="$extraStyles"/>
+		   body { background-color: #cbffb9; }
+		   div.illustration { float:right; }
+		   span.grammatical-info { font-variant: small-caps; }
+		   span.lexical-unit { font-weight: bold; font-size: 1.2em; }
+		   span.sense-number { vertical-align: super; font-size: 0.8em; }
+		   <xsl:value-of select="$extraStyles"/>
 		 </style>
-		 <link href="{concat($baseUrl, 'export/customLayout.css')}" rel="stylesheet" type="text/css" media="all" />
-		 <link href="export/customFonts.css" rel="stylesheet" type="text/css" media="all" />
+		 <link href="{concat($baseUrl, '/export/customLayout.css')}" rel="stylesheet" type="text/css" media="all" />
+		 <link href="{concat($baseUrl, '/export/customFonts.css')}" rel="stylesheet" type="text/css" media="all" />
 
 	  </head>
 	  <body>
@@ -62,7 +66,7 @@
 			grammatical-info/@value)">
 			<xsl:apply-templates select="grammatical-info"/>
 			<xsl:apply-templates
-			  select="parent::*/sense[field[@type='grammatical-info']/@value =current()/field[@type='grammatical-info']/@value]"/>
+			  select="parent::*/sense[grammatical-info/@value =current()/grammatical-info/@value]"/>
 		  </xsl:if>
 		</xsl:for-each>
 	  </xsl:when>
@@ -111,6 +115,7 @@
 		</div>
 	  </xsl:when>
 	  <xsl:otherwise>
+		<xsl:apply-templates select="illustration|.//illustration"/>
 		<div class="entry">
 		  <xsl:call-template name="output-entry"/>
 		</div>
@@ -172,6 +177,9 @@
 	</xsl:variable>
 
 	<span class="sense">
+	  <!--
+	  <xsl:apply-templates select="illustration"/>
+	  -->
 	  <xsl:if test="$multiple-senses = 'yes'">
 		<span class="sense-number">
 		  <xsl:number level="multiple" count="sense | subsense" value="position()" format="1.1.1"/>
@@ -200,7 +208,6 @@
 		  </span>
 		</xsl:when>
 	  </xsl:choose>
-		 <xsl:apply-templates select="illustration"/>
 	  <xsl:apply-templates select="trait"/>
 	  <xsl:apply-templates select="field[not(@type='grammatical-info')]"/>
 	  <xsl:apply-templates select="relation"/>
@@ -257,7 +264,15 @@
 		<!-- added this to help word, but it didn't work -->
 		<xsl:attribute name="style">width:100; height:auto</xsl:attribute>
 		<xsl:attribute name="src">
-		  <xsl:text>pictures/</xsl:text><xsl:value-of select="@href"/>
+		  <xsl:if test="not(contains(@href, ':'))">
+			<xsl:value-of select="$baseUrl"/>
+			<xsl:text>/</xsl:text>
+			<!-- The Biatah example doesn't have pictures in the URL, but new pictures seem to!-->
+			<xsl:if test="not(contains(@href, 'pictures'))">
+			  <xsl:text>pictures/</xsl:text>
+			</xsl:if>
+		  </xsl:if>
+		  <xsl:value-of select="translate(@href, '\','/')"/>
 		</xsl:attribute>
 		<xsl:attribute name="title">
 		  <!-- leave it up to the plift process to filter down to the one form it wants -->
@@ -311,15 +326,15 @@
 	  </div>
 	</xsl:if>
   </xsl:template>
-<!--
+
   <xsl:template match="form">
-	<span class="{@lang}">
+	<span lang="{@lang}">
 	  <xsl:apply-templates select="text"/>
 	</span>
 	<xsl:if test="following-sibling::form">
 	  <xsl:text> </xsl:text>
 	</xsl:if>
-  </xsl:template>-->
+  </xsl:template>
 
   <xsl:template match="span">
 	<xsl:variable name="content">
@@ -414,6 +429,7 @@
 	<span class="grammatical-info">
 	  <xsl:value-of select="@value"/>
 	</span>
+	<xsl:text> </xsl:text>
 
 	<xsl:apply-templates select="trait"/>
   </xsl:template>

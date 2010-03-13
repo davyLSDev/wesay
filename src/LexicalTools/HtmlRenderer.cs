@@ -33,10 +33,14 @@ namespace WeSay.LexicalTools
 			StringBuilder builder = new StringBuilder();
 			LiftWriter writer = new LiftWriter(builder, true);
 			writer.Add(entry);
+			writer.End();// Needed to flush output
+			writer.Dispose();
 			if (transform == null) initTransform();
 			string xml = builder.ToString();
 			System.IO.StringReader entryReader = new System.IO.StringReader(xml);
 			XsltArgumentList xsltArgs = new XsltArgumentList();
+			string basePath = "file://" + WeSayWordsProject.Project.ProjectDirectoryPath.Replace('\\','/');
+			xsltArgs.AddParam("baseUrl", "", basePath);
 			xsltArgs.AddParam("extraStyles", "", getWritingSystemStyles(viewTemplate));
 			XmlTextReader entryXmlReader = new XmlTextReader(entryReader);
 			TextWriter htmlTextWriter = new StringWriter();
@@ -45,8 +49,14 @@ namespace WeSay.LexicalTools
 			html = htmlTextWriter.ToString();
 #if DEBUG
 			// temp hack
-			System.IO.File.WriteAllText("/tmp/LexicalEntry.xml", xml);
-			System.IO.File.WriteAllText("/tmp/LexicalEntry.html", html);
+			try
+			{
+				string temp = System.Environment.GetEnvironmentVariable("TEMP");
+				if (temp.Length == 0) temp = "/tmp";
+				System.IO.File.WriteAllText(Path.Combine(temp, "LexicalEntry.xml"), xml);
+				System.IO.File.WriteAllText(Path.Combine(temp, "LexicalEntry.html"), html);
+			}
+			catch (Exception e) {}
 #endif
 			return html;
 		}

@@ -20,6 +20,7 @@ namespace WeSay.LexicalTools
 		private LexEntry _currentRecord=null;
 		private const string _emptyEntryHtml =
 			"<html><head><style type=\"text/css\">body { background-color: #cbffb9; }</style></head><body></body></html>";
+		private string _lastEntryHtml = _emptyEntryHtml;
 
 		/// <summary>
 		/// designer only
@@ -32,6 +33,7 @@ namespace WeSay.LexicalTools
 		public EntryHeaderView(NotesBarView notesBarView)
 		{
 			InitializeComponent();
+			_entryHeaderBrowser.DocumentCompleted += _browserDocumentLoaded;
 
 			_notesBar = notesBarView;// notesSystem.CreateNotesBarView(id => WeSayWordsProject.GetUrlFromLexEntry(_currentRecord));
 			_notesBar.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -48,6 +50,13 @@ namespace WeSay.LexicalTools
 			Controls.SetChildIndex(_notesBar, 0);
 			_notesBar.SizeChanged += new EventHandler(_notesBar_SizeChanged);
 			DoLayout();
+		}
+
+		void _browserDocumentLoaded(object sender, WebBrowserDocumentCompletedEventArgs args)
+		{
+			// work around for text not being set when browser is first initialized
+			if (!_lastEntryHtml.Equals(_entryHeaderBrowser.DocumentText))
+				_entryHeaderBrowser.DocumentText = _lastEntryHtml;
 		}
 
 		void _notesBar_SizeChanged(object sender, EventArgs e)
@@ -75,7 +84,11 @@ namespace WeSay.LexicalTools
 			if (record == null)
 			{
 				_entryPreview.Rtf = string.Empty;
+#if MONO
 				_entryHeaderBrowser.Navigate("javascript:{document.body.outerHTML='" + _emptyEntryHtml + "'}");
+#else
+				_entryHeaderBrowser.DocumentText = _emptyEntryHtml;
+#endif
 			}
 			else
 			{
@@ -84,10 +97,14 @@ namespace WeSay.LexicalTools
 													  lexEntryRepository);
 				ViewTemplate viewTemplate = (ViewTemplate)
 						WeSayWordsProject.Project.ServiceLocator.GetService(typeof(ViewTemplate));
-				string html = HtmlRenderer.ToHtml(record, currentItemInFocus, lexEntryRepository, viewTemplate);
+				_lastEntryHtml = HtmlRenderer.ToHtml(record, currentItemInFocus, lexEntryRepository, viewTemplate);
+#if MONO
 				_entryHeaderBrowser.Navigate("javascript:{document.body.outerHTML='" +
-					html.Replace("'","\'") + "'}");
+					_lastEntryHtml.Replace("'","\'") + "'}");
+#else
+				_entryHeaderBrowser.DocumentText = _lastEntryHtml;
 
+#endif
 			}
 
 			if (record != _currentRecord)
@@ -129,9 +146,13 @@ namespace WeSay.LexicalTools
 				return;
 			_notesBar.Location=new Point(0, Height-_notesBar.Height);
 			int height = Height - _notesBar.Height;
-			//_entryPreview.Visible = (height > 20);
-			//_entryPreview.Height = height;
+#if USERTF
+			_entryPreview.Visible = (height > 20);
+			_entryPreview.Height = height;
+#else
+			_entryHeaderBrowser.Visible = (height > 20);
 			_entryHeaderBrowser.Height = height;
+#endif
 		}
 	}
 }

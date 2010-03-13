@@ -49,20 +49,21 @@
 			// _entryHeaderBrowser
 			//
 			this._entryHeaderBrowser.AllowWebBrowserDrop = false;
-			this._entryHeaderBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._entryHeaderBrowser.Location = new System.Drawing.Point(0, 85);
+			this._entryHeaderBrowser.Dock = System.Windows.Forms.DockStyle.Top;
+			this._entryHeaderBrowser.Location = new System.Drawing.Point(0, 0);
 			this._entryHeaderBrowser.MinimumSize = new System.Drawing.Size(20, 20);
 			this._entryHeaderBrowser.Name = "_entryHeaderBrowser";
 			this._entryHeaderBrowser.Size = new System.Drawing.Size(527, 44);
 			this._entryHeaderBrowser.TabIndex = 2;
 			this._entryHeaderBrowser.Visible = true;
+			this._entryHeaderBrowser.IsWebBrowserContextMenuEnabled = false;
+			this._entryHeaderBrowser.ScrollBarsEnabled = false;
 			//
 			// EntryHeaderView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._entryHeaderBrowser);
-			//this.Controls.Add(this._entryPreview);
 			this.Name = "EntryHeaderView";
 			this.Size = new System.Drawing.Size(527, 129);
 			this.Load += new System.EventHandler(this.EntryHeaderView_Load);
