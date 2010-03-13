@@ -239,8 +239,11 @@ namespace WeSay.LexicalTools
 			_entryPreview.Visible = (height > 20);
 			_entryPreview.Height = height;
 #else
-			_entryHeaderBrowser.Visible = (height > 20);
-			_entryHeaderBrowser.Height = height;
+			if (_entryHeaderBrowser != null)
+			{
+				_entryHeaderBrowser.Visible = (height > 20);
+				_entryHeaderBrowser.Height = height;
+			}
 #endif
 		}
 	}
