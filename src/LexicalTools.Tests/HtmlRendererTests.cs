@@ -23,7 +23,7 @@ namespace WeSay.LexicalTools.Tests
 		}
 
 		[Test]
-		public void TestCase()
+		public void TestLexEntryHtml()
 		{
 			string lexicalForm = "test";
 			string definition = "definition";
