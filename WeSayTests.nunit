@@ -9,7 +9,7 @@
 	<assembly path="output\Debug\WeSay.App.Tests.dll" />
 	<assembly path="output\Debug\WeSay.ConfigTool.Tests.dll" />
 	<assembly path="output\Debug\WeSay.Data.Tests.dll" />
-	<assembly path="output\Debug\WeSay.Foundation.Tests.dll" />
+	<!--<assembly path="output\Debug\WeSay.Foundation.Tests.dll" />-->
 	<assembly path="output\Debug\WeSay.Project.Tests.dll" />
 	<assembly path="output\Debug\WeSay.UI.Tests.dll" />
   </Config>
