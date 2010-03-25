@@ -302,11 +302,11 @@ namespace WeSay.LexicalTools.Tests
 			GoToLexicalEntryUseFind("Initial"); //go away
 			GoToLexicalEntryUseFind(form); //come back
 
+			LexRelationCollection relationCollection = new LexRelationCollection();
+			relationCollection.Relations.Add(new LexRelation("b", "bbb", entry));
+
 			KeyValuePair<string, object> item2 = new KeyValuePair<string, object>("test",
-																				  new LexRelation(
-																						  "b",
-																						  "bbb",
-																						  entry));
+																				  relationCollection);
 			entry.Properties.Add(item2);
 
 			GetEditControl("*EntryLexicalForm").FocusOnFirstWsAlternative();

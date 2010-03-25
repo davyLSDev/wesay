@@ -47,7 +47,8 @@ namespace WeSay.LexicalTools
 			XmlWriter htmlWriter = new XmlTextWriter(htmlTextWriter);
 			transform.Transform(entryXmlReader, xsltArgs, htmlWriter);
 			html = htmlTextWriter.ToString();
-
+			writer.Dispose();
+			htmlWriter.Close();
 #if DEBUG
 			// temp hack
 			try

@@ -337,6 +337,7 @@ namespace WeSay.LexicalTools
 				{
 					oldDetailList.ChangeOfWhichItemIsInFocus -= OnChangeOfWhichItemIsInFocus;
 					oldDetailList.KeyDown -= _detailListControl_KeyDown;
+					oldDetailList.Dispose();
 				}
 
 				DetailList detailList = new DetailList();
