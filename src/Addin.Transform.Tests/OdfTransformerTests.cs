@@ -70,6 +70,7 @@ namespace Addin.Transform.Tests
 			ZipFile odtZip = new ZipFile(odtFile);
 			ZipEntry manifest = odtZip.GetEntry("META-INF/manifest.xml");
 			Assert.IsNotNull(manifest);
+			odtZip.Close();
 		}
 	}
 }

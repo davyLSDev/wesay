@@ -95,6 +95,7 @@ namespace WeSay.LexicalTools
 				_entryHeaderBrowser.DocumentCompleted -= _browserDocumentLoaded;
 				_entryHeaderBrowser.Navigating -= _browserNavigating;
 
+#if MONO
 				// Removing the control before the EntryHeaderView is disposed helps to
 				// avoid X locking up on Mono.
 				Controls.Remove(_entryHeaderBrowser);
@@ -111,6 +112,7 @@ namespace WeSay.LexicalTools
 					}
 					_entryHeaderBrowser = null;
 				}
+#endif
 			}
 		}
 
@@ -160,7 +162,7 @@ namespace WeSay.LexicalTools
 
 		public void UpdateContents(LexEntry record, CurrentItemEventArgs currentItemInFocus, LexEntryRepository lexEntryRepository)
 		{
-			if (record == null)
+			if (record == null || record.GetOrCreateId(false) == null)
 			{
 				_entryPreview.Rtf = string.Empty;
 				if (_entryHeaderBrowser != null)
