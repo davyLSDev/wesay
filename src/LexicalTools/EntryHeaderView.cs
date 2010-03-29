@@ -71,15 +71,18 @@ namespace WeSay.LexicalTools
 			base.OnHandleCreated (e);
 			Palaso.Reporting.Logger.WriteEvent("EntryHeaderView Handle Created");
 			InitializeBrowser();
-			_entryHeaderBrowser.DocumentCompleted += _browserDocumentLoaded;
-			_entryHeaderBrowser.Navigating += _browserNavigating;
+			if (_entryHeaderBrowser != null)
+			{
+				_entryHeaderBrowser.DocumentCompleted += _browserDocumentLoaded;
+				_entryHeaderBrowser.Navigating += _browserNavigating;
 #if MONO
-			System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
-			_entryHeaderBrowser.Navigate(_browserUrl);
+				System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
+				_entryHeaderBrowser.Navigate(_browserUrl);
 			//_entryHeaderBrowser.Navigate("javascript:{" + _lastEntryHtml.Replace("'","\'") + "}");
 #else
-			_entryHeaderBrowser.DocumentText = _lastEntryHtml;
+				_entryHeaderBrowser.DocumentText = _lastEntryHtml;
 #endif
+			}
 			DoLayout();
 		}
 
@@ -104,14 +107,16 @@ namespace WeSay.LexicalTools
 					Palaso.Reporting.Logger.WriteEvent("EntryHeaderView will really dispose browser");
 					try
 					{
+						Console.WriteLine("header dispose");
 						_entryHeaderBrowser.Dispose();
+						Console.WriteLine("header disposed");
 					}
 					catch (Exception e)
 					{
 						Palaso.Reporting.Logger.WriteEvent(e.StackTrace);
 					}
-					_entryHeaderBrowser = null;
 				}
+				_entryHeaderBrowser = null;
 #endif
 			}
 		}

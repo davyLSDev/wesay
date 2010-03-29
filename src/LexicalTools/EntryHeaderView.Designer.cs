@@ -66,9 +66,16 @@
 			//
 			// _entryHeaderBrowser
 			//
+#if MONO
 			if (this._entryHeaderBrowser == null)
 			{
-				this._entryHeaderBrowser = new System.Windows.Forms.WebBrowser();
+					this._entryHeaderBrowser = sEntryHeaderBrowser;
+
+			}
+#endif
+			if (this._entryHeaderBrowser == null)
+			{
+				this._entryHeaderBrowser = new DictWebBrowser();
 				this._entryHeaderBrowser.AllowWebBrowserDrop = false;
 				this._entryHeaderBrowser.Dock = System.Windows.Forms.DockStyle.Top;
 				this._entryHeaderBrowser.Location = new System.Drawing.Point(0, 0);
@@ -80,11 +87,29 @@
 				this._entryHeaderBrowser.AutoSize = true;
 				this._entryHeaderBrowser.IsWebBrowserContextMenuEnabled = false;
 				this._entryHeaderBrowser.ScrollBarsEnabled = true;
+				System.Windows.Forms.WebBrowser.CheckForIllegalCrossThreadCalls = true;
+#if MONO
+				EntryHeaderView.sEntryHeaderBrowser = this._entryHeaderBrowser;
+#endif
 			}
 			this.Controls.Add(this._entryHeaderBrowser);
 		}
 
 		private System.Windows.Forms.RichTextBox _entryPreview;
+#if MONO
+		private static System.Windows.Forms.WebBrowser sEntryHeaderBrowser = null;
+#endif
 		private System.Windows.Forms.WebBrowser _entryHeaderBrowser = null;
+	}
+
+	class DictWebBrowser : System.Windows.Forms.WebBrowser
+	{
+			protected override void Dispose(bool disposing)
+			{
+						System.Console.WriteLine("Dispose browser " +
+									 new System.Diagnostics.StackTrace().ToString());
+
+						base.Dispose(disposing);
+			}
 	}
 }

@@ -18,6 +18,7 @@ namespace WeSay.LexicalTools
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			PrepareToDispose();
 			if (disposing && !IsDisposed)
 			{
 				if (_cleanupTimer != null)

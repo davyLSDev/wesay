@@ -61,7 +61,7 @@ namespace WeSay.LexicalTools
 				System.IO.File.WriteAllText(Path.Combine(temp, "LexicalEntry.xml"), xml);
 				System.IO.File.WriteAllText(Path.Combine(temp, "LexicalEntry.html"), html);
 			}
-			catch (Exception e) {}
+			catch (Exception e) { Console.WriteLine(e.StackTrace); }
 #endif
 			return html;
 		}

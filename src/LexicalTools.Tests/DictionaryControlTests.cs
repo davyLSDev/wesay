@@ -217,14 +217,20 @@ namespace WeSay.LexicalTools.Tests
 
 		public override void TearDown()
 		{
+#if MONO
+			_window.Hide();
+#else
 			_window.Close();
 			_window.Dispose();
+#endif
 			_window = null;
 			_task.Deactivate();
 			_lexEntryRepository.Dispose();
 			_lexEntryRepository = null;
 			_tempFolder.Delete();
+#if !MONO
 			base.TearDown();
+#endif
 		}
 
 		[Test]

@@ -89,6 +89,7 @@ namespace WeSay.LexicalTools.Tests
 			using (EntryViewControl entryViewControl = new EntryViewControl())
 			{
 				Assert.IsNotNull(entryViewControl);
+				entryViewControl.PrepareToDispose();
 			}
 		}
 
