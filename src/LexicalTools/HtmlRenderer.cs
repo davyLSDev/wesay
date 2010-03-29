@@ -18,7 +18,9 @@ using WeSay.LexicalTools.Properties;
 namespace WeSay.LexicalTools
 {
 
-
+	/// <summary>
+	/// Renders a single LexEntry as an HTML string.
+	/// </summary>
 	public static class HtmlRenderer
 	{
 		private static XslCompiledTransform transform = null;
@@ -31,7 +33,8 @@ namespace WeSay.LexicalTools
 		{
 			string html = "";
 			StringBuilder builder = new StringBuilder();
-			LiftWriter writer = new LiftWriter(builder, true);
+			LiftWriter writer = new LiftWriter(builder, true, true);
+
 			writer.Add(entry);
 			writer.End();// Needed to flush output
 			writer.Dispose();
@@ -68,6 +71,22 @@ namespace WeSay.LexicalTools
 			System.Text.StringBuilder builder = new System.Text.StringBuilder();
 			foreach (WritingSystem ws in viewTemplate.WritingSystems.Values)
 			{
+				// Note: It is possible to configure IE to ignore these styles.
+				// In IE goto Internet Options dialog, General tab, Accessibility button,
+				// make sure that "Ignore font styles specified on webpages" is not selected.
+
+				// :lang is not supported, in IE8, so use traditional styles
+				builder.Append(".lang_");
+				// Are all abbreviations ok as class names? ISO639-3 should be fine.
+				builder.Append(ws.Abbreviation);
+				builder.Append(" { font-family: \"");
+				builder.Append(ws.FontName);
+				builder.Append("\"; font-size: ");
+				builder.Append(ws.FontSize);
+				builder.Append("pt;");
+				builder.Append("}\n");
+
+				// attribute styles below aren't supported in IE 8
 				builder.Append(":lang(");
 				builder.Append(ws.Abbreviation);
 				builder.Append(") { font-family: \"");
@@ -75,7 +94,7 @@ namespace WeSay.LexicalTools
 				builder.Append("\"; font-size: ");
 				builder.Append(ws.FontSize);
 				builder.Append("pt;");
-				builder.Append("}");
+				builder.Append("}\n");
 			}
 			return builder.ToString();
 		}

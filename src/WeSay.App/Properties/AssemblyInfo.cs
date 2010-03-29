@@ -35,8 +35,8 @@ using System.Security.Permissions;
 //      Revision
 //
 
-[assembly: AssemblyVersion("0.7.2421")]
-[assembly: AssemblyFileVersion("0.7.2421")]
+[assembly: AssemblyVersion("0.7.2425")]
+[assembly: AssemblyFileVersion("0.7.2425")]
 [assembly: CLSCompliant(true)]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
 [assembly: InternalsVisibleTo("WeSay.App.Tests")]

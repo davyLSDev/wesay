@@ -37,8 +37,8 @@ using Mono.Addins;
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("0.7.2421")]
-[assembly: AssemblyFileVersion("0.7.2421")]
+[assembly: AssemblyVersion("0.7.2425")]
+[assembly: AssemblyFileVersion("0.7.2425")]
 [assembly: CLSCompliant(true)]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
 [assembly: Addin]

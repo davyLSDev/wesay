@@ -132,30 +132,6 @@
   <!-- omit entries that have been deleted-->
   <xsl:template match="entry[@dateDeleted]"/>
 
-
-  <!-- TODO: there is a @first='true' we can use to output, say, non-bold for the forms after the first one -->
-
-  <xsl:template match="field[@type='headword']">
-	<xsl:element name="span">
-	  <xsl:attribute name="class">headword</xsl:attribute>
-	  <xsl:attribute name="lang"><xsl:value-of select="form[@first]/@lang"/></xsl:attribute>
-
-	  <!-- <xsl:apply-templates select="form[@lang=$headword-writing-system]"/> -->
-	  <xsl:value-of select="form[@first]"/>
-
-	 <!-- TODO: other headword writing systems
-		<xsl:variable name="homograph-number">
-		<xsl:value-of select="ancestor::entry/@order"/>
-	  </xsl:variable>
-	  <xsl:if test="$homograph-number != ''">
-		<span class="homograph-number">
-		  <xsl:value-of select="$homograph-number"/>
-		</span>
-	  </xsl:if>
-	  <xsl:apply-templates select="form[not(@first)]"/>-->
-	</xsl:element>
-  </xsl:template>
-
   <xsl:template match="sense | subsense">
 	<xsl:variable name="multiple-senses">
 	  <xsl:choose>
@@ -238,16 +214,8 @@
 	  <xsl:attribute name="class"><xsl:value-of select="name(parent::node())"/></xsl:attribute>
 	  <xsl:attribute name="lang"><xsl:value-of select="@lang"/></xsl:attribute>
 	  <xsl:element name="span">
-		<xsl:attribute name="class">xitem</xsl:attribute>
+		<xsl:attribute name="class"><xsl:text>lang_</xsl:text><xsl:value-of select="@lang"/></xsl:attribute>
 		<xsl:attribute name="lang"><xsl:value-of select="@lang"/></xsl:attribute>
-		<!-- I'm commenting this out because it's more work and, frankly, all the lang tags clutter up the page.
-		  <xsl:element name="span">
-			 <xsl:attribute name="class">xlanguagetag</xsl:attribute>
-			<xsl:attribute name="lang">en</xsl:attribute> <! todo this should be language of the abbreviation ->
-
-		  <xsl:value-of select="@lang"/> <!-todo should be the abbreviation of the ws... get it from the plift? ->
-		</xsl:element>
-		-->
 		<xsl:value-of select="current()"/>
 	  </xsl:element>
 	</xsl:element>
@@ -296,12 +264,6 @@
 
   <xsl:template match="example">
 	<xsl:apply-templates mode="langAndForm" select="*[not(self::translation)]"></xsl:apply-templates>
-   <!-- <span class="example">
-	  <xsl:apply-templates select="*[not(self::translation)]"/>
-	</span>
-	<xsl:text> </xsl:text>-->
-
-
 	<xsl:choose>
 	  <xsl:when test="translation">
 		<span class="translations">
@@ -328,7 +290,7 @@
   </xsl:template>
 
   <xsl:template match="form">
-	<span lang="{@lang}">
+	<span lang="{@lang}" class="{concat('lang_',@lang)}">
 	  <xsl:apply-templates select="text"/>
 	</span>
 	<xsl:if test="following-sibling::form">
