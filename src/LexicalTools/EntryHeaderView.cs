@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
@@ -13,6 +14,9 @@ namespace WeSay.LexicalTools
 {
 	public partial class EntryHeaderView : UserControl
 	{
+#if MONO
+		static private Stack<WebBrowser> browserStack = new Stack<WebBrowser>();
+#endif
 		private const int kNotesBarHeight = 30;//we want 16pixel icons
 		//autofac generates a factory which comes up with all the other needed parameters from its container
 		public delegate EntryHeaderView Factory();
@@ -73,13 +77,13 @@ namespace WeSay.LexicalTools
 			InitializeBrowser();
 			if (_entryHeaderBrowser != null)
 			{
-				_entryHeaderBrowser.DocumentCompleted += _browserDocumentLoaded;
-				_entryHeaderBrowser.Navigating += _browserNavigating;
 #if MONO
 				System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
 				_entryHeaderBrowser.Navigate(_browserUrl);
 			//_entryHeaderBrowser.Navigate("javascript:{" + _lastEntryHtml.Replace("'","\'") + "}");
 #else
+				_entryHeaderBrowser.DocumentCompleted += _browserDocumentLoaded;
+				_entryHeaderBrowser.Navigating += _browserNavigating;
 				_entryHeaderBrowser.DocumentText = _lastEntryHtml;
 #endif
 			}
@@ -97,26 +101,24 @@ namespace WeSay.LexicalTools
 				Palaso.Reporting.Logger.WriteEvent("EntryHeaderView PrepareToDispose");
 				_entryHeaderBrowser.DocumentCompleted -= _browserDocumentLoaded;
 				_entryHeaderBrowser.Navigating -= _browserNavigating;
-
+				Console.WriteLine("EntryHeaderView prepare to dispose");
 #if MONO
 				// Removing the control before the EntryHeaderView is disposed helps to
 				// avoid X locking up on Mono.
 				Controls.Remove(_entryHeaderBrowser);
+				browserStack.Push(_entryHeaderBrowser);
 				if (TopLevelControl == null || TopLevelControl.Disposing)
 				{
 					Palaso.Reporting.Logger.WriteEvent("EntryHeaderView will really dispose browser");
 					try
 					{
-						Console.WriteLine("header dispose");
-						_entryHeaderBrowser.Dispose();
-						Console.WriteLine("header disposed");
+						//_entryHeaderBrowser.Dispose();// Causes problems in tests
 					}
 					catch (Exception e)
 					{
 						Palaso.Reporting.Logger.WriteEvent(e.StackTrace);
 					}
 				}
-				_entryHeaderBrowser = null;
 #endif
 			}
 		}
@@ -197,7 +199,7 @@ namespace WeSay.LexicalTools
 					System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
 					_entryHeaderBrowser.Navigate(_browserUrl);
 #else
-				 _entryHeaderBrowser.DocumentText = _lastEntryHtml;
+					_entryHeaderBrowser.DocumentText = _lastEntryHtml;
 
 #endif
 				}
@@ -253,5 +255,17 @@ namespace WeSay.LexicalTools
 			}
 #endif
 		}
+
+#if MONO
+		public static void DisposeBrowsers()
+		{
+			foreach (WebBrowser browser in EntryHeaderView.browserStack)
+			{
+				browser.Dispose();
+			}
+			EntryHeaderView.browserStack.Clear();
+		}
+#endif
+
 	}
 }
