@@ -17,7 +17,8 @@ namespace WeSay.LexicalTools.AddMissingInfo
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			_entryViewControl.PrepareToDispose();
+			if (_entryViewControl != null)
+				_entryViewControl.PrepareToDispose();
 			if (disposing && !IsDisposed)
 			{
 				//_records.ListChanged -= OnRecordsListChanged;
