@@ -77,14 +77,25 @@ namespace WeSay.LexicalTools
 			InitializeBrowser();
 			if (_entryHeaderBrowser != null)
 			{
-#if MONO
-				System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
-				_entryHeaderBrowser.Navigate(_browserUrl);
-			//_entryHeaderBrowser.Navigate("javascript:{" + _lastEntryHtml.Replace("'","\'") + "}");
-#else
+#if ! MONO
 				_entryHeaderBrowser.DocumentCompleted += _browserDocumentLoaded;
 				_entryHeaderBrowser.Navigating += _browserNavigating;
-				_entryHeaderBrowser.DocumentText = _lastEntryHtml;
+#endif
+				try
+				{
+					System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
+					_entryHeaderBrowser.Navigate(_browserUrl);
+				}
+				catch (Exception exception)
+				{
+					// Exceptions may be thrown if IE6 is in use, they disappear with IE8
+					Palaso.Reporting.Logger.WriteEvent("Exception while navigating in EntryHeaderView.\n" + exception
+						.Message);
+				}
+#if MONO
+			  //_entryHeaderBrowser.Navigate("javascript:{" + _lastEntryHtml.Replace("'","\'") + "}");
+#else
+			  //_entryHeaderBrowser.DocumentText = _lastEntryHtml;
 #endif
 			}
 			DoLayout();
@@ -174,13 +185,19 @@ namespace WeSay.LexicalTools
 				_entryPreview.Rtf = string.Empty;
 				if (_entryHeaderBrowser != null)
 				{
-#if MONO
 				//_entryHeaderBrowser.Navigate("javascript:{document.body.outerHTML='" + _emptyEntryHtml + "'}");
-				System.IO.File.WriteAllText(_htmlPath, _emptyEntryHtml);
-				_entryHeaderBrowser.Navigate(_browserUrl);
-#else
-				_entryHeaderBrowser.DocumentText = _emptyEntryHtml;
-#endif
+					System.IO.File.WriteAllText(_htmlPath, _emptyEntryHtml);
+					try
+					{
+						_entryHeaderBrowser.Navigate(_browserUrl);
+					}
+					catch (Exception exception)
+					{
+						// Exceptions may be thrown if IE6 is in use, they disappear with IE8
+						Palaso.Reporting.Logger.WriteEvent("Exception while navigating to empty in EntryHeaderView.\n" + exception
+						.Message);
+					}
+//                _entryHeaderBrowser.DocumentText = _emptyEntryHtml;
 				}
 			}
 			else
@@ -193,15 +210,20 @@ namespace WeSay.LexicalTools
 				_lastEntryHtml = HtmlRenderer.ToHtml(record, currentItemInFocus, lexEntryRepository, viewTemplate);
 				if (_entryHeaderBrowser != null)
 				{
-#if MONO
 					//_entryHeaderBrowser.Navigate("javascript:{document.body.outerHTML='" +
 					//_lastEntryHtml.Replace("'","\'") + "'}");
 					System.IO.File.WriteAllText(_htmlPath, _lastEntryHtml);
-					_entryHeaderBrowser.Navigate(_browserUrl);
-#else
-					_entryHeaderBrowser.DocumentText = _lastEntryHtml;
-
-#endif
+					try
+					{
+						_entryHeaderBrowser.Navigate(_browserUrl);
+					}
+					catch(Exception exception)
+					{
+						// Exceptions may be thrown if IE6 is in use, they disappear with IE8
+						Palaso.Reporting.Logger.WriteEvent("Exception while navigating in EntryHeaderView.\n" + exception
+						.Message);
+					}
+//                    _entryHeaderBrowser.DocumentText = _lastEntryHtml;
 				}
 			}
 
