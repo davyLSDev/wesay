@@ -285,6 +285,21 @@ msgid "Send/Receive Changes to devices, servers, or other users on your network.
 msgstr ""
 
 #; ..\src\WeSay.Project\ViewTemplate.cs
+#. Label for action which uses Chorus to synchronize the dictionary with other users, devices, and servers. Here, 'synchronizing' means putting your changes in the repository, and getting changes that others have put in the repository. In English, we are going with Send/Receive because it is similar to email and this is the term Paratext uses.
+msgid "Send/Receive"
+msgstr ""
+
+#; C:\Documents and Settings\KRS\My Documents\projects\wesay\bld\..\src\WeSay.Project\Synchronize\SendReceiveAction.cs
+#. description of send/receive action
+msgid "Sends your changes to usb key, server, or other users, and receives the changes made by other members of your team."
+msgstr ""
+
+#; C:\Documents and Settings\KRS\My Documents\projects\wesay\bld\..\src\WeSay.Project\Synchronize\SendReceiveAction.cs
+#. Long label for send/receive action.
+msgid "Send/Receive Changes to devices, servers, or other users on your network."
+msgstr ""
+
+#; C:\Documents and Settings\KRS\My Documents\projects\wesay\bld\..\src\WeSay.Project\ViewTemplate.cs
 #. The label for the field showing the Lexeme Form of the entry.
 msgid "Word"
 msgstr ""

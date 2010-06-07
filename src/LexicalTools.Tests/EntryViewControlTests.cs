@@ -89,6 +89,7 @@ namespace WeSay.LexicalTools.Tests
 			using (EntryViewControl entryViewControl = new EntryViewControl())
 			{
 				Assert.IsNotNull(entryViewControl);
+				entryViewControl.Dispose();
 			}
 		}
 
@@ -98,6 +99,7 @@ namespace WeSay.LexicalTools.Tests
 			using (EntryViewControl entryViewControl = CreateForm(null, false))
 			{
 				Assert.AreEqual(string.Empty, entryViewControl.TextContentsOfPreviewForTests);
+				entryViewControl.Dispose();
 			}
 		}
 
@@ -120,7 +122,11 @@ namespace WeSay.LexicalTools.Tests
 			{
 				Assert.IsTrue(entryViewControl.RtfContentsOfPreviewForTests.Contains("noun"));
 				Assert.IsFalse(entryViewControl.RtfContentsOfPreviewForTests.Contains("nombre"));
+				entryViewControl.Dispose();
 			}
+#if MONO
+			EntryHeaderView.DisposeBrowsers();
+#endif
 		}
 
 		private void TestEntryShows(LexEntry entry)
@@ -132,6 +138,7 @@ namespace WeSay.LexicalTools.Tests
 				Assert.IsTrue(entryViewControl.RtfContentsOfPreviewForTests.Contains(GetMeaning(entry)));
 				Assert.IsTrue(
 						entryViewControl.RtfContentsOfPreviewForTests.Contains(GetExampleSentence(entry)));
+				entryViewControl.Dispose();
 			}
 		}
 
@@ -149,6 +156,7 @@ namespace WeSay.LexicalTools.Tests
 					)
 			{
 				Assert.AreEqual(1, entryViewControl.ControlEntryDetail.Count);
+				entryViewControl.Parent.Dispose();
 			}
 		}
 
@@ -165,6 +173,7 @@ namespace WeSay.LexicalTools.Tests
 					)
 			{
 				Assert.AreEqual(2, entryViewControl.ControlEntryDetail.Count);
+				entryViewControl.Parent.Dispose();
 			}
 		}
 
@@ -195,6 +204,8 @@ namespace WeSay.LexicalTools.Tests
 				editControl.TextBoxes[0].Text = "test";
 				entryDetailControl.GetEditControlFromRow(1).Focus();
 				Assert.IsTrue(editControl.TextBoxes[0].Text.Contains(GetMeaning(entry)));
+				// Don't dispose in Mono
+				entryViewControl.Parent.Hide();
 			}
 		}
 
@@ -218,6 +229,7 @@ namespace WeSay.LexicalTools.Tests
 						(MultiTextControl) entryDetailControl.GetEditControlFromRow(0);
 				editControl.TextBoxes[0].Text = "test";
 				Assert.IsTrue(entryViewControl.RtfContentsOfPreviewForTests.Contains("test"));
+				entryViewControl.Hide();
 			}
 		}
 
@@ -240,6 +252,8 @@ namespace WeSay.LexicalTools.Tests
 						GetEditControl(entryViewControl.ControlEntryDetail, "Meaning").Name.Contains
 								("ghost"),
 						"Only ghost should remain");
+				// Don't dispose here for mono
+				entryViewControl.TopLevelControl.Hide();
 			}
 		}
 

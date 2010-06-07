@@ -767,6 +767,8 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			}
 			if (disposing && (components != null))
 			{
+				// PrepareToDispose is necessary because the Mono WebBrowser is very fragile
+				_entryViewControl.PrepareToDispose();
 				components.Dispose();
 			}
 			base.Dispose(disposing);

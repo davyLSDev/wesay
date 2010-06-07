@@ -13,6 +13,7 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			Palaso.Reporting.Logger.WriteEvent("EntryHeaderView.Dispose");
 			if (disposing && (components != null))
 			{
 				components.Dispose();
@@ -43,12 +44,12 @@
 			this._entryPreview.TabIndex = 1;
 			this._entryPreview.TabStop = false;
 			this._entryPreview.Text = "";
+			this._entryPreview.Visible = false;
 			//
 			// EntryHeaderView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._entryPreview);
 			this.Name = "EntryHeaderView";
 			this.Size = new System.Drawing.Size(527, 129);
 			this.Load += new System.EventHandler(this.EntryHeaderView_Load);
@@ -60,6 +61,31 @@
 
 		#endregion
 
+		private void InitializeBrowser()
+		{
+			//
+			// _entryHeaderBrowser
+			//
+			if (this._entryHeaderBrowser == null)
+			{
+				this._entryHeaderBrowser = new System.Windows.Forms.WebBrowser();
+				this._entryHeaderBrowser.AllowWebBrowserDrop = false;
+				this._entryHeaderBrowser.Dock = System.Windows.Forms.DockStyle.Top;
+				this._entryHeaderBrowser.Location = new System.Drawing.Point(0, 0);
+				this._entryHeaderBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+				this._entryHeaderBrowser.Name = "_entryHeaderBrowser";
+				this._entryHeaderBrowser.Size = new System.Drawing.Size(527, 85);
+				this._entryHeaderBrowser.TabIndex = 2;
+				this._entryHeaderBrowser.Visible = true;
+				this._entryHeaderBrowser.AutoSize = true;
+				this._entryHeaderBrowser.IsWebBrowserContextMenuEnabled = false;
+				this._entryHeaderBrowser.ScrollBarsEnabled = true;
+				System.Windows.Forms.WebBrowser.CheckForIllegalCrossThreadCalls = true;
+			}
+			this.Controls.Add(this._entryHeaderBrowser);
+		}
+
 		private System.Windows.Forms.RichTextBox _entryPreview;
+		private System.Windows.Forms.WebBrowser _entryHeaderBrowser = null;
 	}
 }

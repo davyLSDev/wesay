@@ -43,26 +43,38 @@ namespace WeSay.LexicalTools
 		{
 			_viewTemplate = null;
 			InitializeComponent();
+#if ! MONO
 			Controls.Remove(_entryHeaderView);
-		   _entryHeaderView.Dispose();
+			_entryHeaderView.Dispose();
 			_entryHeaderView = entryHeaderViewFactory();
+#endif
 		   _entryHeaderView.Dock = DockStyle.Top;
 		   _entryHeaderView.BackColor = BackColor;
+#if ! MONO
 		   Controls.Add(_entryHeaderView);
+#endif
 		   Controls.SetChildIndex(_panelEntry, 0);
 			Controls.SetChildIndex(_splitter, 1);
 		   Controls.SetChildIndex(_entryHeaderView, 2);
 
 		   _splitter.ControlToHide = _entryHeaderView;
 			RefreshEntryDetail();
+			Palaso.Reporting.Logger.WriteEvent("EntryViewControl constructed");
 		}
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
+			Palaso.Reporting.Logger.WriteEvent("EntryViewControl Handle Destroyed");
 			if (_cleanupTimer != null)
 			{
 				_cleanupTimer.Dispose();
 			}
 			base.OnHandleDestroyed(e);
+		}
+
+		public void PrepareToDispose()
+		{
+			   // PrepareToDispose is necessary because the Mono WebBrowser is very fragile
+				_entryHeaderView.PrepareToDispose();
 		}
 
 		public void SelectOnCorrectControl()
@@ -325,6 +337,7 @@ namespace WeSay.LexicalTools
 				{
 					oldDetailList.ChangeOfWhichItemIsInFocus -= OnChangeOfWhichItemIsInFocus;
 					oldDetailList.KeyDown -= _detailListControl_KeyDown;
+					oldDetailList.Dispose();
 				}
 
 				DetailList detailList = new DetailList();

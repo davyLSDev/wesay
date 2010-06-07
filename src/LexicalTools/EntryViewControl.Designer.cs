@@ -18,6 +18,7 @@ namespace WeSay.LexicalTools
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			PrepareToDispose();
 			if (disposing && !IsDisposed)
 			{
 				if (_cleanupTimer != null)
@@ -71,6 +72,7 @@ namespace WeSay.LexicalTools
 			this._entryHeaderView.Name = "_entryHeaderView";
 			this._entryHeaderView.Size = new System.Drawing.Size(474, 129);
 			this._entryHeaderView.TabIndex = 0;
+			this._entryHeaderView.Visible = true;
 			//
 			// _splitter
 			//

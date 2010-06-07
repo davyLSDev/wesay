@@ -13,6 +13,7 @@ using WeSay.LexicalModel.Foundation;
 using WeSay.Project;
 using WeSay.UI;
 using WeSay.UI.AutoCompleteTextBox;
+using Palaso.Lift.Options;
 
 namespace WeSay.LexicalTools
 {
@@ -142,8 +143,9 @@ namespace WeSay.LexicalTools
 					_lexEntryRepository.GetAllEntriesSortedByLexicalFormOrAlternative(writingSystem);
 			_resultSet = recordTokenList;
 
-			AutoCompleteWithCreationBox<RecordToken<LexEntry>, string> picker =
-					CreatePicker<RecordToken<LexEntry>>(relation);
+			AutoCompleteWithCreationBox<RecordToken<LexEntry>, String> picker =
+					CreatePicker(relation);
+
 			picker.GetKeyValueFromValue = GetRecordTokenFromTargetId;
 			picker.GetValueFromKeyValue = GetTargetIdFromRecordToken;
 
@@ -204,12 +206,16 @@ namespace WeSay.LexicalTools
 			return e.RealObject.Id;
 		}
 
-		private AutoCompleteWithCreationBox<T, string> CreatePicker<T>(LexRelation relation)
-				where T : class
+		// This doesn't need to be templated and removing the template fixes a Mono crash
+//        private AutoCompleteWithCreationBox<T, string> CreatePicker<T>(LexRelation relation)
+//                where T : class
+		private AutoCompleteWithCreationBox<RecordToken<LexEntry>, string> CreatePicker(LexRelation relation)
 		{
-			var picker = new AutoCompleteWithCreationBox<T, string> (
+			System.Console.WriteLine("CreatePicker " + relation);
+			AutoCompleteWithCreationBox<RecordToken<LexEntry>, String> picker = new AutoCompleteWithCreationBox<RecordToken<LexEntry>, String> (
 				CommonEnumerations.VisibilitySetting.Visible
 			);
+
 			picker.Box.Tag = relation;
 			//                    switch (type.TargetType)
 			//                    {

@@ -36,6 +36,9 @@ namespace WeSay.LexicalTools.Tests
 		private Guid _secondEntryGuid;
 		private string[] _analysisWritingSystemIds;
 		private EntryViewControl.Factory _entryViewFactory;
+		// HACK for Mono
+		private Stack<Form> _windowStack = new Stack<Form>();
+		private bool lastTest = false;
 
 		[TestFixtureSetUp]
 		public void SetupFixture()
@@ -217,15 +220,40 @@ namespace WeSay.LexicalTools.Tests
 
 		public override void TearDown()
 		{
+#if MONO
+			if (lastTest)
+			{
+				foreach (Form w in _windowStack)
+				{
+					w.Close();
+					w.Dispose();
+				}
+				_window.Close();
+				_window.Dispose();
+				_windowStack.Clear();
+			}
+			else
+			{
+				_window.Hide();
+				_windowStack.Push(_window);
+			}
+#else
 			_window.Close();
 			_window.Dispose();
+#endif
 			_window = null;
 			_task.Deactivate();
 			_lexEntryRepository.Dispose();
 			_lexEntryRepository = null;
 			_tempFolder.Delete();
+#if MONO
+			if (lastTest) base.TearDown();
+#else
 			base.TearDown();
+#endif
 		}
+
+
 
 		[Test]
 		public void Construct_EmptyViewTemplate_NoCrash()
@@ -235,6 +263,7 @@ namespace WeSay.LexicalTools.Tests
 																new ViewTemplate(), new TaskMemory(), new CheckinDescriptionBuilder()))
 			{
 				Assert.IsNotNull(e);
+				e.Hide();
 			}
 		}
 
@@ -302,11 +331,11 @@ namespace WeSay.LexicalTools.Tests
 			GoToLexicalEntryUseFind("Initial"); //go away
 			GoToLexicalEntryUseFind(form); //come back
 
+			LexRelationCollection relationCollection = new LexRelationCollection();
+			relationCollection.Relations.Add(new LexRelation("b", "bbb", entry));
+
 			KeyValuePair<string, object> item2 = new KeyValuePair<string, object>("test",
-																				  new LexRelation(
-																						  "b",
-																						  "bbb",
-																						  entry));
+																				  relationCollection);
 			entry.Properties.Add(item2);
 
 			GetEditControl("*EntryLexicalForm").FocusOnFirstWsAlternative();
@@ -756,6 +785,8 @@ namespace WeSay.LexicalTools.Tests
 			t = new TextBoxTester(GetLexicalFormControlName(), _window);
 			t.Properties.Visible = true;
 			LexicalFormMustMatch("plus");
+			// HACK for Mono
+			lastTest = true;
 		}
 
 		private void ActivateTask()

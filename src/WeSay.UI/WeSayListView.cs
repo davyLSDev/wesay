@@ -543,7 +543,8 @@ namespace WeSay.UI
 					}
 
 					_selectedItem = SelectedItem;
-					EnsureVisible(value);
+					if (CanFocus) // Prevent exception in Mono 2.6
+						EnsureVisible(value);
 				}
 			}
 		}

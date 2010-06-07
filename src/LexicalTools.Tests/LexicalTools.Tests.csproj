@@ -165,6 +165,7 @@
 	<Compile Include="DashBoardTests.cs" />
 	<Compile Include="DashTests.cs" />
 	<Compile Include="GatherBySemanticDomainTaskTests.cs" />
+	<Compile Include="HtmlRendererTests.cs" />
 	<Compile Include="MissingEntryRelationFieldFilterTests.cs" />
 	<Compile Include="MissingInfoconfigurationTests.cs" />
 	<Compile Include="MissingLexicalFormFilterTests.cs" />
