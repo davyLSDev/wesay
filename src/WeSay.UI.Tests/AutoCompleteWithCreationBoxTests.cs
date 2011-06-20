@@ -140,7 +140,7 @@ namespace WeSay.UI.Tests
 			Application.DoEvents();
 			_control.Box.Focus();
 			Application.DoEvents();
-			_control.Box.Paste("two");
+			_control.Box.SelectedText = "two";//.Paste("two");
 			//            while (true)
 			//            {
 			//                Application.DoEvents();
@@ -201,7 +201,7 @@ namespace WeSay.UI.Tests
 			//just pasting only appends
 			_control.Box.SelectionStart = 0;
 			_control.Box.SelectionLength = 1000;
-			_control.Box.Paste(text);
+			_control.Box.SelectedText=text;//.Paste(text);
 		}
 
 		[Test]
