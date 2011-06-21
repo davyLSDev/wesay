@@ -213,7 +213,7 @@ namespace WeSay.UI.Tests
 			box.Focus();
 			box.SelectionStart = 0;
 			box.SelectionLength = box.TextLength;
-			box.Paste(s);
+			box.SelectedText=s;//.Paste(s);
 		}
 
 		[Test]
@@ -225,7 +225,7 @@ namespace WeSay.UI.Tests
 			ActuallyShowOnScreen();
 			Assert.AreEqual(4, Boxes.Count);
 			SimulateTypingOver(1, "hello");
-			Boxes[1].Box.Paste("hello");
+			Boxes[1].Box.SelectedText = "hello";//.Paste("hello");
 			Assert.AreEqual(4, Boxes.Count);
 		}
 

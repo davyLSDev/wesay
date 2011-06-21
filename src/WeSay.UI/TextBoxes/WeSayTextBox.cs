@@ -12,7 +12,7 @@ using WeSay.LexicalModel.Foundation;
 
 namespace WeSay.UI.TextBoxes
 {
-	public partial class WeSayTextBox: TextBox, IControlThatKnowsWritingSystem
+	public partial class WeSayTextBox: RichTextBox, IControlThatKnowsWritingSystem
 	{
 		private WritingSystemDefinition _writingSystem;
 
@@ -38,11 +38,26 @@ namespace WeSay.UI.TextBoxes
 			KeyPress += WeSayTextBox_KeyPress;
 			TextChanged += WeSayTextBox_TextChanged;
 
+
 			KeyDown += OnKeyDown;
 
 			if (_nameForLogging == null)
 			{
 				_nameForLogging = "??";
+			}
+
+			DetectUrls = true;
+		}
+
+		protected override void OnLinkClicked(LinkClickedEventArgs e)
+		{
+			try
+			{
+				Process.Start(e.LinkText);
+			}
+			catch (Exception error )
+			{
+				ErrorReport.NotifyUserOfProblem(error, "Could not follow that link.");
 			}
 		}
 
