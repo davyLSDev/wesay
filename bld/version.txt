@@ -1,1 +1,1 @@
-1.1.RichText.${revision}
+1.999.${revision}
