@@ -451,8 +451,9 @@ namespace WeSay.Project
 			var builder = new ContainerBuilder();
 
 			builder.RegisterInstance(new WordListCatalog()).SingleInstance();
-
-			//builder.RegisterInstance(new DialogProgressNotificationProvider()).As<IProgressNotificationProvider>();
+#if !MONO
+			builder.RegisterInstance(new DialogProgressNotificationProvider()).As<IProgressNotificationProvider>();
+#endif
 
 			//NB: these are delegates because the viewtemplate is not yet avaialbe when were're building the container
 			builder.Register<OptionsList>(c => GetSemanticDomainsList());//todo: figure out how to limit this with a name... currently, it's for any OptionList
@@ -464,11 +465,13 @@ namespace WeSay.Project
 			  {
 				  try
 				  {
-//                      return c.Resolve<IProgressNotificationProvider>().Go
-//                          <LiftDataMapper>(
-//                              "Loading Dictionary",
-//                              progressState =>
-//                                  {
+#if !MONO
+					  return c.Resolve<IProgressNotificationProvider>().Go
+						  <LiftDataMapper>(
+							  "Loading Dictionary",
+							  progressState =>
+								  {
+#endif
 									  var mapper =  new WeSayLiftDataMapper(
 										  _pathToLiftFile,
 										  GetSemanticDomainsList(),
@@ -477,8 +480,10 @@ namespace WeSay.Project
 										  );
 
 									  return mapper;
-//                                  }
-//                          );
+#if !MONO
+								  }
+						  );
+#endif
 				  }
 				  catch (LiftFormatException error)
 				  {
