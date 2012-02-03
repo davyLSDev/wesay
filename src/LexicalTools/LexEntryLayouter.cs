@@ -8,6 +8,7 @@ using WeSay.LexicalModel;
 using WeSay.Project;
 using WeSay.UI;
 using WeSay.UI.audio;
+using Autofac;
 
 namespace WeSay.LexicalTools
 {
@@ -90,7 +91,7 @@ namespace WeSay.LexicalTools
 			var ap = new AudioPathProvider(WeSayWordsProject.Project.PathToAudio,
 						() => entry.LexicalForm.GetBestAlternativeString(namingHelper.LexicalUnitWritingSystemIds));
 
-		   return serviceLocator.CreateNewUsing(c=>c.Register(ap));
+		   return serviceLocator.CreateNewUsing(c=>c.RegisterInstance(ap));
 	   }
 	}
 

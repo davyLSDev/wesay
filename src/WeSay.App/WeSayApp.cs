@@ -14,6 +14,7 @@ using WeSay.LexicalModel;
 using WeSay.LexicalTools;
 using WeSay.Project;
 using WeSay.UI;
+using Autofac;
 
 namespace WeSay.App
 {
@@ -210,7 +211,7 @@ namespace WeSay.App
 																					controller.ShowConfigLauncher = _commandLineArguments.launchedByConfigTool;
 																					return controller;
 																				}));
-			   _project.AddToContainer(b => b.Register<TabbedForm>());
+			   _project.AddToContainer(b => b.RegisterType<TabbedForm>());
 			   _tabbedForm = _project.Container.Resolve<TabbedForm>();
 			   _tabbedForm.Show(); // so the user sees that we did launch
 			   _tabbedForm.Text = String.Format(
@@ -224,9 +225,9 @@ namespace WeSay.App
 
 			  //todo: this is what we're supposed to use the autofac "modules" for
 			   //couldn't get this to work: _project.AddToContainer(typeof(ICurrentWorkTask), _tabbedForm as ICurrentWorkTask);
-			   _project.AddToContainer(b => b.Register<ICurrentWorkTask>(_tabbedForm));
-			   _project.AddToContainer(b => b.Register<StatusStrip>(_tabbedForm.StatusStrip));
-			   _project.AddToContainer(b => b.Register(TaskMemoryRepository.CreateOrLoadTaskMemoryRepository(_project.Name, _project.PathToWeSaySpecificFilesDirectoryInProject )));
+			   _project.AddToContainer(b => b.RegisterInstance<ICurrentWorkTask>(_tabbedForm));
+			   _project.AddToContainer(b => b.RegisterInstance<StatusStrip>(_tabbedForm.StatusStrip));
+			   _project.AddToContainer(b => b.RegisterInstance(TaskMemoryRepository.CreateOrLoadTaskMemoryRepository(_project.Name, _project.PathToWeSaySpecificFilesDirectoryInProject )));
 
 			   _project.LoadTasksFromConfigFile();
 

@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Autofac;
+using Autofac.Core;
 using System.Linq;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.ServiceLocation
 {
-	public delegate void ContainerAdder(Autofac.Builder.ContainerBuilder b);
+	public delegate void ContainerAdder(Autofac.ContainerBuilder b);
 
 	public interface IServiceLocator : IServiceProvider
 	{
@@ -36,9 +38,9 @@ namespace WeSay.Project
 	/// </summary>
 	public class ServiceLocatorAdapter : IServiceLocator
 	{
-		readonly IContainer _container;
+		readonly ILifetimeScope _container;
 
-		public ServiceLocatorAdapter(IContainer container)
+		public ServiceLocatorAdapter(ILifetimeScope container)
 		{
 			if (container == null)
 				throw new ArgumentNullException("container");
@@ -67,7 +69,7 @@ namespace WeSay.Project
 			return
 				string.IsNullOrEmpty(key)
 					? GetInstanceWhichWrapsExceptions(() => _container.Resolve(serviceType))
-					: GetInstanceWhichWrapsExceptions(() => _container.Resolve(key));
+					: GetInstanceWhichWrapsExceptions(() => _container.ResolveNamed(key, serviceType));
 		}
 
 		public TService GetInstance<TService>()
@@ -77,15 +79,20 @@ namespace WeSay.Project
 
 		public TService GetInstance<TService>(string key)
 		{
-			return GetInstanceWhichWrapsExceptions(() => _container.Resolve<TService>(key));
+			return GetInstanceWhichWrapsExceptions(() => _container.ResolveNamed<TService>(key));
 		}
 
 		public IEnumerable<object> GetAllInstances(Type serviceType)
 		{
+			var enumerableType = typeof (IEnumerable<>).MakeGenericType(serviceType);
+
+			object instance = _container.Resolve(enumerableType);
+			return ((IEnumerable) instance).Cast<object>();
+/*
 			// go through all the registrations and find TypedService instances that
 			// equal the serviceType.
 			var servicesToActivate
-				= from reg in _container.ComponentRegistrations
+				= from reg in _container.ComponentRegistry.Registrations
 				  from svc in reg.Descriptor.Services.OfType<TypedService>()
 				  where svc.ServiceType.Equals(serviceType)
 				  select svc;
@@ -98,6 +105,7 @@ namespace WeSay.Project
 				result.Add(GetInstanceWhichWrapsExceptions(() => _container.Resolve(service)));
 
 			return result;
+*/
 		}
 
 		public IEnumerable<TService> GetAllInstances<TService>()
@@ -113,10 +121,10 @@ namespace WeSay.Project
 		 /// <returns></returns>
 		public IServiceLocator CreateNewUsing(ContainerAdder adder)
 		{
-			var containerBuilder = new Autofac.Builder.ContainerBuilder();
+			var containerBuilder = new Autofac.ContainerBuilder();
 			adder.Invoke(containerBuilder);
-			var innerContainer = _container.CreateInnerContainer();
-			containerBuilder.Build(innerContainer);
+			var innerContainer = _container.BeginLifetimeScope();
+			containerBuilder.Update(innerContainer.ComponentRegistry); // DG: don't know if this change will work
 			return new ServiceLocatorAdapter(innerContainer);
 		}
 
@@ -134,10 +142,11 @@ namespace WeSay.Project
 			{
 				throw new ActivationException(ex.Message, ex);
 			}
-			catch (ComponentNotRegisteredException ex)
+/*            catch (ComponentNotRegisteredException ex)
 			{
 				throw new ActivationException(ex.Message, ex);
 			}
+			*/
 		}
 
 		#endregion

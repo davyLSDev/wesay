@@ -330,37 +330,37 @@ namespace WeSay.ConfigTool
 			return true;
 		}
 
-		private IContainer BuildInnerContainerForThisProject()
+		private IComponentContext BuildInnerContainerForThisProject()
 		{
-			IContainer container = _project.Container.CreateInnerContainer();
-			var containerBuilder = new Autofac.Builder.ContainerBuilder();
-			containerBuilder.Register(typeof(Tasks.TaskListView));
-			containerBuilder.Register(typeof(Tasks.TaskListPresentationModel));
+			var container = _project.Container.BeginLifetimeScope();
+			var containerBuilder = new Autofac.ContainerBuilder();
+			containerBuilder.RegisterType(typeof(Tasks.TaskListView));
+			containerBuilder.RegisterType(typeof(Tasks.TaskListPresentationModel));
 
-			containerBuilder.Register<MissingInfoTaskConfigControl>().FactoryScoped();
+			containerBuilder.RegisterType<MissingInfoTaskConfigControl>().InstancePerDependency();
 
 			//      autofac's generated factory stuff wasn't working with our version of autofac, so
 			//  i abandoned this
 			//containerBuilder.Register<Control>().FactoryScoped();
 			// containerBuilder.RegisterGeneratedFactory<ConfigTaskControlFactory>(new TypedService(typeof (Control)));
 
-			containerBuilder.Register<FieldsControl>();
-			containerBuilder.Register<WritingSystemSetup>();
-			containerBuilder.Register<FieldsControl>();
-			containerBuilder.Register<InterfaceLanguageControl>();
-			containerBuilder.Register<ActionsControl>();
-			containerBuilder.Register<BackupPlanControl>();
+			containerBuilder.RegisterType<FieldsControl>();
+			containerBuilder.RegisterType<WritingSystemSetup>();
+			containerBuilder.RegisterType<FieldsControl>();
+			containerBuilder.RegisterType<InterfaceLanguageControl>();
+			containerBuilder.RegisterType<ActionsControl>();
+			containerBuilder.RegisterType<BackupPlanControl>();
 //            containerBuilder.Register<ChorusControl>();
-			containerBuilder.Register<OptionListControl>();
+			containerBuilder.RegisterType<OptionListControl>();
 
-			containerBuilder.Register<IContext>(c => c); // make the context itself available for pushing into contructors
+			containerBuilder.Register<IComponentContext>(c => c); // make the context itself available for pushing into contructors
 
-			containerBuilder.Build(container);
+			containerBuilder.Update(container.ComponentRegistry);
 			return container;
 		}
 
 
-		private void SetupProjectControls(IContext context)
+		private void SetupProjectControls(IComponentContext context)
 		{
 			UpdateWindowCaption();
 			RemoveExistingControls();
@@ -402,7 +402,7 @@ namespace WeSay.ConfigTool
 
 
 
-		private void InstallProjectsControls(IContext context)
+		private void InstallProjectsControls(IComponentContext context)
 		{
 			_projectSettingsControl = new SettingsControl(context);
 			Controls.Add(_projectSettingsControl);

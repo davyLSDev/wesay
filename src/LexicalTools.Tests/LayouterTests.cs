@@ -11,6 +11,7 @@ using WeSay.TestUtilities;
 using WeSay.UI;
 using WeSay.UI.TextBoxes;
 using Palaso.Lift;
+using Autofac;
 
 namespace WeSay.LexicalTools.Tests
 {
@@ -24,7 +25,7 @@ namespace WeSay.LexicalTools.Tests
 		public void Setup()
 		{
 			WeSayProjectTestHelper.InitializeForTests();
-			var b = new Autofac.Builder.ContainerBuilder();
+			var b = new Autofac.ContainerBuilder();
 			b.Register(c => new MediaNamingHelper(new string[] {"en"}));
 
 			Context =   new WeSay.Project.ServiceLocatorAdapter(b.Build());
