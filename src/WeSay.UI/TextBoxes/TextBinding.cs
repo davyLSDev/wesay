@@ -177,7 +177,7 @@ namespace WeSay.UI.TextBoxes
 		//{
 		//    get { return _writingSystemId; }
 		//}
-		//        public WeSayTextBox TextBoxTarget
+		//        public IWeSayTextBox TextBoxTarget
 		//        {
 		//            get
 		//            {

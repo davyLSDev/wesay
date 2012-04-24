@@ -260,7 +260,7 @@ namespace WeSay.UI
 				if(tb is WeSayTextBox)
 					((WeSayTextBox) tb).Select(1000, 0); //go to end
 			}
-			else if (c is WeSayTextBox)
+			else if (c is IWeSayTextBox)
 			{
 				c.Focus();
 				if(c is WeSayTextBox)

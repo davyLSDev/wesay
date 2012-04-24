@@ -81,8 +81,8 @@ namespace WeSay.LexicalTools.GatherByWordList
 			}
 			var box = _vernacularBox.TextBoxes[0];
 			box.Focus();
-			if(box is WeSayTextBox)
-					((WeSayTextBox) box).SelectionStart = 1000; //go to end
+			if(box is IWeSayTextBox)
+					((IWeSayTextBox) box).SelectionStart = 1000; //go to end
 		}
 
 		private void UpdateSourceWord()

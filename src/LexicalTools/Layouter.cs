@@ -150,7 +150,7 @@ namespace WeSay.LexicalTools
 		//        {
 		//            WeSayMultiText m = new WeSayMultiText(writingSystemIds, new MultiText());
 		////
-		////            foreach (WeSayTextBox box in m.TextBoxes)
+		////            foreach (IWeSayTextBox box in m.TextBoxes)
 		////            {
 		////                MakeGhostBinding(list, ghostPropertyName, box.WritingSystem, box);
 		////            }
@@ -158,7 +158,7 @@ namespace WeSay.LexicalTools
 		////            //!!!!!!!!!!!!!!!!! g.ReferenceControl =
 		////                DetailList.AddWidgetRow(StringCatalog.GetListOfType("New Example"), false, entry, insertAtRow+rowCount);
 		////
-		//////            WeSayTextBox entry = new WeSayTextBox(writingSystem);
+		//////            IWeSayTextBox entry = new WeSayTextBox(writingSystem);
 		////            MakeGhostBinding(list, ghostPropertyName, writingSystem, entry);
 		//            return m;
 		//        }
@@ -192,7 +192,7 @@ namespace WeSay.LexicalTools
 
 				foreach (IControlThatKnowsWritingSystem box in m.TextBoxes)
 				{
-					WeSayTextBox tb = box as WeSayTextBox;
+					var tb = box as IWeSayTextBox;
 					if (tb != null)
 					{
 						GhostBinding<T> g = MakeGhostBinding(parent, list, propertyName, box.WritingSystem, tb);
@@ -210,7 +210,7 @@ namespace WeSay.LexicalTools
 		protected GhostBinding<T> MakeGhostBinding<T>(PalasoDataObject parent, IList<T> list,
 													  string ghostPropertyName,
 													  WritingSystemDefinition writingSystem,
-													  WeSayTextBox entry)
+													  IWeSayTextBox entry)
 				where T : PalasoDataObject, new()
 		{
 			GhostBinding<T> binding = new GhostBinding<T>(parent,

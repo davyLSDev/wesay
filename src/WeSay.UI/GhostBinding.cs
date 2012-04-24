@@ -28,7 +28,7 @@ namespace WeSay.UI
 		private readonly string _propertyName;
 		private readonly PalasoDataObject _parent;
 		private IList<T> _listTarget;
-		private WeSayTextBox _textBoxTarget;
+		private Control _textBoxTarget;
 		private Control _referenceControl;
 
 		public delegate void LayoutNeededHandler(
@@ -51,7 +51,7 @@ namespace WeSay.UI
 							IList<T> targetList,
 							string propertyName,
 							WritingSystemDefinition writingSystem,
-							WeSayTextBox textBoxTarget)
+							IWeSayTextBox textBoxTarget)
 		{
 			_parent = parent;
 			_listTarget = targetList;
@@ -59,7 +59,7 @@ namespace WeSay.UI
 			_propertyName = propertyName;
 			_writingSystem = writingSystem;
 
-			_textBoxTarget = textBoxTarget;
+			_textBoxTarget = (Control) textBoxTarget;
 			_textBoxTarget.KeyDown += _textBoxTarget_KeyDown;
 			_textBoxTarget.LostFocus += _textBoxTarget_LostFocus;
 			_textBoxTarget.Enter += OnTextBoxEntered;
@@ -120,8 +120,8 @@ namespace WeSay.UI
 		///// </summary>
 		// void _textBoxTarget_VisibleChanged(object sender, EventArgs e)
 		//{
-		//    //once I wrapped textbox in wesaytextbox, this was never false anymore!
-		//     if (((WeSayTextBox)sender).Visible == false)
+		//    //once I wrapped textbox in IWeSayTextBox, this was never false anymore!
+		//     if (((IWeSayTextBox)sender).Visible == false)
 		//    {
 		//        TearDown();
 		//    }
@@ -204,7 +204,7 @@ namespace WeSay.UI
 				return; //teardown was already called
 			}
 
-			//WeSayTextBox textBoxTarget = _textBoxTarget;
+			//IWeSayTextBox textBoxTarget = _textBoxTarget;
 			if (_textBoxTarget.Text.Trim().Length == 0)
 			{
 				return;
