@@ -152,9 +152,8 @@
 	  <ExecutableExtension>.exe</ExecutableExtension>
 	  <HintPath>..\..\lib\net2.0\Chorus.exe</HintPath>
 	</Reference>
-	<Reference Include="CookComputing.XmlRpcV2, Version=2.2.0.4, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\lib\common\CookComputing.XmlRpcV2.dll</HintPath>
+	<Reference Include="geckofx-11">
+	  <HintPath>..\..\lib\net2.0\geckofx-11.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

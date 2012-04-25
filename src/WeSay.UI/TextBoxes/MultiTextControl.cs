@@ -352,7 +352,7 @@ namespace WeSay.UI.TextBoxes
 			}
 			else
 			{
-				var box = new WeSayTextBox(writingSystem, Name);
+				var box = new GeckoBox(writingSystem, Name);// WeSayTextBox(writingSystem, Name);
 				control = box;
 				box.ReadOnly = (_visibility == CommonEnumerations.VisibilitySetting.ReadOnly);
 				box.Multiline = true;

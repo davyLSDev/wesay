@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using CommandLine;
 using Palaso.Code;
+using Palaso.IO;
 using Palaso.i18n;
 using Palaso.Lift;
 using Palaso.Reporting;
@@ -24,6 +26,10 @@ namespace WeSay.App
 
 		private readonly CommandLineArguments _commandLineArguments = new CommandLineArguments();
 		private TabbedForm _tabbedForm;
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool SetDllDirectory(string lpPathName);
 
 		[STAThread]
 		private static void Main(string[] args)
@@ -66,6 +72,8 @@ namespace WeSay.App
 				Settings.Default.NeedUpgrade = false;
 			}
 			 SetUpReporting();
+
+			SetUpXulRunner();
 
 			if (!Parser.ParseArguments(args, _commandLineArguments, ShowCommandLineError))
 			{
@@ -498,7 +506,40 @@ namespace WeSay.App
 			e += "\r\n\r\n" + p.GetUsageString(200);
 			MessageBox.Show(e, "WeSay Command Line Problem");
 		}
+
+		public static void SetUpXulRunner()
+		{
+			string xulRunnerPath = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution, "xulrunner");
+			if (!Directory.Exists(xulRunnerPath))
+			{
+
+				//if this is a programmer, go look in the lib directory
+				xulRunnerPath = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution,
+											 Path.Combine("lib", "xulrunner"));
+
+				//on my build machine, I really like to have the dir labelled with the version.
+				//but it's a hassle to update all the other parts (installer, build machine) with this number,
+				//so we only use it if we don't find the unnumbered alternative.
+				if (!Directory.Exists(xulRunnerPath))
+					xulRunnerPath = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution,
+												 Path.Combine("lib", "xulrunner11"));
+
+				//NB: WHEN CHANGING VERSIONS, ALSO CHANGE IN THESE LOCATIONS:
+				// get the new xulrunner, zipped (as it comes from mozilla), onto c:\builddownloads on the palaso teamcity build machine
+				//	build/build.win.proj: change the zip file to match the new name
+
+
+			}
+			//Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
+			SetDllDirectory(xulRunnerPath);
+
+			Gecko.Xpcom.Initialize(xulRunnerPath);
+			//turn on graphite text rendering
+			Gecko.GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+		}
 	}
+
+
 
 	internal class ThreadExceptionHandler
 	{

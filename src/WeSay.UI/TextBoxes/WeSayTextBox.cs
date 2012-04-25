@@ -29,6 +29,10 @@ namespace WeSay.UI.TextBoxes
 		void AssignKeyboardFromWritingSystem();
 		void ClearKeyboard();
 
+		bool ReadOnly { get; set; }
+		bool Multiline { get; set; }
+		bool WordWrap { get; set; }
+
 		/// <summary>
 		/// for automated tests
 		/// </summary>
@@ -61,8 +65,8 @@ namespace WeSay.UI.TextBoxes
 			}
 			GotFocus += OnGotFocus;
 			LostFocus += OnLostFocus;
-			KeyPress += IWeSayTextBox_KeyPress;
-			TextChanged += IWeSayTextBox_TextChanged;
+			KeyPress += OnKeyPress;
+			TextChanged += OnTextChanged;
 
 			KeyDown += OnKeyDown;
 
@@ -130,7 +134,7 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		private void IWeSayTextBox_TextChanged(object sender, EventArgs e)
+		private void OnTextChanged(object sender, EventArgs e)
 		{
 			//only first change per focus session will be logged
 			if (!_haveAlreadyLoggedTextChanged && Focused
@@ -143,7 +147,7 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		private void IWeSayTextBox_KeyPress(object sender, KeyPressEventArgs e)
+		private void OnKeyPress(object sender, KeyPressEventArgs e)
 		{
 			//only first change per focus session will be logged
 			if (!_haveAlreadyLoggedTextChanged)

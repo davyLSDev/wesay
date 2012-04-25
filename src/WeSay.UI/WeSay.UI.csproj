@@ -116,6 +116,10 @@
 	<ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="geckofx-11, Version=10.0.0.0, Culture=neutral, PublicKeyToken=3209ac31600d1857, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\lib\net2.0\geckofx-11.dll</HintPath>
+	</Reference>
 	<Reference Include="NetReflector, Version=1.0.0.0, Culture=neutral">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\lib\common\NetReflector.dll</HintPath>
@@ -208,6 +212,12 @@
 	  <DependentUpon>WeSayAudioFieldBox.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Event.cs" />
+	<Compile Include="TextBoxes\GeckoBox.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="TextBoxes\GeckoBox.Designer.cs">
+	  <DependentUpon>GeckoBox.cs</DependentUpon>
+	</Compile>
 	<Compile Include="TextBoxes\IControlThatKnowsWritingSystem.cs" />
 	<Compile Include="WeSayListView.cs">
 	  <SubType>Component</SubType>
@@ -316,6 +326,9 @@
 	<EmbeddedResource Include="DetailList.resx">
 	  <SubType>Designer</SubType>
 	  <DependentUpon>DetailList.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="TextBoxes\GeckoBox.resx">
+	  <DependentUpon>GeckoBox.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="TextBoxes\MultiTextControl.resx">
 	  <DependentUpon>MultiTextControl.cs</DependentUpon>
