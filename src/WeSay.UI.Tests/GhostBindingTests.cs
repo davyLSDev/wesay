@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Windows.Forms;
 using NUnit.Framework;
 using Palaso.WritingSystems;
 using WeSay.Project;
@@ -18,8 +19,8 @@ namespace WeSay.UI.Tests
 	public class GhostBindingTests
 	{
 		private readonly Papa _papa = new Papa();
-		private WeSayTextBox _ghostFirstNameWidget;
-		private WeSayTextBox _papaNameWidget;
+		private Control _ghostFirstNameWidget;
+		private Control _papaNameWidget;
 		private GhostBinding<Child> _binding;
 		protected bool _didNotify;
 
@@ -103,7 +104,7 @@ namespace WeSay.UI.Tests
 				_papa.Children,
 											   "First",
 											   writingSystem,
-											   _ghostFirstNameWidget);
+											   (IWeSayTextBox) _ghostFirstNameWidget);
 			_didNotify = false;
 			//Window w = new Window("test");
 			//VBox box = new VBox();
@@ -126,7 +127,7 @@ namespace WeSay.UI.Tests
 		{
 			Assert.AreEqual(0, _papa.Children.Count);
 			_ghostFirstNameWidget.Text = "Samuel";
-			_ghostFirstNameWidget.PretendLostFocus();
+			((IWeSayTextBox) _ghostFirstNameWidget).PretendLostFocus();
 			Assert.AreEqual(1, _papa.Children.Count);
 		}
 
@@ -134,7 +135,7 @@ namespace WeSay.UI.Tests
 		public void NewItemGetsValue()
 		{
 			_ghostFirstNameWidget.Text = "Samuel";
-			_ghostFirstNameWidget.PretendLostFocus();
+			((IWeSayTextBox)_ghostFirstNameWidget).PretendLostFocus();
 			Assert.AreEqual("Samuel", _papa.Children[0].First[_writingSystemId]);
 		}
 
@@ -146,7 +147,7 @@ namespace WeSay.UI.Tests
 
 			_binding.LayoutNeededAfterMadeReal += _binding_LayoutNeededAfterMadeReal;
 			_ghostFirstNameWidget.Text = "Samuel";
-			_ghostFirstNameWidget.PretendLostFocus();
+			((IWeSayTextBox)_ghostFirstNameWidget).PretendLostFocus();
 			Assert.IsTrue(_didNotify);
 		}
 	}

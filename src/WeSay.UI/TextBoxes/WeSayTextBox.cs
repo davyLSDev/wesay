@@ -12,7 +12,33 @@ using WeSay.LexicalModel.Foundation;
 
 namespace WeSay.UI.TextBoxes
 {
-	public partial class WeSayTextBox: TextBox, IControlThatKnowsWritingSystem
+	public interface IWeSayTextBox
+	{
+		Size GetPreferredSize(Size proposedSize);
+
+		[Browsable(false)]
+		string Text { set; get; }
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		WritingSystemDefinition WritingSystem { get; set; }
+
+		bool MultiParagraph { get; set; }
+		bool IsSpellCheckingEnabled { get; set; }
+		int SelectionStart { get; set; }
+		void AssignKeyboardFromWritingSystem();
+		void ClearKeyboard();
+
+		/// <summary>
+		/// for automated tests
+		/// </summary>
+		void PretendLostFocus();
+
+		void AppendText(string text);
+	}
+
+
+	public partial class WeSayTextBox: TextBox, IControlThatKnowsWritingSystem, IWeSayTextBox
 	{
 		private IWritingSystemDefinition _writingSystem;
 
@@ -35,8 +61,8 @@ namespace WeSay.UI.TextBoxes
 			}
 			GotFocus += OnGotFocus;
 			LostFocus += OnLostFocus;
-			KeyPress += WeSayTextBox_KeyPress;
-			TextChanged += WeSayTextBox_TextChanged;
+			KeyPress += IWeSayTextBox_KeyPress;
+			TextChanged += IWeSayTextBox_TextChanged;
 
 			KeyDown += OnKeyDown;
 
@@ -104,7 +130,7 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		private void WeSayTextBox_TextChanged(object sender, EventArgs e)
+		private void IWeSayTextBox_TextChanged(object sender, EventArgs e)
 		{
 			//only first change per focus session will be logged
 			if (!_haveAlreadyLoggedTextChanged && Focused
@@ -117,7 +143,7 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		private void WeSayTextBox_KeyPress(object sender, KeyPressEventArgs e)
+		private void IWeSayTextBox_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			//only first change per focus session will be logged
 			if (!_haveAlreadyLoggedTextChanged)

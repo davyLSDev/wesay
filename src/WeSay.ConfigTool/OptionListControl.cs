@@ -189,13 +189,13 @@ namespace WeSay.ConfigTool
 				_keyText.TextChanged += OnKeyTextChanged;
 				*/
 
-				var justTextBoxes = from z in m.TextBoxes where z is WeSayTextBox select z;
-				foreach (WeSayTextBox box in justTextBoxes)
+				var justTextBoxes = from z in m.TextBoxes where z is IWeSayTextBox select z;
+				foreach (IWeSayTextBox box in justTextBoxes)
 				{
 					var binding = new TextBinding(
 						_currentOption.Name,
 						box.WritingSystem.Id,
-						box
+						(Control)box
 					);
 					//hooking on to this is more reliable, sequence-wise, than directly wiring to m.TextChanged
 					//JH (2011): Maybe so, but this doesn't fire until they tab away, and that's too late.

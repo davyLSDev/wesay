@@ -1,5 +1,12 @@
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Palaso.WritingSystems;
+
 namespace WeSay.UI.TextBoxes
 {
+
 	partial class WeSayTextBox
 	{
 		/// <summary>
@@ -32,7 +39,7 @@ namespace WeSay.UI.TextBoxes
 		{
 			this.SuspendLayout();
 			//
-			// WeSayTextBox
+			// IWeSayTextBox
 			//
 			BackColor = System.Drawing.Color.White;
 			//BackColor = System.Drawing.Color.AliceBlue;
