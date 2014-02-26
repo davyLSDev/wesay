@@ -112,7 +112,7 @@ namespace WeSay.UI.TextBoxes
 
 		private void SetText(string s)
 		{
-			var html = string.Format("<html><body style='background:#CEECF5'><div style='min-height:15px; font-family:{0}; font-size:{1}pt' id='main' name='textArea' contentEditable='true'>{2}</div></body></html>", WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s);
+			var html = string.Format("<html><header><meta charset=\"UTF-8\"></header><body style='background:#CEECF5'><div style='min-height:15px; font-family:{0}; font-size:{1}pt' id='main' name='textArea' contentEditable='true'>{2}</div></body></html>", WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s);
 			if (!_browserIsReadyToNavigate)
 			{
 				_pendingHtmlLoad = html;
