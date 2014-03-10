@@ -34,6 +34,7 @@ namespace WeSay.UI
 		public EventHandler MouseEnteredBounds;
 		public EventHandler MouseLeftBounds;
 		private bool _mouseIsInBounds;
+		private List<IDisposable> _layouters;
 
 		public DetailList()
 		{
@@ -53,9 +54,25 @@ namespace WeSay.UI
 
 			MouseClick += OnMouseClick;
 
+			_layouters = new List<IDisposable>();
+
 			//CellPaint += OnCellPaint;
 			//var rand = new Random();
 			//BackColor = Color.FromArgb(255, rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255));
+		}
+
+		public void AddLayouter (IDisposable layouter)
+		{
+			_layouters.Add(layouter);
+		}
+
+		public void ClearLayouters()
+		{
+			foreach (var layouter in _layouters)
+			{
+				layouter.Dispose();
+			}
+			_layouters = null;
 		}
 
 		public float LabelColumnWidth
@@ -202,10 +219,18 @@ namespace WeSay.UI
 			RowStyles.Clear();
 			while (Controls.Count > 0)
 			{
+				Control myControl = Controls[0];
 				//  Debug.WriteLine("  VBoxClear() calling dispose on " + base.Controls[0].Name);
+				if (Controls[0] is DetailList)
+				{
+					((DetailList)Controls[0]).LabelsChanged -= OnLabelsChanged;
+					((DetailList)Controls[0]).Clear();
+				}
 				Controls[0].Dispose();
 			}
+			ClearLayouters();
 			Controls.Clear();
+
 			// Debug.WriteLine("VBox " + Name + "   Clearing DONE");
 		}
 
@@ -279,7 +304,7 @@ namespace WeSay.UI
 			OnLabelsChanged(this, new EventArgs());
 			label.SizeChanged += OnLabelSizeChanged;
 
-			editWidget.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			editWidget.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
 
 			editWidget.KeyDown += OnEditWidget_KeyDown;
 			editWidget.MouseWheel += OnChildWidget_MouseWheel;

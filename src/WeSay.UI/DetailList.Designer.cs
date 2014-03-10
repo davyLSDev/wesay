@@ -15,9 +15,13 @@ namespace WeSay.UI
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				LabelsChanged -= OnLabelsChanged;
+				if (components != null)
+				{
+					components.Dispose();
+				}
 			}
 			Application.RemoveMessageFilter(this);
 			base.Dispose(disposing);

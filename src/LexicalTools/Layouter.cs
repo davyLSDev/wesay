@@ -28,7 +28,7 @@ namespace WeSay.LexicalTools
 	/// and each of these layout erstwhile call a different layouter for each
 	/// child object (e.g. LexEntryLayouter would employ a SenseLayouter to display senses).
 	/// </summary>
-	public abstract class Layouter
+	public abstract class Layouter : IDisposable
 	{
 		/// <summary>
 		/// The DetailList we are filling.
@@ -162,6 +162,21 @@ namespace WeSay.LexicalTools
 			DetailList.MouseEnteredBounds += OnMouseEnteredBounds;
 			DetailList.MouseLeftBounds += OnMouseLeftBounds;
 			ParentDetailList.AddDetailList(DetailList, rowInParent);
+			ParentDetailList.AddLayouter(this);
+		}
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_deleteButton.Dispose();
+				DetailList.MouseEnteredBounds -= OnMouseEnteredBounds;
+				DetailList.MouseLeftBounds -= OnMouseLeftBounds;
+			}
 		}
 
 		/// <summary>

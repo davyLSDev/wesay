@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using Autofac;
 using Microsoft.Practices.ServiceLocation;
 using Palaso.DictionaryServices.Model;
@@ -20,6 +21,7 @@ namespace WeSay.LexicalTools
 	{
 		private bool _sensesAreDeletable = false;
 		private readonly ConfirmDeleteFactory _confirmDeleteFactory;
+		private List<LexSenseLayouter> _senseLayouters;
 
 		public LexEntry Entry { get; set; }
 
@@ -38,8 +40,23 @@ namespace WeSay.LexicalTools
 			_sensesAreDeletable = sensesAreDeletable;
 			_confirmDeleteFactory = confirmDeleteFactory;
 			DetailList.LabelsChanged += OnLabelsChanged;
+			_senseLayouters = new List<LexSenseLayouter>();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				foreach (var layouter in _senseLayouters)
+				{
+					layouter.GhostRequestedLayout -= OnGhostRequestedlayout;
+					layouter.DeleteClicked -= OnSenseDeleteClicked;
+				}
+				_senseLayouters = null;
+				DetailList.LabelsChanged-= OnLabelsChanged;
+			}
+			base.Dispose(disposing);
+		}
 		private void OnLabelsChanged(object sender, EventArgs e)
 		{
 			var maxWidth = DetailList.WidestLabelWidthWithMargin;
@@ -90,6 +107,7 @@ namespace WeSay.LexicalTools
 				layouter.DeleteClicked += OnSenseDeleteClicked;
 				AddChildrenWidgets(layouter, lexSense);
 				rowCount++;
+				_senseLayouters.Add(layouter);
 			}
 
 			//see: WS-1120 Add option to limit "add meanings" task to the ones that have a semantic domain
@@ -138,6 +156,7 @@ namespace WeSay.LexicalTools
 			layouter.GhostRequestedLayout += OnGhostRequestedlayout;
 			layouter.DeleteClicked += OnSenseDeleteClicked;
 			row++;
+			_senseLayouters.Add(layouter);
 		}
 
 		private void OnGhostRequestedlayout(object sender, EventArgs e)

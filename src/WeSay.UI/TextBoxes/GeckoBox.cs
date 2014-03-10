@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using Gecko;
 using Gecko.DOM;
@@ -16,8 +17,12 @@ namespace WeSay.UI.TextBoxes
 		private string _pendingHtmlLoad;
 		private IWritingSystemDefinition _writingSystem;
 		private bool keyPressed;
-		private GeckoDocument _document;
 		private GeckoDivElement _divElement;
+		private EventHandler _loadHandler;
+		private EventHandler<GeckoDomKeyEventArgs> _domKeyDownHandler;
+		private EventHandler<GeckoDomKeyEventArgs> _domKeyUpHandler;
+		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
+		private EventHandler _textChangedHandler;
 
 		public GeckoBox(IWritingSystemDefinition writingSystem, string name)
 		{
@@ -35,14 +40,37 @@ namespace WeSay.UI.TextBoxes
 			_browser.Dock = DockStyle.Fill;
 
 			_browser.Parent = this;
-			this.Load += new EventHandler(GeckoBox_Load);
+			_loadHandler = new EventHandler(GeckoBox_Load);
+			this.Load += _loadHandler;
 			Controls.Add(_browser);
 
-			_browser.DomKeyDown +=new EventHandler<GeckoDomKeyEventArgs>(OnDomKeyDown);
-			_browser.DomKeyUp += new EventHandler<GeckoDomKeyEventArgs>(OnDomKeyPress);
-			_browser.DomFocus += new EventHandler<GeckoDomEventArgs>(_browser_DomFocus);
+			_domKeyDownHandler = new EventHandler<GeckoDomKeyEventArgs>(OnDomKeyDown);
+			_browser.DomKeyDown += _domKeyDownHandler;
+			_domKeyUpHandler = new EventHandler<GeckoDomKeyEventArgs>(OnDomKeyUp);
+			_browser.DomKeyUp += _domKeyUpHandler;
+			_domFocusHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomFocus);
+			_browser.DomFocus += _domFocusHandler;
 
-			this.TextChanged += new EventHandler(OnTextChanged);
+			_textChangedHandler = new EventHandler(OnTextChanged);
+			this.TextChanged += _textChangedHandler;
+		}
+
+		public void Closing()
+		{
+			this.Load -= _loadHandler;
+			_browser.DomKeyDown -= _domKeyDownHandler;
+			_browser.DomKeyUp -= _domKeyUpHandler;
+			_browser.DomFocus -= _domFocusHandler;
+			this.TextChanged -= _textChangedHandler;
+			_loadHandler = null;
+			_domKeyDownHandler = null;
+			_domKeyUpHandler = null;
+			_textChangedHandler = null;
+			_domFocusHandler = null;
+			_divElement = null;
+			_browser.Stop();
+			_browser.Dispose();
+			_browser = null;
 		}
 
 		/// <summary>
@@ -70,7 +98,7 @@ namespace WeSay.UI.TextBoxes
 				}
 			}
 		}
-		private void OnDomKeyPress(object sender, GeckoDomKeyEventArgs e)
+		private void OnDomKeyUp(object sender, GeckoDomKeyEventArgs e)
 		{
 			var content = _browser.Document.GetElementById("main");
 			keyPressed = true;
@@ -110,9 +138,21 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
+		private string UTF8Encode(string standardText)
+		{
+			UTF8Encoding utf8 = new UTF8Encoding();
+//			byte[] encodedBytes = utf8.GetBytes(standardText);
+			byte[] encodedBytes = Encoding.Unicode.GetBytes(standardText);
+//			string encodedString = utf8.GetString(encodedBytes);
+			string encodedString = Encoding.UTF8.GetString(encodedBytes);
+			return encodedString;
+		}
 		private void SetText(string s)
 		{
-			var html = string.Format("<html><header><meta charset=\"UTF-8\"></header><body style='background:#CEECF5'><div style='min-height:15px; font-family:{0}; font-size:{1}pt' id='main' name='textArea' contentEditable='true'>{2}</div></body></html>", WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s);
+			var html = string.Format("<html><header><meta charset=\"UTF-8\"></head><body style='background:#FFFFFF'><div style='min-height:10px; font-family:{0}; font-size:{1}pt' id='main' name='textArea' contentEditable='true'>{2}</div></body></html>", WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s);
+//			var html = string.Format("<html><body style='background:#CEECF5'><div style='min-height:15px; font-family:{0}; font-size:{1}pt' id='main' name='textArea' contentEditable='true'>{2}</div></body></html>", WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), UTF8Encode(s));
+//			string htmlString = string.Format("<html><body style='background:#CEECF5'><div style='min-height:15px; font-family:{0}; font-size:{1}pt' id='main' name='textArea' contentEditable='true'>{2}</div></body></html>", WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s);
+//			var html = UTF8Encode(htmlString);
 			if (!_browserIsReadyToNavigate)
 			{
 				_pendingHtmlLoad = html;
@@ -121,8 +161,8 @@ namespace WeSay.UI.TextBoxes
 			{
 				if (!keyPressed)
 				{
+
 					_browser.LoadHtml(html);
-					_document = _browser.Document;
 				}
 				keyPressed = false;
 			}
@@ -224,27 +264,25 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
+		/// <summary>
+		/// for automated tests
+		/// </summary>
 		public void PretendLostFocus()
 		{
-			//TODO
+			OnLostFocus(new EventArgs());
 		}
 
-		public void AppendText(string text)
-		{
-			//TODO
-		}
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
 
 			// this.BackColor = System.Drawing.Color.White;
 			ClearKeyboard();
-		}
+		 }
 		protected override void OnEnter(EventArgs e)
 		{
 			base.OnEnter(e);
 			AssignKeyboardFromWritingSystem();
-
 		}
 
 	}

@@ -118,6 +118,10 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
+		public void Closing()
+		{
+		}
+
 		///<remarks>This can't be done during construction... we have to wait until
 		///we actually have a parent to do this.</remarks>
 		private void OnParentChanged(object sender, EventArgs e)

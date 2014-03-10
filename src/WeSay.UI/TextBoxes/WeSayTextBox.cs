@@ -38,7 +38,6 @@ namespace WeSay.UI.TextBoxes
 		/// </summary>
 		void PretendLostFocus();
 
-		void AppendText(string text);
 	}
 
 

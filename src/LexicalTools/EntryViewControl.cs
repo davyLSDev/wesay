@@ -354,6 +354,7 @@ namespace WeSay.LexicalTools
 					oldDetailList.KeyDown -= _detailListControl_KeyDown;
 					oldDetailList.SizeChanged -= OnScrollableContainerOrDetailListSizeChanged;
 					_scrollableContainer.Controls.Remove(oldDetailList);
+					oldDetailList.Clear();
 					oldDetailList.ResumeLayout();
 					oldDetailList.Dispose();
 				}
