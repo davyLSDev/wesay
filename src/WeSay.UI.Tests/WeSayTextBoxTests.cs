@@ -1,19 +1,34 @@
 using System;
 using NUnit.Framework;
+using NUnit.Extensions.Forms;
 using Palaso.WritingSystems;
 using WeSay.LexicalModel.Foundation;
 using WeSay.UI.TextBoxes;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace WeSay.UI.Tests
 {
 	[TestFixture]
-	public class IWeSayTextBoxTests
+	public class IWeSayTextBoxTests : NUnitFormTest
 	{
+		private Form _window;
+
 		[SetUp]
-		public void Setup() {}
+		public void Setup()
+		{
+			base.Setup();
+			_window = new Form();
+			_window.Size = new Size(500, 500);
+
+		}
 
 		[TearDown]
-		public void TearDown() {}
+		public void TearDown()
+		{
+			_window.Dispose();
+			base.TearDown();
+		}
 
 		[Test]
 		public void Create()
@@ -43,7 +58,7 @@ namespace WeSay.UI.Tests
 		{
 			IWeSayTextBox textBox = new WeSayTextBox();
 			IWritingSystemDefinition ws;
-			Assert.Throws<InvalidOperationException>(() => ws= textBox.WritingSystem);
+			Assert.Throws<InvalidOperationException>(() => ws = textBox.WritingSystem);
 		}
 
 		[Test]
@@ -58,6 +73,25 @@ namespace WeSay.UI.Tests
 		{
 			IWeSayTextBox textBox = new WeSayTextBox();
 			Assert.Throws<InvalidOperationException>(() => textBox.ClearKeyboard());
+		}
+
+		[Test]
+		public void TextReflectsKeystrokes()
+		{
+			IWritingSystemDefinition ws = WritingSystemDefinition.Parse("fr");
+			IWeSayTextBox textBox = new WeSayTextBox(ws, "_textToSearchForBox");
+			_window.Controls.Add((WeSayTextBox)textBox);
+			_window.Show();
+			TextBoxTester t = new TextBoxTester("_textToSearchForBox", _window);
+			KeyboardController keyboardController = new KeyboardController(t);
+			t.Properties.Focus();
+			keyboardController.Press("Test");
+			keyboardController.Press("e");
+			keyboardController.Press("s");
+			keyboardController.Press("t");
+			Assert.IsTrue(textBox.Text.Equals("Testest"));
+			keyboardController.Dispose();
+
 		}
 	}
 }

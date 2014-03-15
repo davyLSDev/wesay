@@ -38,6 +38,11 @@ namespace WeSay.UI.TextBoxes
 		/// </summary>
 		void PretendLostFocus();
 
+		/// <summary>
+		/// for automated tests
+		/// </summary>
+		void PretendSetFocus();
+
 	}
 
 
@@ -73,6 +78,7 @@ namespace WeSay.UI.TextBoxes
 			{
 				_nameForLogging = "??";
 			}
+			Name = _nameForLogging;
 		}
 
 		private void OnKeyDown(object sender, KeyEventArgs e)
@@ -234,6 +240,7 @@ namespace WeSay.UI.TextBoxes
 		public WeSayTextBox(IWritingSystemDefinition ws, string nameForLogging): this()
 		{
 			_nameForLogging = nameForLogging;
+			Name = _nameForLogging;
 			WritingSystem = ws;
 		}
 
@@ -424,6 +431,14 @@ namespace WeSay.UI.TextBoxes
 		public void PretendLostFocus()
 		{
 			OnLostFocus(new EventArgs());
+		}
+
+		/// <summary>
+		/// for automated tests
+		/// </summary>
+		public void PretendSetFocus()
+		{
+			Focus();
 		}
 	}
 }

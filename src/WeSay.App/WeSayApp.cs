@@ -315,6 +315,7 @@ namespace WeSay.App
 
 			   RtfRenderer.HeadWordWritingSystemId =
 				   _project.DefaultViewTemplate.HeadwordWritingSystem.Id;
+			   HtmlRenderer.HeadWordWritingSystemId = _project.DefaultViewTemplate.HeadwordWritingSystem.Id;
 
 #if __MonoCS__
 				UglyHackForXkbIndicator();

@@ -1,4 +1,7 @@
-﻿namespace WeSay.LexicalTools
+﻿using WeSay.Project;
+using WeSay.UI.TextBoxes;
+
+namespace WeSay.LexicalTools
 {
 	partial class EntryHeaderView
 	{
@@ -28,7 +31,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._entryPreview = new System.Windows.Forms.RichTextBox();
+			this._entryPreview = new GeckoBox(WeSayWordsProject.Project.DefaultViewTemplate.HeadwordWritingSystem, null);
+//			this._entryPreview = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			//
 			// _entryPreview
@@ -60,6 +64,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.RichTextBox _entryPreview;
+		private GeckoBox _entryPreview;
+//		private System.Windows.Forms.RichTextBox _entryPreview;
 	}
 }

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Chorus.UI.Notes.Bar;
 using Palaso.DictionaryServices.Model;
 using WeSay.LexicalModel;
+using WeSay.Project;
 using WeSay.UI;
 
 namespace WeSay.LexicalTools
@@ -16,7 +17,8 @@ namespace WeSay.LexicalTools
 
 		private NotesBarView _notesBar;
 		private LexEntry _currentRecord=null;
-		private string _rtfFormattedTextOfEntry;
+//		private string _rtfFormattedTextOfEntry;
+		private string _htmlFormattedTextOfEntry;
 
 		/// <summary>
 		/// designer only
@@ -42,6 +44,9 @@ namespace WeSay.LexicalTools
 			//_notesBar.Visible = false;//wait until we have a record to show
 			_notesBar.Height = kNotesBarHeight;
 
+			_entryPreview.WritingSystem = WeSayWordsProject.Project.DefaultViewTemplate.HeadwordWritingSystem;  // Need a default for blank
+			_entryPreview.ReadOnly = true;
+
 			this.Controls.Add(_notesBar);
 			Controls.SetChildIndex(_notesBar, 0);
 
@@ -57,7 +62,7 @@ namespace WeSay.LexicalTools
 
 		public string RtfForTests
 		{
-			get { return this._entryPreview.Rtf; }
+			get { return this._entryPreview.Text; }
 		}
 
 		public string TextForTests
@@ -74,14 +79,15 @@ namespace WeSay.LexicalTools
 		{
 			if (record == null)
 			{
-				_entryPreview.Rtf = string.Empty;
+				//_entryPreview.Rtf = string.Empty;
 			}
 			else
 			{
-				_rtfFormattedTextOfEntry = RtfRenderer.ToRtf(record,
+				_htmlFormattedTextOfEntry = HtmlRenderer.ToHtml(record,
 													  currentItemInFocus,
 													  lexEntryRepository);
-				_entryPreview.Rtf = _rtfFormattedTextOfEntry;
+				_entryPreview.SetHtml(_htmlFormattedTextOfEntry);
+
 			}
 
 			if (record != _currentRecord)
@@ -129,11 +135,11 @@ namespace WeSay.LexicalTools
 
 		private void OnEntryView_FontChanged(object sender, EventArgs e)
 		{
-			if (String.IsNullOrEmpty(_rtfFormattedTextOfEntry)) // This check needed by mono 2.6.x CP 2010-12
+			if (String.IsNullOrEmpty(_htmlFormattedTextOfEntry)) // This check needed by mono 2.6.x CP 2010-12
 			{
 				return;
 			}
-			_entryPreview.Rtf = _rtfFormattedTextOfEntry;
+			_entryPreview.SetHtml(_htmlFormattedTextOfEntry);
 		}
 	}
 }
