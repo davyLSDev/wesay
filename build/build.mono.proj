@@ -111,6 +111,7 @@
 		<Source Include="$(RootDir)/test/*" />
 		<Source Include="$(RootDir)/templates/**/*" />
 		<Source Include="$(RootDir)/externals/*" />
+		<Source Include="$(RootDir)/environ*" />
 	</ItemGroup>
 	<Target Name="SourcePackage" DependsOnTargets="PackageClean;SetAssemblyVersion">
 		<CreateProperty Value="$(OutputDir)/$(ApplicationNameLC)-$(Version).tar.gz">
@@ -167,14 +168,13 @@
 			Command='dch -v $(Version)-1palaso1 "Auto Build"'
 			WorkingDirectory="$(InstallerBaseDir)"
 		/>
-		<Message Text="pbuilder update" />
 		<Exec
-			Command='sudo pbuilder --update --configfile /home/bob/pbuilder/pbuilderrc-$(Dist)-i386-lingnet'
+			Command='dch -r ""'
 			WorkingDirectory="$(InstallerBaseDir)"
 		/>
-		<Message Text="Starting pdebuild -- $(Dist) i386" />
+		<Message Text="debuild -S -nc -sa" />
 		<Exec
-			Command='pdebuild --architecture i386 --configfile /home/bob/pbuilder/pbuilderrc-$(Dist)-i386-lingnet --debbuildopts "" --debbuildopts "-sa" --debsign-k "mono teamcity" --auto-debsign'
+			Command="debuild -S -nc -sa"
 			WorkingDirectory="$(InstallerBaseDir)"
 		/>
 	</Target>
@@ -190,7 +190,7 @@
 	<!-- Install -->
 	<!-- The Install Target must be called from an MSBuild task so as to include the output from the previous MSBuild in the ItemGroup below -->
 	<ItemGroup>
-		<ExecutableFiles Include="$(OutputDir)/*;$(RootDir)/build/mono/chorusmerge" Exclude="$(OutputDir)/*Tests.dll;$(OutputDir)/*Test.dll;$(OutputDir)/*.mdb;$(OutputDir)/Addin.LiftReports.dll;$(OutputDir)/NVelocity.dll" />
+		<ExecutableFiles Include="$(OutputDir)/*;$(RootDir)/build/mono/chorusmerge;$(RootDir)/environ*" Exclude="$(OutputDir)/*Tests.dll;$(OutputDir)/*Test.dll;$(OutputDir)/*.mdb;$(OutputDir)/Addin.LiftReports.dll;$(OutputDir)/NVelocity.dll" />
 		<CommonFiles Include="$(RootDir)/common/**/*" />
 		<TemplateFiles Include="$(RootDir)/templates/**/*" />
 		<IconFiles Include="$(RootDir)/src/Installer_Linux/icons/**/*" />

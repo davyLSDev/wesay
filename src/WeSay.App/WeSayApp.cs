@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using Autofac;
 using CommandLine;
 using Palaso.Code;
-using Palaso.IO;
 using Palaso.i18n;
 using Palaso.IO;
 using Palaso.Lift;
@@ -18,9 +17,10 @@ using WeSay.LexicalModel;
 using WeSay.LexicalTools;
 using WeSay.Project;
 using WeSay.UI;
-//#if __MonoCS__
 using Gecko;
-//#endif
+#if __MonoCS__
+using NDesk.DBus;
+#endif
 
 namespace WeSay.App
 {
@@ -48,6 +48,12 @@ namespace WeSay.App
 			}
 			finally
 			{
+#if __MonoCS__
+				// Chorus backup results in NDesk spinning up a thread that
+				// continues until NDesk Bus is closed.  Failure to close the
+				// thread results in a hang when closing.
+				Bus.System.Close();
+#endif
 				Palaso.UI.WindowsForms.Keyboarding.KeyboardController.Shutdown();
 				ShutDownXulRunner();
 				ReleaseMutexForThisProject();
@@ -82,7 +88,6 @@ namespace WeSay.App
 			}
 			 SetUpReporting();
 
-
 			if (!Parser.ParseArguments(args, _commandLineArguments, ShowCommandLineError))
 			{
 				Application.Exit();
@@ -96,18 +101,16 @@ namespace WeSay.App
 
 		public static void SetUpXulRunner()
 		{
-//#if __MonoCS__
 			try
 			{
-				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 #if __MonoCS__
+				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
 				if (String.IsNullOrEmpty(xulRunnerLocation))
 					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
 				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 				if (!librarySearchPath.Contains(xulRunnerLocation))
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
-				//Review: an early tester found that wrong xpcom was being loaded. The following solution is from http://www.geckofx.org/viewtopic.php?id=74&action=new
 #else
 				string xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution, "xulrunner");
 				if (!Directory.Exists(xulRunnerLocation))
@@ -130,12 +133,11 @@ namespace WeSay.App
 			{
 				ErrorReport.NotifyUserOfProblem(e.Message);
 			}
-//#endif
+
 
 		}
 		private static void ShutDownXulRunner()
 		{
-//#if __MonoCS__
 			if (Xpcom.IsInitialized)
 			{
 				// The following line appears to be necessary to keep Xpcom.Shutdown()
@@ -145,7 +147,6 @@ namespace WeSay.App
 				var foo = new GeckoWebBrowser();
 				Xpcom.Shutdown();
 			}
-//#endif
 		}
 		private static void SetUpReporting()
 		{
@@ -440,7 +441,7 @@ namespace WeSay.App
 		private static void RunConfigTool()
 		{
 			string dir = Directory.GetParent(Application.ExecutablePath).FullName;
-			ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(dir, "WeSay Configuration Tool.exe"));
+			ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(dir, "WeSay.ConfigTool.exe"));
 			Process.Start(startInfo);
 		}
 
@@ -611,8 +612,6 @@ namespace WeSay.App
 		}
 		#endif
 	}
-
-
 
 	internal class ThreadExceptionHandler
 	{

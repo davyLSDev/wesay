@@ -60,7 +60,6 @@ namespace WeSay.UI
 			//var rand = new Random();
 			//BackColor = Color.FromArgb(255, rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255));
 		}
-
 		public void AddLayouter (IDisposable layouter)
 		{
 			_layouters.Add(layouter);
@@ -230,7 +229,6 @@ namespace WeSay.UI
 			}
 			ClearLayouters();
 			Controls.Clear();
-
 			// Debug.WriteLine("VBox " + Name + "   Clearing DONE");
 		}
 
@@ -304,6 +302,7 @@ namespace WeSay.UI
 			OnLabelsChanged(this, new EventArgs());
 			label.SizeChanged += OnLabelSizeChanged;
 
+			// AnchorStyle overrides DockStyle and on Linux must anchor to Top.
 			editWidget.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
 
 			editWidget.KeyDown += OnEditWidget_KeyDown;
