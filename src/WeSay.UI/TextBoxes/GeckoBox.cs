@@ -18,6 +18,7 @@ namespace WeSay.UI.TextBoxes
 		private IWritingSystemDefinition _writingSystem;
 		private bool _keyPressed;
 		private GeckoDivElement _divElement;
+		private GeckoBodyElement _bodyElement;
 		private EventHandler _loadHandler;
 		private EventHandler<GeckoDomKeyEventArgs> _domKeyDownHandler;
 		private EventHandler<GeckoDomKeyEventArgs> _domKeyUpHandler;
@@ -60,6 +61,7 @@ namespace WeSay.UI.TextBoxes
 
 			_textChangedHandler = new EventHandler(OnTextChanged);
 			this.TextChanged += _textChangedHandler;
+			this.ResumeLayout(false);
 		}
 
 		public GeckoBox(IWritingSystemDefinition ws, string nameForLogging)
@@ -106,13 +108,13 @@ namespace WeSay.UI.TextBoxes
 
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
-			var content = _browser.Document.GetElementById("main");
+			var content = _browser.Document.GetElementById("mainbody");
 			if (content != null)
 			{
-				if (content is GeckoDivElement)
+				if (content is GeckoBodyElement)
 				{
-					_divElement = (GeckoDivElement) content;
-					Height = _divElement.ClientHeight + 10;
+					_bodyElement = (GeckoBodyElement)content;
+					Height = _bodyElement.ScrollHeight;
 				}
 			}
 		}
@@ -185,7 +187,7 @@ namespace WeSay.UI.TextBoxes
 			}
 			var html =
 				string.Format(
-					"<html><header><meta charset=\"UTF-8\"></head><body style='background:#FFFFFF'><div style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{3}' id='main' name='textArea' contentEditable='{4}'>{2}</div></body></html>",
+					"<html><header><meta charset=\"UTF-8\"></head><body style='background:#FFFFFF' id='mainbody'><div style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{3}' id='main' name='textArea' contentEditable='{4}'>{2}</div></body></html>",
 					WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s, justification, editable);
 			if (!_browserIsReadyToNavigate)
 			{

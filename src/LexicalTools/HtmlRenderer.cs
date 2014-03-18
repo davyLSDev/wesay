@@ -25,7 +25,7 @@ namespace WeSay.LexicalTools
 								   CurrentItemEventArgs currentItem,
 								   LexEntryRepository lexEntryRepository)
 		{
-			string oldhtml = "<html><header><meta charset=\"UTF-8\"></head><body style='background:{5}'><div style='min-height:20px; font-family:{0}; font-size:{1}pt; text-align:{3}' id='main' name='textArea' contentEditable='{4}'>{2}</div></body></html>";
+			string oldhtml = "<html><header><meta charset=\"UTF-8\"></head><body style='background:{5}' id='mainbody'><div style='min-height:20px; font-family:{0}; font-size:{1}pt; text-align:{3}' id='main' name='textArea' contentEditable='{4}'>{2}</div></body></html>";
 			italicsOn = false;
 			if (lexEntryRepository == null)
 			{

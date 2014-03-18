@@ -39,7 +39,7 @@
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "GeckoBox";
 			this.Size = new System.Drawing.Size(238, 10);
-			this.ResumeLayout(false);
+//			this.ResumeLayout(false);
 
 		}
 
