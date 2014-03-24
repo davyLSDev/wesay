@@ -125,11 +125,7 @@ namespace WeSay.UI.TextBoxes
 			{
 				if (content is GeckoBodyElement)
 				{
-<<<<<<< HEAD
-					_bodyElement = (GeckoBodyElement) content;
-=======
 					_bodyElement = (GeckoBodyElement)content;
->>>>>>> 24ced5369f191555b27d0860504b399daa22332c
 					Height = _bodyElement.ScrollHeight;
 				}
 			}
