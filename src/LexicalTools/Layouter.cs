@@ -252,12 +252,12 @@ namespace WeSay.LexicalTools
 										 string propertyName,
 										 bool isHeading) where T : PalasoDataObject, new()
 		{
-			DetailList.SuspendLayout();
 			int rowCount = 0;
 			Field field = ActiveViewTemplate.GetField(fieldName);
 			if (field != null && field.Enabled &&
 				field.Visibility == CommonEnumerations.VisibilitySetting.Visible)
 			{
+				DetailList.SuspendLayout();
 				MultiTextControl m = new MultiTextControl(field.WritingSystemIds,
 														  new MultiText(),
 														  fieldName + "_ghost",
@@ -281,7 +281,7 @@ namespace WeSay.LexicalTools
 						g.ReferenceControl = refWidget;
 					}
 				}
-				DetailList.ResumeLayout();
+				DetailList.ResumeLayout(false);
 				return 1;
 			}
 			else

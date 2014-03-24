@@ -326,12 +326,14 @@ namespace WeSay.UI.TextBoxes
 				}
 				var ap =_serviceProvider.GetService(typeof (AudioPathProvider)) as AudioPathProvider;
 				control = new WeSayAudioFieldBox(writingSystem, ap, _serviceProvider.GetService(typeof(Palaso.Reporting.ILogger)) as ILogger);
+				control.SuspendLayout();
 				((WeSayAudioFieldBox)control).PlayOnly = (_visibility == CommonEnumerations.VisibilitySetting.ReadOnly);
 			}
 			else
 			{
 				var box = new GeckoBox(writingSystem, Name);// WeSayTextBox(writingSystem, Name);
 				control = box;
+				control.SuspendLayout();
 				box.ReadOnly = (_visibility == CommonEnumerations.VisibilitySetting.ReadOnly);
 				box.Multiline = true;
 				box.WordWrap = true;
@@ -356,8 +358,9 @@ namespace WeSay.UI.TextBoxes
 
 			control.TextChanged += OnTextOfSomeBoxChanged;
 			control.KeyDown += OnKeyDownInSomeBox;
-			control.MouseWheel += subControl_MouseWheel;
 
+			control.MouseWheel += subControl_MouseWheel;
+			control.ResumeLayout(false);
 			return control;
 
 		}

@@ -143,7 +143,7 @@ namespace WeSay.UI
 			Controls.Add(detailList, _indexOfLabel, insertAtRow);
 			OnLabelsChanged(this, new EventArgs());
 			detailList.LabelsChanged += OnLabelsChanged;
-			ResumeLayout();
+			ResumeLayout(false);
 		}
 
 		public void ForceFullTreeLayout()
@@ -153,8 +153,8 @@ namespace WeSay.UI
 			{
 				childDetailList.ForceFullTreeLayout();
 			}
+			ResumeLayout(false);
 			PerformLayout();
-			ResumeLayout();
 		}
 
 		protected override void OnGotFocus(EventArgs e)

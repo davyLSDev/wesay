@@ -357,13 +357,13 @@ namespace WeSay.LexicalTools
 					oldDetailList.SizeChanged -= OnScrollableContainerOrDetailListSizeChanged;
 					_scrollableContainer.Controls.Remove(oldDetailList);
 					oldDetailList.Clear();
-					oldDetailList.ResumeLayout();
+					oldDetailList.ResumeLayout(false);
 					oldDetailList.Dispose();
 				}
-				_scrollableContainer.ResumeLayout();
 
 				var detailList = new DetailList();
 				_detailListControl = detailList;
+				_detailListControl.SuspendLayout();
 				detailList.BackColor = BackColor;
 				detailList.Name = "_detailListControl";
 				detailList.TabIndex = 1;
@@ -395,9 +395,9 @@ namespace WeSay.LexicalTools
 				detailList.KeyDown += _detailListControl_KeyDown;
 				detailList.MouseWheel += OnDetailListMouseWheel;
 
-				_scrollableContainer.SuspendLayout();
 				_scrollableContainer.AutoScroll = true;
 				_scrollableContainer.Controls.Add(detailList);
+				_detailListControl.ResumeLayout(false);
 				_detailListControl.ForceFullTreeLayout();
 				_scrollableContainer.ResumeLayout();
 			}
