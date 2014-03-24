@@ -186,12 +186,16 @@
     <Compile Include="ScrollableContainer.Designer.cs">
       <DependentUpon>ScrollableContainer.cs</DependentUpon>
     </Compile>
-	<Compile Include="TextBoxes\GeckoBox.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="TextBoxes\GeckoBox.Designer.cs">
-	  <DependentUpon>GeckoBox.cs</DependentUpon>
-	</Compile>
+    <Compile Include="TextBoxes\GeckoBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextBoxes\GeckoBox.Designer.cs">
+      <DependentUpon>GeckoBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextBoxes\GeckoComboBox.cs" />
+    <Compile Include="TextBoxes\GeckoComboBox.designer.cs">
+      <DependentUpon>GeckoComboBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextBoxes\IControlThatKnowsWritingSystem.cs" />
     <Compile Include="WeSayListView.cs">
       <SubType>Component</SubType>
@@ -304,6 +308,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>DetailList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TextBoxes\GeckoComboBox.resx">
+      <DependentUpon>GeckoComboBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TextBoxes\MultiTextControl.resx">
       <DependentUpon>MultiTextControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -325,9 +332,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>WeSayTextBox.cs</DependentUpon>
     </EmbeddedResource>
-	<EmbeddedResource Include="TextBoxes\GeckoBox.resx">
-	  <DependentUpon>GeckoBox.cs</DependentUpon>
-	</EmbeddedResource>
+    <EmbeddedResource Include="TextBoxes\GeckoBox.resx">
+      <DependentUpon>GeckoBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\delete-word.png" />
