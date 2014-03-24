@@ -133,13 +133,6 @@ namespace WeSay.LexicalTools
 			_entryPreview.Height = height;
 		}
 
-		private void OnEntryView_FontChanged(object sender, EventArgs e)
-		{
-			if (String.IsNullOrEmpty(_htmlFormattedTextOfEntry)) // This check needed by mono 2.6.x CP 2010-12
-			{
-				return;
-			}
-			_entryPreview.SetHtml(_htmlFormattedTextOfEntry);
-		}
+
 	}
 }

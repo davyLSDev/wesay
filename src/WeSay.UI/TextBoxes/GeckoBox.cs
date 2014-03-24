@@ -23,9 +23,12 @@ namespace WeSay.UI.TextBoxes
 		private EventHandler<GeckoDomKeyEventArgs> _domKeyDownHandler;
 		private EventHandler<GeckoDomKeyEventArgs> _domKeyUpHandler;
 		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
+		private EventHandler<GeckoDomEventArgs> _domBlurHandler;
+		private EventHandler<GeckoDomEventArgs> _domClickHandler;
 		private EventHandler _domDocumentChangedHandler;
 		private EventHandler _textChangedHandler;
 		private readonly string _nameForLogging;
+		private bool _inFocus;
 
 		public GeckoBox()
 		{
@@ -38,14 +41,16 @@ namespace WeSay.UI.TextBoxes
 			Name = _nameForLogging;
 			_keyPressed = false;
 			ReadOnly = false;
+			_inFocus = false;
 
 			var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			if (designMode)
 				return;
 
+			Debug.WriteLine("New GeckoBox");
 			_browser = new GeckoWebBrowser();
 			_browser.Dock = DockStyle.Fill;
-			_browser.Parent = this;
+			//_browser.Parent = this;
 			_loadHandler = new EventHandler(GeckoBox_Load);
 			this.Load += _loadHandler;
 			Controls.Add(_browser);
@@ -56,8 +61,12 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomKeyUp += _domKeyUpHandler;
 			_domFocusHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomFocus);
 			_browser.DomFocus += _domFocusHandler;
+			_domBlurHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomBlur);
+			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
+			_domClickHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomClick);
+			_browser.DomClick += _domClickHandler;
 
 			_textChangedHandler = new EventHandler(OnTextChanged);
 			this.TextChanged += _textChangedHandler;
@@ -82,11 +91,14 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomKeyDown -= _domKeyDownHandler;
 			_browser.DomKeyUp -= _domKeyUpHandler;
 			_browser.DomFocus -= _domFocusHandler;
+			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
+			_browser.DomClick -= _domClickHandler;
 			this.TextChanged -= _textChangedHandler;
 			_loadHandler = null;
 			_domKeyDownHandler = null;
 			_domKeyUpHandler = null;
+			_domClickHandler = null;
 			_textChangedHandler = null;
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
@@ -113,23 +125,57 @@ namespace WeSay.UI.TextBoxes
 			{
 				if (content is GeckoBodyElement)
 				{
+<<<<<<< HEAD
+					_bodyElement = (GeckoBodyElement) content;
+=======
 					_bodyElement = (GeckoBodyElement)content;
+>>>>>>> 24ced5369f191555b27d0860504b399daa22332c
 					Height = _bodyElement.ScrollHeight;
 				}
 			}
 		}
 
+		private delegate void ChangeFocusDelegate(GeckoDivElement ctl);
 		private void _browser_DomFocus(object sender, GeckoDomEventArgs e)
 		{
+#if DEBUG
+			Debug.WriteLine("Got Focus: " + Text);
+#endif
 			var content = _browser.Document.GetElementById("main");
 			if (content != null)
 			{
-				if (content is GeckoDivElement)
+				if ((content is GeckoDivElement) && (!_inFocus))
 				{
+					_inFocus = true;
+#if DEBUG
+					Debug.WriteLine("Got Focus2: " + Text);
+#endif
 					_divElement = (GeckoDivElement) content;
-					_divElement.Focus();
+					this.BeginInvoke (new ChangeFocusDelegate(changeFocus), _divElement);
 				}
 			}
+		}
+		private void _browser_DomBlur(object sender, GeckoDomEventArgs e)
+		{
+			_inFocus = false;
+#if DEBUG
+			Debug.WriteLine("Got Blur: " + Text);
+#endif
+		}
+		private void _browser_DomClick(object sender, GeckoDomEventArgs e)
+		{
+#if DEBUG
+			Debug.WriteLine ("Got Dom Mouse Click " + Text);
+#endif
+			_browser.Focus ();
+		}
+
+		private void changeFocus(GeckoDivElement ctl)
+		{
+#if DEBUG
+			Debug.WriteLine("Change Focus: " + Text);
+#endif
+			ctl.Focus();
 		}
 
 		private void OnDomKeyUp(object sender, GeckoDomKeyEventArgs e)
@@ -143,31 +189,60 @@ namespace WeSay.UI.TextBoxes
 
 		private void OnDomKeyDown(object sender, GeckoDomKeyEventArgs e)
 		{
-			if (!MultiParagraph && e.KeyCode == 13) // carriage return
+			if (_inFocus)
 			{
-				e.Handled = true;
-			}
-			else if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey && !e.ShiftKey)
-			{
-				ParentForm.SelectNextControl(this, true, true, true, true);
-			}
-			else
-			{
-				this.RaiseKeyEvent(Keys.A, new KeyEventArgs(Keys.A));
+				if (!MultiParagraph && e.KeyCode == 13) // carriage return
+				{
+					e.Handled = true;
+				}
+				else if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
+				{
+					int a = ParentForm.Controls.Count;
+#if DEBUG
+					Debug.WriteLine ("Got a Tab Key " + Text + " Count " + a.ToString() );
+#endif
+					if (e.ShiftKey)
+					{
+						if (!ParentForm.SelectNextControl(this, false, true, true, true))
+						{
+#if DEBUG
+							Debug.WriteLine("Failed to advance");
+#endif
+						}
+					}
+					else
+					{
+						if (!ParentForm.SelectNextControl(this, true, true, true, true))
+						{
+#if DEBUG
+							Debug.WriteLine("Failed to advance");
+#endif
+						}
+					}
+				}
+				else
+				{
+					this.RaiseKeyEvent(Keys.A, new KeyEventArgs(Keys.A));
+				}
 			}
 		}
-
 
 		private void GeckoBox_Load(object sender, EventArgs e)
 		{
 			_browserIsReadyToNavigate = true;
 			if (_pendingHtmlLoad != null)
 			{
+#if DEBUG
+				Debug.WriteLine("Load: " + _pendingHtmlLoad);
+#endif
 				_browser.LoadHtml(_pendingHtmlLoad);
 				_pendingHtmlLoad = null;
 			}
 			else
 			{
+#if DEBUG
+				Debug.WriteLine ("Load: Empty Line");
+#endif
 				SetText(""); //make an empty, editable box
 			}
 		}
@@ -197,7 +272,9 @@ namespace WeSay.UI.TextBoxes
 			{
 				if (!_keyPressed)
 				{
-
+#if DEBUG
+					Debug.WriteLine ("SetText: " + html);
+#endif
 					_browser.LoadHtml(html);
 				}
 				_keyPressed = false;
@@ -214,6 +291,7 @@ namespace WeSay.UI.TextBoxes
 			}
 			else
 			{
+				Debug.WriteLine("SetHTML: " + finalHtml);
 				_browser.LoadHtml(finalHtml);
 			}
 				
@@ -309,65 +387,6 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		// we do this in OnLayout instead of OnResize see
-		// "Setting the Size/Location of child controls in the Resize event
-		// http://blogs.msdn.com/jfoscoding/archive/2005/03/04/385625.aspx
-/*		protected override void OnLayout(LayoutEventArgs levent)
-		{
-			Height = GetPreferredHeight(Width);
-			base.OnLayout(levent);
-		}
-
-		// we still need the resize sometimes or ghost fields disappear
-		protected override void OnSizeChanged(EventArgs e)
-		{
-			Height = GetPreferredHeight(Width);
-			base.OnSizeChanged(e);
-		}
-
-		protected override void OnResize(EventArgs e)
-		{
-			Height = GetPreferredHeight(Width);
-			base.OnResize(e);
-		}
-
-		public override Size GetPreferredSize(Size proposedSize)
-		{
-			Size size = base.GetPreferredSize(proposedSize);
-			size.Height = GetPreferredHeight(size.Width);
-			return size;
-		}
-
-		private int GetPreferredHeight(int width)
-		{
-//			using (Graphics g = CreateGraphics())
-			{
-			//	Graphics g = CreateGraphics();
-/*				TextFormatFlags flags = TextFormatFlags.TextBoxControl | TextFormatFlags.Default |
-										TextFormatFlags.NoClipping;
-				if (Multiline && WordWrap)
-				{
-					flags |= TextFormatFlags.WordBreak;
-				}
-				if (_writingSystem != null && WritingSystem.RightToLeftScript)
-				{
-					flags |= TextFormatFlags.RightToLeft;
-				}
-				Size sz = TextRenderer.MeasureText(g,
-												   Text == String.Empty ? " " : Text + "\n",
-					// replace empty string with space, because mono returns zero height for empty string (windows returns one line height)
-					// need extra new line to handle case where ends in new line (since last newline is ignored)
-												   Font,
-												   new Size(width, int.MaxValue),
-												   flags);
-				return sz.Height + 2; // add enough space for spell checking squiggle underneath
- * *
-//				g.Dispose();
-				return 32;
-			}
-		}
-*/
-
 		/// <summary>
 		/// for automated tests
 		/// </summary>
@@ -390,12 +409,12 @@ namespace WeSay.UI.TextBoxes
 			base.OnLeave(e);
 
 			// this.BackColor = System.Drawing.Color.White;
-			ClearKeyboard();
+//			ClearKeyboard();
 		 }
 		protected override void OnEnter(EventArgs e)
 		{
 			base.OnEnter(e);
-			AssignKeyboardFromWritingSystem();
+//			AssignKeyboardFromWritingSystem();
 		}
 
 	}

@@ -59,7 +59,6 @@ namespace WeSay.LexicalTools
 			this.BackColorChanged += new System.EventHandler(this.EntryHeaderView_BackColorChanged);
 			this.SizeChanged += new System.EventHandler(this.EntryHeaderView_SizeChanged);
 			this.ResumeLayout(false);
-			this._entryPreview.FontChanged += OnEntryView_FontChanged;
 		}
 
 		#endregion
