@@ -65,8 +65,10 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
+#if __MonoCS__
 			_domClickHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomClick);
 			_browser.DomClick += _domClickHandler;
+#endif
 
 			_textChangedHandler = new EventHandler(OnTextChanged);
 			this.TextChanged += _textChangedHandler;
@@ -93,12 +95,14 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomFocus -= _domFocusHandler;
 			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
+#if __MonoCS__
 			_browser.DomClick -= _domClickHandler;
+			_domClickHandler = null;
+#endif
 			this.TextChanged -= _textChangedHandler;
 			_loadHandler = null;
 			_domKeyDownHandler = null;
 			_domKeyUpHandler = null;
-			_domClickHandler = null;
 			_textChangedHandler = null;
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
