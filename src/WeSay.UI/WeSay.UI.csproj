@@ -192,7 +192,9 @@
     <Compile Include="TextBoxes\GeckoBox.Designer.cs">
       <DependentUpon>GeckoBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextBoxes\GeckoComboBox.cs" />
+    <Compile Include="TextBoxes\GeckoComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="TextBoxes\GeckoComboBox.designer.cs">
       <DependentUpon>GeckoComboBox.cs</DependentUpon>
     </Compile>

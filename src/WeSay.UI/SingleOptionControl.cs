@@ -8,13 +8,15 @@ using Palaso.UiBindings;
 using Palaso.Reporting;
 using Palaso.WritingSystems;
 using WeSay.LexicalModel.Foundation;
+using WeSay.UI.TextBoxes;
 
 namespace WeSay.UI
 {
 	public partial class SingleOptionControl: UserControl, IBindableControl<string>
 	{
 		private readonly OptionsList _list;
-		private readonly ComboBox _control = new ComboBox();
+//		private readonly ComboBox _control = new ComboBox();
+		private readonly GeckoComboBox _control = new GeckoComboBox();
 		private readonly string _nameForLogging;
 		private readonly IWritingSystemDefinition _preferredWritingSystem;
 
@@ -46,10 +48,11 @@ namespace WeSay.UI
 			_preferredWritingSystem = preferredWritingSystem;
 			InitializeComponent();
 			//doesn't allow old, non-valid values to be shown (can't set the text):  ComboBoxStyle.DropDownList;
-			_control.AutoCompleteMode = AutoCompleteMode.Append;
+/*			_control.AutoCompleteMode = AutoCompleteMode.Append;
 			_control.AutoCompleteSource = AutoCompleteSource.ListItems;
 			_control.Sorted = false;
 			_control.MaxDropDownItems = 100;
+ */
 			_control.Font = WritingSystemInfo.CreateFont(_preferredWritingSystem);
 			_control.Height = WritingSystemInfo.CreateFont(_preferredWritingSystem).Height + 10;
 			BuildBoxes(optionRef);
@@ -80,12 +83,13 @@ namespace WeSay.UI
 				//    SetStatusColor();
 				//    return;
 				//}
-
-				foreach (Option.OptionDisplayProxy proxy in _control.Items)
+//				foreach (Option.OptionDisplayProxy proxy in _control.Items) 
+				for (int i = 0; i < _control.Items.Count; i++)
 				{
+					var proxy = (Option.OptionDisplayProxy) _control.Items[i];
 					if (proxy.Key.Equals(value))
 					{
-						_control.SelectedItem = proxy;
+						_control.SelectedIndex = i;
 						SetStatusColor();
 						return;
 					}
@@ -93,12 +97,12 @@ namespace WeSay.UI
 
 				//Didn't find it
 
-				_control.DropDownStyle = ComboBoxStyle.DropDown;
+//				_control.DropDownStyle = ComboBoxStyle.DropDown;
 				//allow abberant old value NB: don't remove just because SetStatusCOlor looks like it will set this
 				//this was needed to fix ws-115, which appear to be related to changing the
 				//DropDownStyle + having autocomplete on.  Sadly, it means a bad (red) key can't be fixed just by typing. Must
 				//select a good value.
-				_control.AutoCompleteMode = AutoCompleteMode.None;
+//				_control.AutoCompleteMode = AutoCompleteMode.None;
 
 				_control.Text = value;
 				SetStatusColor(); //must do this before trying to change to a non-list value
@@ -110,12 +114,12 @@ namespace WeSay.UI
 			if (Value != null && Value.Length > 0 && _control.SelectedIndex == -1)
 			{
 				_control.BackColor = Color.Red;
-				_control.DropDownStyle = ComboBoxStyle.DropDown; //allow abberant old value
+//				_control.DropDownStyle = ComboBoxStyle.DropDown; //allow abberant old value
 			}
 			else
 			{
 				_control.BackColor = Color.White;
-				_control.DropDownStyle = ComboBoxStyle.DropDownList; // can't type
+//				_control.DropDownStyle = ComboBoxStyle.DropDownList; // can't type
 			}
 		}
 
@@ -159,7 +163,9 @@ namespace WeSay.UI
 													StringCatalog.Get("~unknown",
 																	  "This is shown in a combo-box (list of options, like Part Of Speech) when no option has been chosen, or the user just doesn't know what to put in this field."));
 				Option unspecifiedOption = new Option("unknown", unspecifiedMultiText);
-				_control.Items.Add(new Option.OptionDisplayProxy(unspecifiedOption,
+//				_control.Items.Add(new Option.OptionDisplayProxy(unspecifiedOption,
+//																 _preferredWritingSystem.Id));
+				_control.AddItem(new Option.OptionDisplayProxy(unspecifiedOption,
 																 _preferredWritingSystem.Id));
 			}
 			_list.Options.Sort(CompareItems);
@@ -170,8 +176,11 @@ namespace WeSay.UI
 					give us a way to choose the ws either.
 					_control.Items.Add(o);
 				*/
-				_control.Items.Add(o.GetDisplayProxy(_preferredWritingSystem.Id));
+//				_control.Items.Add(o.GetDisplayProxy(_preferredWritingSystem.Id));
+				_control.AddItem(o.GetDisplayProxy(_preferredWritingSystem.Id));
 			}
+
+			_control.ListCompleted();
 
 			Value = selectedOptionRef.Value;
 
