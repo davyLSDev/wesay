@@ -195,7 +195,7 @@
     <Compile Include="TextBoxes\GeckoComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoComboBox.designer.cs">
+    <Compile Include="TextBoxes\GeckoComboBox.Designer.cs">
       <DependentUpon>GeckoComboBox.cs</DependentUpon>
     </Compile>
     <Compile Include="TextBoxes\IControlThatKnowsWritingSystem.cs" />
