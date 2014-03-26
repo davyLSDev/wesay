@@ -53,6 +53,7 @@ namespace WeSay.UI
 			_control.Sorted = false;
 			_control.MaxDropDownItems = 100;
  */
+			_control.WritingSystem = _preferredWritingSystem;
 			_control.Font = WritingSystemInfo.CreateFont(_preferredWritingSystem);
 			_control.Height = WritingSystemInfo.CreateFont(_preferredWritingSystem).Height + 10;
 			BuildBoxes(optionRef);

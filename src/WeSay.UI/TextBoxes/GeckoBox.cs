@@ -120,10 +120,20 @@ namespace WeSay.UI.TextBoxes
 		private void OnTextChanged(object sender, EventArgs e)
 		{
 			SetText(Text);
+			AdjustHeight();
 		}
 
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
+			AdjustHeight();
+		}
+
+		private void AdjustHeight()
+		{
+			if (_browser.Document == null)
+			{
+				return;
+			}
 			var content = _browser.Document.GetElementById("mainbody");
 			if (content != null)
 			{
@@ -133,8 +143,8 @@ namespace WeSay.UI.TextBoxes
 					Height = _bodyElement.ScrollHeight;
 				}
 			}
+			
 		}
-
 		private delegate void ChangeFocusDelegate(GeckoDivElement ctl);
 		private void _browser_DomFocus(object sender, GeckoDomEventArgs e)
 		{
@@ -146,6 +156,9 @@ namespace WeSay.UI.TextBoxes
 			{
 				if ((content is GeckoDivElement) && (!_inFocus))
 				{
+					// The following is required because we get two in focus events every time this
+					// is entered.  This is normal for Gecko.  But I don't want to be constantly 
+					// refocussing.
 					_inFocus = true;
 #if DEBUG
 					Debug.WriteLine("Got Focus2: " + Text);

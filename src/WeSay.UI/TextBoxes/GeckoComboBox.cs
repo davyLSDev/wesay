@@ -25,12 +25,9 @@ namespace WeSay.UI.TextBoxes
 		private GeckoBodyElement _bodyElement;
 		private EventHandler _loadHandler;
 		private EventHandler<GeckoDomKeyEventArgs> _domKeyDownHandler;
-		private EventHandler<GeckoDomKeyEventArgs> _domKeyUpHandler;
 		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
 		private EventHandler<GeckoDomEventArgs> _domBlurHandler;
-		private EventHandler<GeckoDomEventArgs> _domClickHandler;
 		private EventHandler _domDocumentChangedHandler;
-		private EventHandler _textChangedHandler;
 		private readonly string _nameForLogging;
 		private bool _inFocus;
 		private List<Object> _items;
@@ -67,19 +64,13 @@ namespace WeSay.UI.TextBoxes
 
 			_domKeyDownHandler = new EventHandler<GeckoDomKeyEventArgs>(OnDomKeyDown);
 			_browser.DomKeyDown += _domKeyDownHandler;
-			_domKeyUpHandler = new EventHandler<GeckoDomKeyEventArgs>(OnDomKeyUp);
-			_browser.DomKeyUp += _domKeyUpHandler;
 			_domFocusHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomFocus);
 			_browser.DomFocus += _domFocusHandler;
 			_domBlurHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomBlur);
 			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
-			_domClickHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomClick);
-			_browser.DomClick += _domClickHandler;
 
-			_textChangedHandler = new EventHandler(OnTextChanged);
-			this.TextChanged += _textChangedHandler;
 			this.ResumeLayout(false);
 		}
 
@@ -101,18 +92,12 @@ namespace WeSay.UI.TextBoxes
 			_itemHtml.Clear();
 			this.Load -= _loadHandler;
 			_browser.DomKeyDown -= _domKeyDownHandler;
-			_browser.DomKeyUp -= _domKeyUpHandler;
 			_browser.DomFocus -= _domFocusHandler;
 			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
-			_browser.DomClick -= _domClickHandler;
-			this.TextChanged -= _textChangedHandler;
 			_items = null;
 			_loadHandler = null;
 			_domKeyDownHandler = null;
-			_domKeyUpHandler = null;
-			_domClickHandler = null;
-			_textChangedHandler = null;
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
 			_browser.Stop();
@@ -206,6 +191,11 @@ namespace WeSay.UI.TextBoxes
 
 		public void ListCompleted()
 		{
+			String justification = "left";
+			if (_writingSystem != null && WritingSystem.RightToLeftScript)
+			{
+				justification = "right";
+			}
 			var html = new StringBuilder();
 			html.Append("<!DOCTYPE html>");
 			html.Append("<html><header><meta charset=\"UTF-8\">");
@@ -220,7 +210,8 @@ namespace WeSay.UI.TextBoxes
 			html.Append("</head>");
 			html.AppendFormat("<body style='background:{0}' id='mainbody'>", 
 				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)));
-			html.Append("<select id='itemList' onchange=\"fireEvent('selectChanged','changed');\">");
+			html.AppendFormat("<select id='itemList' style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{2}' onchange=\"fireEvent('selectChanged','changed');\">",
+				WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(),justification);
 			html.Append(_itemHtml);
 			html.Append("</select></body></html>");
 			SetHtml(html.ToString());
@@ -232,15 +223,6 @@ namespace WeSay.UI.TextBoxes
 				SelectedValueChanged.Invoke(this, null);
 			}
 		}
-		/// <summary>
-		/// called when the client changes our Control.Text... we need to them move that into the html
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnTextChanged(object sender, EventArgs e)
-		{
-			SetText(Text);
-		}
 
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
@@ -249,6 +231,15 @@ namespace WeSay.UI.TextBoxes
 			{
 				SelectedIndex = _pendingInitialIndex;
 				_pendingInitialIndex = -1;
+			}
+			AdjustHeight();
+		}
+
+		void AdjustHeight()
+		{
+			if (_browser.Document == null)
+			{
+				return;
 			}
 			var content = _browser.Document.GetElementById("mainbody");
 			if (content != null)
@@ -270,6 +261,9 @@ namespace WeSay.UI.TextBoxes
 			var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
 			if (content != null)
 			{
+				// The following is required because we get two in focus events every time this
+				// is entered.  This is normal for Gecko.  But I don't want to be constantly 
+				// refocussing.
 				if (!_inFocus)
 				{
 					_inFocus = true;
@@ -288,13 +282,6 @@ namespace WeSay.UI.TextBoxes
 			Debug.WriteLine("Got Blur: " + Text);
 #endif
 		}
-		private void _browser_DomClick(object sender, GeckoDomEventArgs e)
-		{
-#if DEBUG
-			Debug.WriteLine ("Got Dom Mouse Click " + Text);
-#endif
-			_browser.Focus ();
-		}
 
 		private void changeFocus(GeckoSelectElement ctl)
 		{
@@ -304,28 +291,16 @@ namespace WeSay.UI.TextBoxes
 			ctl.Focus();
 		}
 
-		private void OnDomKeyUp(object sender, GeckoDomKeyEventArgs e)
-		{
-			var content = _browser.Document.GetElementById("main");
-			_keyPressed = true;
-
-			//			Debug.WriteLine(content.TextContent);
-			Text = content.TextContent;
-		}
 
 		private void OnDomKeyDown(object sender, GeckoDomKeyEventArgs e)
 		{
 			if (_inFocus)
 			{
-				if (!MultiParagraph && e.KeyCode == 13) // carriage return
-				{
-					e.Handled = true;
-				}
-				else if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
+				if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
 				{
 					int a = ParentForm.Controls.Count;
 #if DEBUG
-					Debug.WriteLine ("Got a Tab Key " + Text + " Count " + a.ToString() );
+					Debug.WriteLine ("Got a Tab Key " );
 #endif
 					if (e.ShiftKey)
 					{
@@ -364,47 +339,6 @@ namespace WeSay.UI.TextBoxes
 #endif
 				_browser.LoadHtml(_pendingHtmlLoad);
 				_pendingHtmlLoad = null;
-			}
-			else
-			{
-#if DEBUG
-				Debug.WriteLine ("Load: Empty Line");
-#endif
-				SetText(""); //make an empty, editable box
-			}
-		}
-
-		private void SetText(string s)
-		{
-			String justification = "left";
-			if (_writingSystem != null && WritingSystem.RightToLeftScript)
-			{
-				justification = "right";
-			}
-
-			String editable = "true";
-			if (ReadOnly)
-			{
-				editable = "false";
-			}
-			var html =
-				string.Format(
-					"<html><header><meta charset=\"UTF-8\"></head><body style='background:#FFFFFF' id='mainbody'><div style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{3}' id='main' name='textArea' contentEditable='{4}'>{2}</div></body></html>",
-					WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(), s, justification, editable);
-			if (!_browserIsReadyToNavigate)
-			{
-				_pendingHtmlLoad = html;
-			}
-			else
-			{
-				if (!_keyPressed)
-				{
-#if DEBUG
-					Debug.WriteLine ("SetText: " + html);
-#endif
-					_browser.LoadHtml(html);
-				}
-				_keyPressed = false;
 			}
 		}
 
@@ -486,32 +420,10 @@ namespace WeSay.UI.TextBoxes
 
 		public bool ReadOnly { get; set; }
 
-		public bool Multiline
-		{
-			get
-			{
-				//todo
-				return false;
-			}
-			set
-			{
-				//todo
-			}
-		}
 
-		public bool WordWrap
-		{
-			get
-			{
-				//todo
-				return false;
-			}
-			set
-			{
-				//todo
-			}
-		}
-
+		/// <summary>
+		/// for automated tests
+		/// </summary>
 		public GeckoWebBrowser Browser
 		{
 			get
