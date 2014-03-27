@@ -79,7 +79,7 @@ namespace WeSay.UI
 				for (int i = 0; i < _control.Items.Count; i++)
 				{
 					var proxy = (Option.OptionDisplayProxy) _control.Items[i];
-					if (proxy.Key.Equals(value))
+					if (proxy.Key.Equals(value, StringComparison.OrdinalIgnoreCase))
 					{
 						_control.SelectedIndex = i;
 						SetStatusColor();
@@ -141,7 +141,7 @@ namespace WeSay.UI
 			{
 				_control.AddItem(o.GetDisplayProxy(_preferredWritingSystem.Id));
 			}
-
+			_control.BackColor = Color.White;
 			_control.ListCompleted();
 
 			Value = selectedOptionRef.Value;
