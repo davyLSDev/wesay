@@ -15,7 +15,6 @@ namespace WeSay.UI
 	public partial class SingleOptionControl: UserControl, IBindableControl<string>
 	{
 		private readonly OptionsList _list;
-//		private readonly ComboBox _control = new ComboBox();
 		private readonly GeckoComboBox _control = new GeckoComboBox();
 		private readonly string _nameForLogging;
 		private readonly IWritingSystemDefinition _preferredWritingSystem;
@@ -47,13 +46,6 @@ namespace WeSay.UI
 			_nameForLogging = nameForLogging;
 			_preferredWritingSystem = preferredWritingSystem;
 			InitializeComponent();
-			//doesn't allow old, non-valid values to be shown (can't set the text):  ComboBoxStyle.DropDownList;
-/*			_control.AutoCompleteMode = AutoCompleteMode.Append;
-			_control.AutoCompleteSource = AutoCompleteSource.ListItems;
-			_control.Sorted = false;
-			_control.MaxDropDownItems = 100;
- */
-			_control.WritingSystem = _preferredWritingSystem;
 			_control.Font = WritingSystemInfo.CreateFont(_preferredWritingSystem);
 			_control.Height = WritingSystemInfo.CreateFont(_preferredWritingSystem).Height + 10;
 			BuildBoxes(optionRef);
@@ -84,7 +76,6 @@ namespace WeSay.UI
 				//    SetStatusColor();
 				//    return;
 				//}
-//				foreach (Option.OptionDisplayProxy proxy in _control.Items) 
 				for (int i = 0; i < _control.Items.Count; i++)
 				{
 					var proxy = (Option.OptionDisplayProxy) _control.Items[i];
@@ -98,13 +89,6 @@ namespace WeSay.UI
 
 				//Didn't find it
 
-//				_control.DropDownStyle = ComboBoxStyle.DropDown;
-				//allow abberant old value NB: don't remove just because SetStatusCOlor looks like it will set this
-				//this was needed to fix ws-115, which appear to be related to changing the
-				//DropDownStyle + having autocomplete on.  Sadly, it means a bad (red) key can't be fixed just by typing. Must
-				//select a good value.
-//				_control.AutoCompleteMode = AutoCompleteMode.None;
-
 				_control.Text = value;
 				SetStatusColor(); //must do this before trying to change to a non-list value
 			}
@@ -114,13 +98,12 @@ namespace WeSay.UI
 		{
 			if (Value != null && Value.Length > 0 && _control.SelectedIndex == -1)
 			{
+				// TODO Look at this
 				_control.BackColor = Color.Red;
-//				_control.DropDownStyle = ComboBoxStyle.DropDown; //allow abberant old value
 			}
 			else
 			{
 				_control.BackColor = Color.White;
-//				_control.DropDownStyle = ComboBoxStyle.DropDownList; // can't type
 			}
 		}
 
@@ -133,20 +116,6 @@ namespace WeSay.UI
 			SetupComboControl(optionRef);
 
 			components.Add(_control); //so it will get disposed of when we are
-
-			//Panel p = new Panel();
-			//p.Controls.Add(_control);
-			//p.Size = new Size(initialPanelWidth, _control.Height + 10);
-
-			//            FlagButton flagButton = MakeFlagButton(p.Size);
-			//            p.Controls.Add(flagButton);
-			//            this.components.Add(flagButton);//so it will get disposed of when we are
-
-			//            //TODO: THIS IS TRANSITIONAL CODE... AnnotationWidget should probably become a full control (or go away)
-			//            AnnotationWidget aw = new AnnotationWidget(multiText, writingSystem.Id);
-			//            Control annotationControl = aw.MakeControl(p.Size);
-			//            p.Controls.Add(annotationControl);
-			//            this.components.Add(annotationControl);//so it will get disposed of when we are
 
 			Controls.Add(_control);
 			//Height += p.Height;
@@ -164,20 +133,12 @@ namespace WeSay.UI
 													StringCatalog.Get("~unknown",
 																	  "This is shown in a combo-box (list of options, like Part Of Speech) when no option has been chosen, or the user just doesn't know what to put in this field."));
 				Option unspecifiedOption = new Option("unknown", unspecifiedMultiText);
-//				_control.Items.Add(new Option.OptionDisplayProxy(unspecifiedOption,
-//																 _preferredWritingSystem.Id));
 				_control.AddItem(new Option.OptionDisplayProxy(unspecifiedOption,
 																 _preferredWritingSystem.Id));
 			}
 			_list.Options.Sort(CompareItems);
 			foreach (Option o in _list.Options)
 			{
-				/* this won't work.  It doesn't give us a way to select which ws to display, as it will always
-					draw from ToString().  We can change which property (e.g. DisplayName(), but that doesn't
-					give us a way to choose the ws either.
-					_control.Items.Add(o);
-				*/
-//				_control.Items.Add(o.GetDisplayProxy(_preferredWritingSystem.Id));
 				_control.AddItem(o.GetDisplayProxy(_preferredWritingSystem.Id));
 			}
 
@@ -186,7 +147,6 @@ namespace WeSay.UI
 			Value = selectedOptionRef.Value;
 
 			_control.SelectedValueChanged += OnSelectedValueChanged;
-			//            _control.Validating += new System.ComponentModel.CancelEventHandler(_control_Validating);
 
 			//don't let the mousewheel do the scrolling, as it's likely an accident (http://jira.palaso.org/issues/browse/WS-34670)
 			_control.MouseWheel += (sender, e) => {((HandledMouseEventArgs)e).Handled = true;};
@@ -207,12 +167,6 @@ namespace WeSay.UI
 
 			return String.Compare(x, y);
 		}
-
-		//void _control_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		//{
-		//    //don't allow entering things that aren't options
-		//      e.Cancel = !(_control.SelectedIndex > -1 || _control.Text=="");
-		//}
 
 		private void OnSelectedValueChanged(object sender, EventArgs e)
 		{

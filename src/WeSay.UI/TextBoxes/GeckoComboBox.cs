@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Gecko;
 using Gecko.DOM;
@@ -17,6 +18,7 @@ namespace WeSay.UI.TextBoxes
 		private GeckoWebBrowser _browser;
 		private bool _browserIsReadyToNavigate;
 		private bool _browserDocumentLoaded;
+		private bool _initialSelectLoad;
 		private int _pendingInitialIndex;
 		private string _pendingHtmlLoad;
 		private IWritingSystemDefinition _writingSystem;
@@ -46,9 +48,10 @@ namespace WeSay.UI.TextBoxes
 			_keyPressed = false;
 			ReadOnly = false;
 			_inFocus = false;
+			_initialSelectLoad = false;
 			_pendingInitialIndex = -1;
 			_items = new List<object>();
-			_itemHtml = new StringBuilder(); 
+			_itemHtml = new StringBuilder();
 
 			var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			if (designMode)
@@ -86,6 +89,12 @@ namespace WeSay.UI.TextBoxes
 			WritingSystem = ws;
 		}
 
+		public void Clear()
+		{
+			_items.Clear();
+			_itemHtml.Clear();
+		}
+
 		public void Closing()
 		{
 			_items.Clear();
@@ -108,7 +117,8 @@ namespace WeSay.UI.TextBoxes
 		public void AddItem(Object item)
 		{
 			_items.Add(item);
-			_itemHtml.AppendFormat("<option value=\"{0}\">{1}</option>", item.ToString(), item.ToString());
+			var paddedItem = Regex.Replace(item.ToString(), @"(?<=^\s*)\s", "&nbsp;");
+			_itemHtml.AppendFormat("<option value=\"{0}\">{1}</option>", item.ToString().Trim(), paddedItem);
 		}
 
 		public Object SelectedItem
@@ -128,6 +138,7 @@ namespace WeSay.UI.TextBoxes
 			}
 
 		}
+
 		public int SelectedIndex
 		{
 			get
@@ -191,6 +202,7 @@ namespace WeSay.UI.TextBoxes
 
 		public void ListCompleted()
 		{
+			_initialSelectLoad = false;
 			String justification = "left";
 			if (_writingSystem != null && WritingSystem.RightToLeftScript)
 			{
@@ -208,11 +220,20 @@ namespace WeSay.UI.TextBoxes
 			html.Append(" }");
 			html.Append("</script>");
 			html.Append("</head>");
-			html.AppendFormat("<body style='background:{0}' id='mainbody'>", 
-				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)));
-			html.AppendFormat("<select id='itemList' style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{2}' onchange=\"fireEvent('selectChanged','changed');\">",
-				WritingSystem.DefaultFontName, WritingSystem.DefaultFontSize.ToString(),justification);
-			html.Append(_itemHtml);
+			html.AppendFormat("<body style='background:{0}; width:{1}; overflow-x:hidden' id='mainbody'>", 
+				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)),
+				this.Width);
+			html.AppendFormat("<select id='itemList' style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{2}; font-weight:{3}; background:{4}; width:{5}' onchange=\"fireEvent('selectChanged','changed');\">",
+				Font.Name, 
+				Font.Size,justification, 
+				Font.Bold ? "bold": "normal",
+				System.Drawing.ColorTranslator.ToHtml(BackColor),
+				this.Width);
+			// The following line is removed at this point and done later as a change to the inner 
+			// html because otherwise the browser blows up because of the length of the 
+			// navigation line.  Leaving this and this comment in as a warning to anyone who
+			// may be tempted to try the same thing.
+			// html.Append(_itemHtml);
 			html.Append("</select></body></html>");
 			SetHtml(html.ToString());
 		}
@@ -227,6 +248,12 @@ namespace WeSay.UI.TextBoxes
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
 			_browserDocumentLoaded = true;  // Document loaded once
+			if (!_initialSelectLoad)
+			{
+				_initialSelectLoad = true;
+				var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
+				content.InnerHtml = _itemHtml.ToString();
+			}
 			if (_pendingInitialIndex > -1)
 			{
 				SelectedIndex = _pendingInitialIndex;
@@ -337,7 +364,7 @@ namespace WeSay.UI.TextBoxes
 #if DEBUG
 				Debug.WriteLine("Load: " + _pendingHtmlLoad);
 #endif
-				_browser.LoadHtml(_pendingHtmlLoad);
+				SetHtml(_pendingHtmlLoad);
 				_pendingHtmlLoad = null;
 			}
 		}
@@ -351,7 +378,12 @@ namespace WeSay.UI.TextBoxes
 			else
 			{
 				Debug.WriteLine("SetHTML: " + html);
-				_browser.LoadHtml(html);
+				const string type = "text/html";
+				var bytes = System.Text.Encoding.UTF8.GetBytes(html);
+				_browser.Navigate(string.Format("data:{0};base64,{1}", type, Convert.ToBase64String(bytes)),  
+					GeckoLoadFlags.BypassHistory);
+
+//				_browser.LoadHtml(html);
 			}
 				
 		}
@@ -396,45 +428,11 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		public void AssignKeyboardFromWritingSystem()
-		{
-			if (_writingSystem == null)
-			{
-				throw new InvalidOperationException(
-					"Input system must be initialized prior to use.");
-			}
-
-			_writingSystem.LocalKeyboard.Activate();
-		}
-
-		public void ClearKeyboard()
-		{
-			if (_writingSystem == null)
-			{
-				throw new InvalidOperationException(
-					"Input system must be initialized prior to use.");
-			}
-
-			Keyboard.Controller.ActivateDefaultKeyboard();
-		}
 
 		public bool ReadOnly { get; set; }
 
 
-		/// <summary>
-		/// for automated tests
-		/// </summary>
-		public GeckoWebBrowser Browser
-		{
-			get
-			{
-				return _browser;
-			}
-			set
-			{
-				//todo
-			}
-		}
+
 		/// <summary>
 		/// for automated tests
 		/// </summary>
@@ -450,19 +448,6 @@ namespace WeSay.UI.TextBoxes
 		{
 			Debug.Assert(_browser != null, "_browser != null");
 			_browser.Focus();
-		}
-
-		protected override void OnLeave(EventArgs e)
-		{
-			base.OnLeave(e);
-
-			// this.BackColor = System.Drawing.Color.White;
-//			ClearKeyboard();
-		 }
-		protected override void OnEnter(EventArgs e)
-		{
-			base.OnEnter(e);
-//			AssignKeyboardFromWritingSystem();
 		}
 
 	}

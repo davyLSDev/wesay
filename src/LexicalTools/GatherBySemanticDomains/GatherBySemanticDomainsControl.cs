@@ -37,6 +37,19 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			_listViewWords.MeaningWritingSystem = _presentationModel.ShowMeaningField ? _presentationModel.MeaningWritingSystem: null;
 			_listViewWords.ItemDrawer = DrawOneAnswerForList;
 
+			//we'd like to have monospace, but I don't know for sure which languages these fonts will work
+			//this is going to override the normal font choice they've made
+			var majorRomanWritingSystems = new List<string>(new[] { "en", "id", "fr" });
+			if (majorRomanWritingSystems.Contains(presentationModel.SemanticDomainWritingSystemId))
+			{
+#if __MonoCS__
+				_domainListComboBox.Font = new Font("monospace", _domainListComboBox.Font.Size, FontStyle.Bold);
+#else
+				_domainListComboBox.Font = new Font("Lucida Console", _domainListComboBox.Font.Size, FontStyle.Bold);
+#endif
+
+			}
+
 			RefreshCurrentWords();
 			LoadDomainListCombo();
 			RefreshCurrentDomainAndQuestion();
@@ -113,19 +126,6 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			_flyingLabel.Finished += _animator_Finished;
 
 			_domainListComboBox.Font = _presentationModel.GetFontOfSemanticDomainField();
-
-			//we'd like to have monospace, but I don't know for sure which languages these fonts will work
-			//this is going to override the normal font choice they've made
-			var majorRomanWritingSystems = new List<string>(new[] {"en", "id", "fr"});
-			if(majorRomanWritingSystems.Contains(presentationModel.SemanticDomainWritingSystemId))
-			{
-#if __MonoCS__
-				_domainListComboBox.Font = new Font("monospace", _domainListComboBox.Font.Size, FontStyle.Bold);
-#else
-				_domainListComboBox.Font = new Font("Lucida Console", _domainListComboBox.Font.Size, FontStyle.Bold);
-#endif
-
-			}
 		}
 
 		/// <summary>
@@ -148,11 +148,12 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 
 		private void LoadDomainListCombo()
 		{
-			_domainListComboBox.Items.Clear();
+			_domainListComboBox.Clear();
 			foreach (string domainName in _presentationModel.DomainNames)
 			{
-				_domainListComboBox.Items.Add(domainName);
+				_domainListComboBox.AddItem(domainName);
 			}
+			_domainListComboBox.ListCompleted();
 		}
 
 		private void InitializeDisplaySettings()

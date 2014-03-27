@@ -35,9 +35,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("blah");
-			System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("stuff");
-			this._domainListComboBox = new System.Windows.Forms.ComboBox();
+			System.Windows.Forms.ListViewItem listViewItem61 = new System.Windows.Forms.ListViewItem("blah");
+			System.Windows.Forms.ListViewItem listViewItem62 = new System.Windows.Forms.ListViewItem("stuff");
+			this._domainListComboBox = new WeSay.UI.TextBoxes.GeckoComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this._instructionLabel = new System.Windows.Forms.Label();
@@ -73,26 +73,26 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel8.SuspendLayout();
 			this.tableLayoutPanel7.SuspendLayout();
 			this.SuspendLayout();
-			//
+			// 
 			// _domainListComboBox
-			//
-			this._domainListComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			// 
+			this._domainListComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this._domainListComboBox.BackColor = System.Drawing.SystemColors.Control;
-			this._domainListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-			this._domainListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._domainListComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._domainListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._domainListComboBox.Location = new System.Drawing.Point(3, 3);
+			this._domainListComboBox.IsSpellCheckingEnabled = false;
+			this._domainListComboBox.Location = new System.Drawing.Point(0, 0);
+			this._domainListComboBox.Margin = new System.Windows.Forms.Padding(0);
+			this._domainListComboBox.MultiParagraph = false;
 			this._domainListComboBox.Name = "_domainListComboBox";
+			this._domainListComboBox.ReadOnly = false;
+			this._domainListComboBox.SelectionStart = 0;
 			this._domainListComboBox.Size = new System.Drawing.Size(434, 27);
 			this._domainListComboBox.TabIndex = 20;
-			this._domainListComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this._domainName_DrawItem);
-			this._domainListComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this._domainName_MeasureItem);
-			this._domainListComboBox.SelectedIndexChanged += new System.EventHandler(this._domainName_SelectedIndexChanged);
-			//
+			this._domainListComboBox.SelectedValueChanged += new System.EventHandler((this._domainName_SelectedIndexChanged));
+			// 
 			// label3
-			//
+			// 
 			this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label3.AutoSize = true;
 			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.75F, System.Drawing.FontStyle.Bold);
@@ -101,9 +101,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.label3.Size = new System.Drawing.Size(40, 15);
 			this.label3.TabIndex = 19;
 			this.label3.Text = "Word";
-			//
+			// 
 			// label4
-			//
+			// 
 			this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.label4.AutoSize = true;
 			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
@@ -113,9 +113,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.label4.Size = new System.Drawing.Size(73, 16);
 			this.label4.TabIndex = 14;
 			this.label4.Text = "(Enter Key)";
-			//
+			// 
 			// _instructionLabel
-			//
+			// 
 			this._instructionLabel.AutoSize = true;
 			this._instructionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
 			this._instructionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(118)))), ((int)(((byte)(17)))));
@@ -124,9 +124,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._instructionLabel.Size = new System.Drawing.Size(423, 20);
 			this._instructionLabel.TabIndex = 15;
 			this._instructionLabel.Text = "Try thinking of words you use to talk about these things.";
-			//
+			// 
 			// _question
-			//
+			// 
 			this._question.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._question.AutoEllipsis = true;
 			this._question.AutoSize = true;
@@ -137,9 +137,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._question.Size = new System.Drawing.Size(161, 18);
 			this._question.TabIndex = 23;
 			this._question.Text = "Question goes here.";
-			//
+			// 
 			// _description
-			//
+			// 
 			this._description.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._description.AutoEllipsis = true;
 			this._description.AutoSize = true;
@@ -150,9 +150,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._description.Size = new System.Drawing.Size(151, 17);
 			this._description.TabIndex = 24;
 			this._description.Text = "Description goes here.";
-			//
+			// 
 			// _reminder
-			//
+			// 
 			this._reminder.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._reminder.AutoEllipsis = true;
 			this._reminder.AutoSize = true;
@@ -164,21 +164,21 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._reminder.Size = new System.Drawing.Size(242, 18);
 			this._reminder.TabIndex = 26;
 			this._reminder.Text = "\"Don\'t translate\" warning goes here.";
-			//
+			// 
 			// label5
-			//
+			// 
 			this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.label5.AutoSize = true;
 			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
 			this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(118)))), ((int)(((byte)(17)))));
-			this.label5.Location = new System.Drawing.Point(536, 43);
+			this.label5.Location = new System.Drawing.Point(530, 43);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(112, 16);
 			this.label5.TabIndex = 16;
 			this.label5.Text = "(Page Down Key)";
-			//
+			// 
 			// _meaningLabel
-			//
+			// 
 			this._meaningLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._meaningLabel.AutoSize = true;
 			this._meaningLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.75F, System.Drawing.FontStyle.Bold);
@@ -187,9 +187,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._meaningLabel.Size = new System.Drawing.Size(63, 15);
 			this._meaningLabel.TabIndex = 19;
 			this._meaningLabel.Text = "Meaning";
-			//
+			// 
 			// tableLayoutPanel1
-			//
+			// 
 			this.tableLayoutPanel1.AutoSize = true;
 			this.tableLayoutPanel1.ColumnCount = 3;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -204,11 +204,11 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(651, 103);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(645, 103);
 			this.tableLayoutPanel1.TabIndex = 28;
-			//
+			// 
 			// tableLayoutPanel2
-			//
+			// 
 			this.tableLayoutPanel2.AutoSize = true;
 			this.tableLayoutPanel2.ColumnCount = 1;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -221,33 +221,33 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel2.RowCount = 2;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(440, 66);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(434, 54);
 			this.tableLayoutPanel2.TabIndex = 29;
-			//
+			// 
 			// _questionIndicator
-			//
+			// 
 			this._questionIndicator.AutoSize = true;
 			this._questionIndicator.BulletColor = System.Drawing.Color.Azure;
 			this._questionIndicator.BulletColorEnd = System.Drawing.Color.MediumBlue;
 			this._questionIndicator.BulletPadding = new System.Windows.Forms.Padding(1);
-			this._questionIndicator.Location = new System.Drawing.Point(3, 36);
+			this._questionIndicator.Location = new System.Drawing.Point(3, 30);
 			this._questionIndicator.Name = "_questionIndicator";
 			this._questionIndicator.Size = new System.Drawing.Size(70, 7);
 			this._questionIndicator.TabIndex = 0;
 			this._questionIndicator.TabStop = false;
-			//
+			// 
 			// panel1
-			//
+			// 
 			this.panel1.Controls.Add(this._btnNext);
 			this.panel1.Controls.Add(this._btnPrevious);
 			this.panel1.ForeColor = System.Drawing.Color.Maroon;
-			this.panel1.Location = new System.Drawing.Point(449, 3);
+			this.panel1.Location = new System.Drawing.Point(443, 3);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(81, 97);
 			this.panel1.TabIndex = 30;
-			//
+			// 
 			// _btnNext
-			//
+			// 
 			this._btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._btnNext.Image = global::WeSay.LexicalTools.Properties.Resources.right_arrow;
 			this._btnNext.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -257,9 +257,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._btnNext.TabIndex = 14;
 			this._btnNext.UseVisualStyleBackColor = true;
 			this._btnNext.Click += new System.EventHandler(this._btnNext_Click);
-			//
+			// 
 			// _btnPrevious
-			//
+			// 
 			this._btnPrevious.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this._btnPrevious.BackColor = System.Drawing.Color.Transparent;
 			this._btnPrevious.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -275,11 +275,11 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._btnPrevious.TabIndex = 13;
 			this._btnPrevious.UseVisualStyleBackColor = false;
 			this._btnPrevious.Click += new System.EventHandler(this._btnPrevious_Click);
-			//
+			// 
 			// tableLayoutPanel5
-			//
-			this.tableLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			// 
+			this.tableLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel5.AutoSize = true;
 			this.tableLayoutPanel5.ColumnCount = 2;
 			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -292,9 +292,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel5.Size = new System.Drawing.Size(648, 39);
 			this.tableLayoutPanel5.TabIndex = 30;
-			//
+			// 
 			// tableLayoutPanel6
-			//
+			// 
 			this.tableLayoutPanel6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel6.AutoSize = true;
 			this.tableLayoutPanel6.ColumnCount = 2;
@@ -311,14 +311,20 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel6.Size = new System.Drawing.Size(477, 30);
 			this.tableLayoutPanel6.TabIndex = 1;
-			//
+			// 
 			// _vernacularBox
-			//
+			// 
 			this._vernacularBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._vernacularBox.AutoSize = true;
 			this._vernacularBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._vernacularBox.BackColor = System.Drawing.Color.Maroon;
 			this._vernacularBox.ColumnCount = 3;
+			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._vernacularBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -455,14 +461,20 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._vernacularBox.Size = new System.Drawing.Size(402, 0);
 			this._vernacularBox.TabIndex = 1;
 			this._vernacularBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this._boxVernacularWord_KeyDown);
-			//
+			// 
 			// _meaningBox
-			//
+			// 
 			this._meaningBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._meaningBox.AutoSize = true;
 			this._meaningBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._meaningBox.BackColor = System.Drawing.Color.Maroon;
 			this._meaningBox.ColumnCount = 3;
+			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._meaningBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -602,9 +614,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._meaningBox.Size = new System.Drawing.Size(402, 0);
 			this._meaningBox.TabIndex = 1;
 			this._meaningBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this._boxVernacularWord_KeyDown);
-			//
+			// 
 			// tableLayoutPanel8
-			//
+			// 
 			this.tableLayoutPanel8.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.tableLayoutPanel8.AutoSize = true;
 			this.tableLayoutPanel8.ColumnCount = 2;
@@ -618,9 +630,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel8.Size = new System.Drawing.Size(159, 33);
 			this.tableLayoutPanel8.TabIndex = 32;
-			//
+			// 
 			// _btnAddWord
-			//
+			// 
 			this._btnAddWord.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this._btnAddWord.BackColor = System.Drawing.Color.Transparent;
 			this._btnAddWord.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
@@ -636,9 +648,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._btnAddWord.TabIndex = 10;
 			this._btnAddWord.UseVisualStyleBackColor = false;
 			this._btnAddWord.Click += new System.EventHandler(this._btnAddWord_Click);
-			//
+			// 
 			// tableLayoutPanel7
-			//
+			// 
 			this.tableLayoutPanel7.ColumnCount = 1;
 			this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel7.Controls.Add(this._instructionLabel, 0, 0);
@@ -662,17 +674,17 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel7.Size = new System.Drawing.Size(654, 386);
 			this.tableLayoutPanel7.TabIndex = 31;
-			//
+			// 
 			// _listViewWords
-			//
+			// 
 			this._listViewWords.ColumnWidth = 100;
 			this._listViewWords.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._listViewWords.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this._listViewWords.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._listViewWords.ItemHeight = 20;
 			this._listViewWords.Items.AddRange(new object[] {
-			listViewItem7,
-			listViewItem8});
+            listViewItem61,
+            listViewItem62});
 			this._listViewWords.ItemToNotDrawYet = null;
 			this._listViewWords.Location = new System.Drawing.Point(3, 179);
 			this._listViewWords.MultiColumn = true;
@@ -681,9 +693,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._listViewWords.TabIndex = 17;
 			this._listViewWords.Click += new System.EventHandler(this.OnListViewWords_Click);
 			this._listViewWords.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this._listViewWords_KeyPress);
-			//
+			// 
 			// _flyingLabel
-			//
+			// 
 			this._flyingLabel.BackColor = System.Drawing.Color.Transparent;
 			this._flyingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
 			this._flyingLabel.Location = new System.Drawing.Point(0, 0);
@@ -691,15 +703,21 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._flyingLabel.Size = new System.Drawing.Size(100, 23);
 			this._flyingLabel.TabIndex = 25;
 			this._flyingLabel.Visible = false;
-			//
+			// 
 			// multiTextControl2
-			//
-			this.multiTextControl2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			// 
+			this.multiTextControl2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.multiTextControl2.AutoSize = true;
 			this.multiTextControl2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.multiTextControl2.BackColor = System.Drawing.Color.Maroon;
 			this.multiTextControl2.ColumnCount = 3;
+			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.multiTextControl2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -839,15 +857,21 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.multiTextControl2.Size = new System.Drawing.Size(200, 0);
 			this.multiTextControl2.TabIndex = 1;
 			this.multiTextControl2.KeyDown += new System.Windows.Forms.KeyEventHandler(this._boxVernacularWord_KeyDown);
-			//
+			// 
 			// multiTextControl1
-			//
-			this.multiTextControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			// 
+			this.multiTextControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.multiTextControl1.AutoSize = true;
 			this.multiTextControl1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.multiTextControl1.BackColor = System.Drawing.Color.White;
 			this.multiTextControl1.ColumnCount = 3;
+			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.multiTextControl1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -986,15 +1010,21 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.multiTextControl1.ShowAnnotationWidget = false;
 			this.multiTextControl1.Size = new System.Drawing.Size(200, 0);
 			this.multiTextControl1.TabIndex = 27;
-			//
+			// 
 			// multiTextControl3
-			//
-			this.multiTextControl3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			// 
+			this.multiTextControl3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.multiTextControl3.AutoSize = true;
 			this.multiTextControl3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.multiTextControl3.BackColor = System.Drawing.Color.Maroon;
 			this.multiTextControl3.ColumnCount = 3;
+			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.multiTextControl3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -1137,9 +1167,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.multiTextControl3.Size = new System.Drawing.Size(140, 0);
 			this.multiTextControl3.TabIndex = 1;
 			this.multiTextControl3.KeyDown += new System.Windows.Forms.KeyEventHandler(this._boxVernacularWord_KeyDown);
-			//
+			// 
 			// GatherBySemanticDomainsControl
-			//
+			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.Controls.Add(this.tableLayoutPanel7);
@@ -1174,7 +1204,8 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 
 
 		private MultiTextControl _vernacularBox;
-		private System.Windows.Forms.ComboBox _domainListComboBox;
+//		private System.Windows.Forms.ComboBox _domainListComboBox;
+		private GeckoComboBox _domainListComboBox;
 		private System.Windows.Forms.Label label3;
 		private WeSayListBox _listViewWords;
 		private System.Windows.Forms.Label label4;

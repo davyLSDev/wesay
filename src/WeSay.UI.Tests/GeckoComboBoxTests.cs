@@ -51,64 +51,6 @@ namespace WeSay.UI.Tests
 		}
 
 		[Test]
-		public void SetHtmlTest()
-		{
-			uint j = 0;
-			int index = 0;
-			String value ="";
-			GeckoSelectElement selectElement;
-			IWritingSystemDefinition ws = WritingSystemDefinition.Parse("fr");
-			var comboBox = new GeckoComboBox(ws, "ControlUnderTest");
-			Assert.IsNotNull(comboBox);
-			Assert.AreSame(ws, comboBox.WritingSystem);
-			var html = new StringBuilder();
-			html.Append("<html><header><meta charset=\"UTF-8\"></head><body style='background:{0}' id='mainbody'><div style='min-height:20px' id='main' name='textArea' contentEditable='false'>");
-			html.Append("<select id='cars'><option value=\"volvo\">Volvo</option><option value=\"saab\">Saab</option><option value=\"toyota\">Toyota</option></select>");
-			html.Append("</div></body></html>");
-
-			comboBox.SetHtml(html.ToString());
-
-			Application.DoEvents();
-		
-
-			_window.Controls.Add((GeckoComboBox)comboBox);
-			_window.Show();
-			ControlTester t = new ControlTester("ControlUnderTest", _window);
-			KeyboardController keyboardController = new KeyboardController(t);
-			Application.DoEvents();
-			var content = comboBox.Browser.Document.GetElementById("cars");
-			while (content == null)
-			{
-				Application.DoEvents();
-				content = comboBox.Browser.Document.GetElementById("cars");
-			}
-			
-				if (content is GeckoSelectElement)
-				{
-					selectElement = (GeckoSelectElement)content;
-					j = selectElement.Options.Length;
-					selectElement.Focus();
-					Application.DoEvents();
-					keyboardController.Press("{DOWN}");
-					keyboardController.Release("{DOWN}");
-					Application.DoEvents();
-					index = selectElement.SelectedIndex;
-					value = selectElement.Value;
-					Assert.IsTrue(j == 3);
-					Assert.IsTrue(index == 1);
-					Assert.IsTrue(value.Equals("saab"));
-					keyboardController.Press("{DOWN}");
-					keyboardController.Release("{DOWN}");
-					Application.DoEvents();
-					index = selectElement.SelectedIndex;
-					value = selectElement.Value;
-					Application.DoEvents();
-				}
-				Assert.IsTrue(j == 3);
-				Assert.IsTrue(index == 2);
-				Assert.IsTrue(value.Equals("toyota"));
-		}
-		[Test]
 		public void TestAddItem()
 		{
 			int j = 0;
@@ -178,20 +120,7 @@ namespace WeSay.UI.Tests
 			Assert.Throws<InvalidOperationException>(() => ws = textBox.WritingSystem);
 		}
 
-		[Test]
-		public void WritingSystem_Unassigned_Focused_Throws()
-		{
-			var textBox = new GeckoComboBox();
-			Assert.Throws<InvalidOperationException>(() => textBox.AssignKeyboardFromWritingSystem());
-		}
 
-		[Test]
-		public void WritingSystem_Unassigned_Unfocused_Throws()
-		{
-			var textBox = new GeckoComboBox();
-			Assert.Throws<InvalidOperationException>(() => textBox.ClearKeyboard());
-			ShutDownXulRunner();
-		}
 		public static void SetUpXulRunner()
 		{
 			try
