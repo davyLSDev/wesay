@@ -30,10 +30,11 @@ namespace WeSay.UI.TextBoxes
 		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
 		private EventHandler<GeckoDomEventArgs> _domBlurHandler;
 		private EventHandler _domDocumentChangedHandler;
+		private EventHandler _backColorChangedHandler;
 		private readonly string _nameForLogging;
 		private bool _inFocus;
 		private List<Object> _items;
-		private StringBuilder _itemHtml;
+		private readonly StringBuilder _itemHtml;
 		public event EventHandler SelectedValueChanged;
 
 		public GeckoComboBox()
@@ -73,6 +74,8 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
+			_backColorChangedHandler = new EventHandler(OnBackColorChanged);
+			this.BackColorChanged += _backColorChangedHandler;
 
 			this.ResumeLayout(false);
 		}
@@ -97,18 +100,19 @@ namespace WeSay.UI.TextBoxes
 
 		public void Closing()
 		{
-			_items.Clear();
-			_itemHtml.Clear();
+			Clear();
 			this.Load -= _loadHandler;
 			_browser.DomKeyDown -= _domKeyDownHandler;
 			_browser.DomFocus -= _domFocusHandler;
 			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
+			this.BackColorChanged -= _backColorChangedHandler;
 			_items = null;
 			_loadHandler = null;
 			_domKeyDownHandler = null;
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
+			_backColorChangedHandler = null;
 			_browser.Stop();
 			_browser.Dispose();
 			_browser = null;
@@ -200,14 +204,26 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		public void ListCompleted()
+		private String SelectStyle()
 		{
-			_initialSelectLoad = false;
 			String justification = "left";
 			if (_writingSystem != null && WritingSystem.RightToLeftScript)
 			{
 				justification = "right";
 			}
+
+			return String.Format("min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{2}; font-weight:{3}; background:{4}; width:{5}",
+				Font.Name,
+				Font.Size, justification,
+				Font.Bold ? "bold" : "normal",
+				System.Drawing.ColorTranslator.ToHtml(BackColor),
+				this.Width);
+			
+		}
+		public void ListCompleted()
+		{
+			_initialSelectLoad = false;
+
 			var html = new StringBuilder();
 			html.Append("<!DOCTYPE html>");
 			html.Append("<html><header><meta charset=\"UTF-8\">");
@@ -223,12 +239,7 @@ namespace WeSay.UI.TextBoxes
 			html.AppendFormat("<body style='background:{0}; width:{1}; overflow-x:hidden' id='mainbody'>", 
 				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)),
 				this.Width);
-			html.AppendFormat("<select id='itemList' style='min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{2}; font-weight:{3}; background:{4}; width:{5}' onchange=\"fireEvent('selectChanged','changed');\">",
-				Font.Name, 
-				Font.Size,justification, 
-				Font.Bold ? "bold": "normal",
-				System.Drawing.ColorTranslator.ToHtml(BackColor),
-				this.Width);
+			html.Append("<select id='itemList' style='" + SelectStyle() + "' onchange=\"fireEvent('selectChanged','changed');\">");
 			// The following line is removed at this point and done later as a change to the inner 
 			// html because otherwise the browser blows up because of the length of the 
 			// navigation line.  Leaving this and this comment in as a warning to anyone who
@@ -244,7 +255,18 @@ namespace WeSay.UI.TextBoxes
 				SelectedValueChanged.Invoke(this, null);
 			}
 		}
-
+		private void OnBackColorChanged(object sender, EventArgs e)
+		{
+			// if it's already loaded, change it
+			if (_initialSelectLoad)
+			{
+				var content = (GeckoSelectElement) _browser.Document.GetElementById("itemList");
+				if (content != null)
+				{
+					content.SetAttribute("style", SelectStyle());
+				}
+			}
+		}
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
 			_browserDocumentLoaded = true;  // Document loaded once
