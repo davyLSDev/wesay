@@ -42,6 +42,7 @@ namespace WeSay.UI
 			_stackAtConstruction = new StackTrace();
 #endif
 			InitializeComponent();
+			this.SuspendLayout();
 			Application.AddMessageFilter(this);
 
 			Name = "DetailList"; //for  debugging
@@ -56,6 +57,7 @@ namespace WeSay.UI
 
 			_layouters = new List<IDisposable>();
 
+			this.ResumeLayout(false);
 			//CellPaint += OnCellPaint;
 			//var rand = new Random();
 			//BackColor = Color.FromArgb(255, rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255));
@@ -80,33 +82,55 @@ namespace WeSay.UI
 			set
 			{
 				SuspendLayout();
+#if __MonoCS__
+				if (value > LabelColumnWidth)
+					ShrinkEditControlWidths((int)(value - LabelColumnWidth));
+#endif
 				if (value != LabelColumnWidth)
 				{
 					ColumnStyles[0].Width = value;
-				}
-				foreach (var detailList in GetChildDetailLists())
-				{
-					detailList.LabelColumnWidth = value;
 				}
 				ResumeLayout();
 			}
 
 		}
-		private List<DetailList> GetChildDetailLists()
+
+#if __MonoCS__
+		/// <summary>
+		/// Shrink the edit control widths to make up for the increased width of the labels.
+		/// </summary>
+		/// <remarks>
+		/// Microsoft .Net TableLayoutPanel code handles nested tables better than Mono -- this
+		/// adjustment isn't needed there.  This is needed primarily when converting ghost
+		/// entries to real entries in the Dictionary Browse & Edit tool.
+		/// </remarks>
+		void ShrinkEditControlWidths(int shrinkage)
 		{
-			var lists = new List<DetailList>();
 			for (int row = 0; row < RowCount; row++)
 			{
-				var control = GetFirstControlInRow(row);
-				if (control is DetailList)
+				var c = GetEditControlFromRow(row);
+				if (c is MultiTextControl)
 				{
-					var detailList = ((DetailList)control);
-					lists.Add(detailList);
+					if (c.Width > shrinkage)
+					{
+						c.Width = c.Width - shrinkage;
+						// When the control resizes, its internal boxes resize automatically,
+						// so we need to shrink each of them as well.
+						foreach (var box in (c as MultiTextControl).TextBoxes)
+						{
+							if (box.Width > shrinkage)
+								box.Width = box.Width - shrinkage;
+						}
+					}
+				}
+				else if (c is TextBox)
+				{
+					if (c.Width > shrinkage)
+						c.Width = c.Width - shrinkage;
 				}
 			}
-			return lists;
 		}
-
+#endif
 
 		public int WidestLabelWidthWithMargin
 		{
