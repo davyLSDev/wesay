@@ -58,7 +58,15 @@ namespace WeSay.UI
 				//review
 				if (_control.SelectedItem != null)
 				{
-					string key = ((Option.OptionDisplayProxy) _control.SelectedItem).Key;
+					string key = "";
+					if (ConfiguredListItem(_control.SelectedItem))
+					{
+						key = ((Option.OptionDisplayProxy) _control.SelectedItem).Key;
+					}
+					else
+					{
+						key = (String) _control.SelectedItem;
+					}
 					// todo: something like this                   if (String.IsNullOrEmpty(key))
 					//                    {
 					//                        return null;// make "unknown" option be the same as if not set (at least as far as we can do that from here)
@@ -78,27 +86,46 @@ namespace WeSay.UI
 				//}
 				for (int i = 0; i < _control.Items.Count; i++)
 				{
-					var proxy = (Option.OptionDisplayProxy) _control.Items[i];
-					if (proxy.Key.Equals(value, StringComparison.OrdinalIgnoreCase))
+					String selectedItemText = "";
+					if (ConfiguredListItem(_control.Items[i]))
+					{
+						selectedItemText = ((Option.OptionDisplayProxy) _control.Items[i]).Key;
+					}
+					else
+					{
+						selectedItemText = (String) _control.Items[i];
+					}
+					if (selectedItemText.Equals(value, StringComparison.OrdinalIgnoreCase))
 					{
 						_control.SelectedIndex = i;
-						SetStatusColor();
+						SetStatusColor(ConfiguredListItem(_control.Items[i]));
 						return;
 					}
 				}
 
 				//Didn't find it
-
-				_control.Text = value;
-				SetStatusColor(); //must do this before trying to change to a non-list value
+				if (value.Length > 0)
+				{
+					_control.AddItem(value);
+					_control.SelectedIndex = _control.Items.Count - 1;
+					SetStatusColor(false); //must do this before trying to change to a non-list value
+				}
+				else
+				{
+					SetStatusColor(true);
+				}
 			}
 		}
 
-		private void SetStatusColor()
+		private bool ConfiguredListItem(Object item)
 		{
-			if (Value != null && Value.Length > 0 && _control.SelectedIndex == -1)
+			return (item is Option.OptionDisplayProxy);
+		}
+
+		private void SetStatusColor(bool configuredItem)
+		{
+			if (!configuredItem)
 			{
-				// TODO Look at this
 				_control.BackColor = Color.Red;
 			}
 			else
@@ -142,9 +169,9 @@ namespace WeSay.UI
 				_control.AddItem(o.GetDisplayProxy(_preferredWritingSystem.Id));
 			}
 			_control.BackColor = Color.White;
-			_control.ListCompleted();
 
 			Value = selectedOptionRef.Value;
+			_control.ListCompleted();
 
 			_control.SelectedValueChanged += OnSelectedValueChanged;
 
@@ -171,7 +198,7 @@ namespace WeSay.UI
 		private void OnSelectedValueChanged(object sender, EventArgs e)
 		{
 			Logger.WriteMinorEvent("SingleOptionControl_SelectionChanged ({0})", _nameForLogging);
-			SetStatusColor();
+			SetStatusColor(ConfiguredListItem(_control.SelectedItem));
 			if (ValueChanged != null)
 			{
 				ValueChanged.Invoke(this, null);
