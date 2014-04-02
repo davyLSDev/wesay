@@ -30,6 +30,7 @@ namespace WeSay.UI.TextBoxes
 		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
 		private EventHandler<GeckoDomEventArgs> _domBlurHandler;
 		private EventHandler _domDocumentChangedHandler;
+		private EventHandler<GeckoDomEventArgs> _domClickHandler;
 		private readonly string _nameForLogging;
 		private bool _inFocus;
 		private List<Object> _items;
@@ -73,7 +74,10 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
-
+#if __MonoCS__
+			_domClickHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomClick);
+			_browser.DomClick += _domClickHandler;
+#endif
 			this.ResumeLayout(false);
 		}
 
@@ -104,6 +108,10 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomFocus -= _domFocusHandler;
 			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
+#if __MonoCS__
+			_browser.DomClick -= _domClickHandler;
+			_domClickHandler = null;
+#endif
 			_items = null;
 			_loadHandler = null;
 			_domKeyDownHandler = null;
@@ -245,6 +253,11 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
+		private void _browser_DomClick(object sender, GeckoDomEventArgs e)
+		{
+			_browser.Focus ();
+		}
+
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
 			_browserDocumentLoaded = true;  // Document loaded once
@@ -282,9 +295,7 @@ namespace WeSay.UI.TextBoxes
 		private delegate void ChangeFocusDelegate(GeckoSelectElement ctl);
 		private void _browser_DomFocus(object sender, GeckoDomEventArgs e)
 		{
-#if DEBUG
-			Debug.WriteLine("Got Focus: " + Text);
-#endif
+//			Console.WriteLine("Got Focus: " );
 			var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
 			if (content != null)
 			{
@@ -294,9 +305,6 @@ namespace WeSay.UI.TextBoxes
 				if (!_inFocus)
 				{
 					_inFocus = true;
-#if DEBUG
-					Debug.WriteLine("Got Focus2: " + Text);
-#endif
 					_selectElement = (GeckoSelectElement)content;
 					this.BeginInvoke(new ChangeFocusDelegate(changeFocus), _selectElement);
 				}
@@ -305,16 +313,10 @@ namespace WeSay.UI.TextBoxes
 		private void _browser_DomBlur(object sender, GeckoDomEventArgs e)
 		{
 			_inFocus = false;
-#if DEBUG
-			Debug.WriteLine("Got Blur: " + Text);
-#endif
 		}
 
 		private void changeFocus(GeckoSelectElement ctl)
 		{
-#if DEBUG
-			Debug.WriteLine("Change Focus: " + Text);
-#endif
 			ctl.Focus();
 		}
 
@@ -326,9 +328,6 @@ namespace WeSay.UI.TextBoxes
 				if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
 				{
 					int a = ParentForm.Controls.Count;
-#if DEBUG
-					Debug.WriteLine ("Got a Tab Key " );
-#endif
 					if (e.ShiftKey)
 					{
 						if (!ParentForm.SelectNextControl(this, false, true, true, true))
@@ -361,9 +360,6 @@ namespace WeSay.UI.TextBoxes
 			_browser.AddMessageEventListener("selectChanged", ((string s) => this.OnSelectedValueChanged(s)));
 			if (_pendingHtmlLoad != null)
 			{
-#if DEBUG
-				Debug.WriteLine("Load: " + _pendingHtmlLoad);
-#endif
 				SetHtml(_pendingHtmlLoad);
 				_pendingHtmlLoad = null;
 			}
@@ -377,13 +373,11 @@ namespace WeSay.UI.TextBoxes
 			}
 			else
 			{
-				Debug.WriteLine("SetHTML: " + html);
 				const string type = "text/html";
 				var bytes = System.Text.Encoding.UTF8.GetBytes(html);
 				_browser.Navigate(string.Format("data:{0};base64,{1}", type, Convert.ToBase64String(bytes)),  
 					GeckoLoadFlags.BypassHistory);
 
-//				_browser.LoadHtml(html);
 			}
 				
 		}
