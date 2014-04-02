@@ -198,6 +198,18 @@
     <Compile Include="TextBoxes\GeckoComboBox.Designer.cs">
       <DependentUpon>GeckoComboBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextBoxes\GeckoListBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextBoxes\GeckoListBox.designer.cs">
+      <DependentUpon>GeckoListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextBoxes\GeckoListView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextBoxes\GeckoListView.Designer.cs">
+      <DependentUpon>GeckoListView.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextBoxes\IControlThatKnowsWritingSystem.cs" />
     <Compile Include="WeSayListView.cs">
       <SubType>Component</SubType>
@@ -312,6 +324,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TextBoxes\GeckoComboBox.resx">
       <DependentUpon>GeckoComboBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextBoxes\GeckoListBox.resx">
+      <DependentUpon>GeckoListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextBoxes\GeckoListView.resx">
+      <DependentUpon>GeckoListView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextBoxes\MultiTextControl.resx">
       <DependentUpon>MultiTextControl.cs</DependentUpon>

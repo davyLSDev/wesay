@@ -46,9 +46,11 @@ namespace WeSay.LexicalTools.GatherByWordList
 
 
 			_verticalWordListView.WritingSystem = task.PromptingWritingSystem;
+			_verticalWordListView.MaxLength = 18;
+			_verticalWordListView.MinLength = 10;  // Space fill to this length
 			_verticalWordListView.DataSource = task.Words;
 			UpdateStuff();
-			_verticalWordListView.SelectedIndexChanged += new EventHandler(OnWordsList_SelectedIndexChanged);
+			_verticalWordListView.SelectedValueChanged += new EventHandler(OnWordsList_SelectedIndexChanged);
 
 			_flyingLabel.Font = _vernacularBox.TextBoxes[0].Font;
 			_flyingLabel.Finished += OnAnimator_Finished;

@@ -80,7 +80,10 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			_searchTextBoxControl.TextBox.AutoCompleteChoiceSelected += OnSearchText_AutoCompleteChoiceSelected;
 			_searchTextBoxControl.FindButton.Click += OnFind_Click;
 
-			_recordsListBox.ItemSelectionChanged += OnRecordsListBoxItemSelectionChanged;
+			//_recordsListBox.ItemSelectionChanged += OnRecordsListBoxItemSelectionChanged;
+			_recordsListBox.SelectedValueChanged += OnRecordsListBoxItemSelectionChanged;
+			_recordsListBox.MinLength = 10;
+			_recordsListBox.MaxLength = 20;
 
 			_splitter.SetMemory(memory);
 			SetupEntryViewControl(entryViewControlFactory);
@@ -234,8 +237,8 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 
 			LoadRecords();
 
-			_recordsListBox.RetrieveVirtualItem -= OnRetrieveVirtualItemEvent;
-			_recordsListBox.RetrieveVirtualItem += OnRetrieveVirtualItemEvent;
+//			_recordsListBox.RetrieveVirtualItem -= OnRetrieveVirtualItemEvent;
+//			_recordsListBox.RetrieveVirtualItem += OnRetrieveVirtualItemEvent;
 
 			//WHy was this here (I'm (JH) scared to remove it)?
 			// it is costing us an extra second, as we set the record
@@ -305,6 +308,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 				_records = _lexEntryRepository.GetAllEntriesSortedByDefinitionOrGloss(_listWritingSystem);
 			}
 			 _findTextAdapter.Items = _records;
+
 			_recordsListBox.DataSource = new List<RecordToken<LexEntry>>(_records);
 			if (selectedItem != null)
 			{
@@ -312,7 +316,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			}
 		}
 
-		private void OnRetrieveVirtualItemEvent(object sender, RetrieveVirtualItemEventArgs e)
+/*		private void OnRetrieveVirtualItemEvent(object sender, RetrieveVirtualItemEventArgs e)
 		{
 			RecordToken<LexEntry> recordToken = _records[e.ItemIndex];
 			var displayString = (string) recordToken["Form"];
@@ -342,7 +346,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			}
 			e.Item.Text = displayString;
 		}
-
+*/
 		private static IEnumerable FindClosestAndNextClosestAndPrefixedForms(string text,
 																			 IEnumerable items,
 																			 IDisplayStringAdaptor
@@ -468,11 +472,13 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 
 		private int _recordListBoxIndexBeforeChange;
 
-		private void OnRecordsListBoxItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+//		private void OnRecordsListBoxItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+		private void OnRecordsListBoxItemSelectionChanged(object sender, EventArgs e)
 		{
-			if (e.IsSelected)
-			{
-				if (e.ItemIndex == -1 && !_entryViewControl.DataSource.IsBeingDeleted)
+//			if (e.IsSelected)
+//			{
+//				if (e.ItemIndex == -1 && !_entryViewControl.DataSource.IsBeingDeleted)
+				if (_recordsListBox.SelectedIndex == -1 && !_entryViewControl.DataSource.IsBeingDeleted)
 				{
 					_recordsListBox.SelectedIndex = _recordListBoxIndexBeforeChange;
 					return;
@@ -493,7 +499,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 
 				UpdateDisplay();
 				_recordListBoxIndexBeforeChange = CurrentIndex;
-			}
+//			}
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -594,7 +600,10 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			}
 			Debug.Assert(selectIndex != -1);
 			_recordsListBox.SelectedIndex = selectIndex;
-			//_entryViewControl.Focus();
+			SetRecordToBeEdited(CurrentEntry);
+
+			UpdateDisplay();
+			_recordListBoxIndexBeforeChange = CurrentIndex;			//_entryViewControl.Focus();
 			_entryViewControl.SelectOnCorrectControl();
 
 			_logger.WriteConciseHistoricalEvent("Added Word");
@@ -681,6 +690,10 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			_recordsListBox.SelectedIndex = _records.Count == CurrentIndex + 1 ? CurrentIndex - 1 : CurrentIndex + 1;
 			_lexEntryRepository.DeleteItem(idToDelete);
 			LoadRecords();
+			SetRecordToBeEdited(CurrentEntry);
+
+			UpdateDisplay();
+			_recordListBoxIndexBeforeChange = CurrentIndex;			//_entryViewControl.Focus();
 
 			_entryViewControl.SelectOnCorrectControl();
 		}
@@ -719,7 +732,8 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 		{
 			if (disposing && !IsDisposed)
 			{
-				_recordsListBox.ItemSelectionChanged -= OnRecordsListBoxItemSelectionChanged;
+				//_recordsListBox.ItemSelectionChanged -= OnRecordsListBoxItemSelectionChanged;
+				_recordsListBox.SelectedValueChanged -= OnRecordsListBoxItemSelectionChanged;
 
 				SaveAndCleanUpPreviousEntry();
 

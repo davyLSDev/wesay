@@ -107,7 +107,6 @@ namespace WeSay.UI.TextBoxes
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
 			_divElement = null;
-			_browser.Stop();
 			_browser.Dispose();
 			_browser = null;
 		}
@@ -148,9 +147,6 @@ namespace WeSay.UI.TextBoxes
 		private delegate void ChangeFocusDelegate(GeckoDivElement ctl);
 		private void _browser_DomFocus(object sender, GeckoDomEventArgs e)
 		{
-#if DEBUG
-			Debug.WriteLine("Got Focus: " + Text);
-#endif
 			var content = _browser.Document.GetElementById("main");
 			if (content != null)
 			{
@@ -171,9 +167,6 @@ namespace WeSay.UI.TextBoxes
 		private void _browser_DomBlur(object sender, GeckoDomEventArgs e)
 		{
 			_inFocus = false;
-#if DEBUG
-			Debug.WriteLine("Got Blur: " + Text);
-#endif
 		}
 		private void _browser_DomClick(object sender, GeckoDomEventArgs e)
 		{
@@ -199,44 +192,18 @@ namespace WeSay.UI.TextBoxes
 			//			Debug.WriteLine(content.TextContent);
 			Text = content.TextContent;
 		}
+		
 
 		private void OnDomKeyDown(object sender, GeckoDomKeyEventArgs e)
 		{
 			if (_inFocus)
 			{
-				if (!MultiParagraph && e.KeyCode == 13) // carriage return
+				if (!MultiParagraph && e.KeyCode == (uint)Keys.Enter) // carriage return
 				{
 					e.Handled = true;
+					
 				}
-				else if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
-				{
-					int a = ParentForm.Controls.Count;
-#if DEBUG
-					Debug.WriteLine ("Got a Tab Key " + Text + " Count " + a.ToString() );
-#endif
-					if (e.ShiftKey)
-					{
-						if (!ParentForm.SelectNextControl(this, false, true, true, true))
-						{
-#if DEBUG
-							Debug.WriteLine("Failed to advance");
-#endif
-						}
-					}
-					else
-					{
-						if (!ParentForm.SelectNextControl(this, true, true, true, true))
-						{
-#if DEBUG
-							Debug.WriteLine("Failed to advance");
-#endif
-						}
-					}
-				}
-				else
-				{
-					this.RaiseKeyEvent(Keys.A, new KeyEventArgs(Keys.A));
-				}
+				OnKeyDown (new KeyEventArgs((Keys)e.KeyCode));
 			}
 		}
 
@@ -422,12 +389,12 @@ namespace WeSay.UI.TextBoxes
 			base.OnLeave(e);
 
 			// this.BackColor = System.Drawing.Color.White;
-//			ClearKeyboard();
+			ClearKeyboard();
 		 }
 		protected override void OnEnter(EventArgs e)
 		{
 			base.OnEnter(e);
-//			AssignKeyboardFromWritingSystem();
+			AssignKeyboardFromWritingSystem();
 		}
 
 	}

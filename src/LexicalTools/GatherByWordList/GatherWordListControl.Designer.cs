@@ -43,7 +43,7 @@ namespace WeSay.LexicalTools.GatherByWordList
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this._flyingLabel = new Palaso.UI.WindowsForms.Widgets.Flying.FlyingLabel();
-			this._verticalWordListView = new WeSay.UI.WeSayListView();
+			this._verticalWordListView = new WeSay.UI.TextBoxes.GeckoListView();
 			this._vernacularBox = new WeSay.UI.TextBoxes.MultiTextControl();
 			this._listViewOfWordsMatchingCurrentItem = new WeSay.UI.WeSayListBox();
 			this._congratulationsControl = new WeSay.LexicalTools.CongratulationsControl();
@@ -140,7 +140,7 @@ namespace WeSay.LexicalTools.GatherByWordList
 			this._verticalWordListView.Name = "_verticalWordListView";
 			this._verticalWordListView.Size = new System.Drawing.Size(177, 346);
 			this._verticalWordListView.TabIndex = 11;
-			this._verticalWordListView.View = System.Windows.Forms.View.SmallIcon;
+			//this._verticalWordListView.View = System.Windows.Forms.View.SmallIcon;
 			//
 			// _vernacularBox
 			//
@@ -294,7 +294,7 @@ namespace WeSay.LexicalTools.GatherByWordList
 		private MultiTextControl _vernacularBox;
 		private CongratulationsControl _congratulationsControl;
 		private FlyingLabel _flyingLabel;
-		private WeSayListView _verticalWordListView;
+		private GeckoListView _verticalWordListView;
 		private RectangularImageButton _btnNextWord;
 		private RectangularImageButton _btnAddWord;
 

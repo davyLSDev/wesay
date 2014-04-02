@@ -1,8 +1,6 @@
-using System.Windows.Forms;
-
-namespace WeSay.UI
+﻿namespace WeSay.UI.TextBoxes
 {
-	partial class DetailList
+	partial class GeckoListView
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -15,18 +13,12 @@ namespace WeSay.UI
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+            Closing();
+            if (disposing && (components != null))
 			{
-				ClearLayouters();
-				LabelsChanged -= OnLabelsChanged;
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components.Dispose();
 			}
-			Application.RemoveMessageFilter(this);
 			base.Dispose(disposing);
-			this._disposed = true;
 		}
 
 		#region Component Designer generated code
@@ -37,20 +29,21 @@ namespace WeSay.UI
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.SuspendLayout();
-			//
-			// DetailList
-			//
-			AutoScroll = false; //but we need to make sure children are never wider than we are
-			this.Name = "DetailList";
-			ColumnCount = 3;
-			DoubleBuffered = true;
-
-			this.ResumeLayout(false);
+			// 
+			// GeckoListView
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.Color.LightGoldenrodYellow;
+			this.Margin = new System.Windows.Forms.Padding(0);
+			this.Name = "GeckoListView";
+			this.Size = new System.Drawing.Size(238, 10);
+//			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
 	}
 }

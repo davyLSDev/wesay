@@ -1,6 +1,7 @@
 using System.Windows.Forms;
 using WeSay.UI;
 using WeSay.UI.Buttons;
+using WeSay.UI.TextBoxes;
 
 namespace WeSay.LexicalTools.AddMissingInfo
 {
@@ -20,8 +21,9 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			if (disposing && !IsDisposed)
 			{
 
-				_todoRecordsListBox.ItemSelectionChanged -= OnTodoRecordSelectionChanged;
-				_completedRecordsListBox.ItemSelectionChanged -= OnCompletedRecordSelectionChanged;
+				//_todoRecordsListBox.ItemSelectionChanged -= OnTodoRecordSelectionChanged;
+				_todoRecordsListBox.SelectedValueChanged -= OnTodoRecordSelectionChanged;
+				_completedRecordsListBox.SelectedValueChanged -= OnCompletedRecordSelectionChanged;
 
 				if (CurrentEntry != null)
 				{
@@ -48,10 +50,10 @@ namespace WeSay.LexicalTools.AddMissingInfo
 
 			this._todoBox = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
-			this._todoRecordsListBox = new WeSay.UI.WeSayListView();
+			this._todoRecordsListBox = new WeSay.UI.TextBoxes.GeckoListView();
 			this._completedBox = new System.Windows.Forms.TableLayoutPanel();
 			this._completedRecordsLabel = new System.Windows.Forms.Label();
-			this._completedRecordsListBox = new WeSay.UI.WeSayListView();
+			this._completedRecordsListBox = new WeSay.UI.TextBoxes.GeckoListView();
 			this._entryViewAndButtons = new System.Windows.Forms.TableLayoutPanel();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.labelNextHotKey = new System.Windows.Forms.Label();
@@ -144,7 +146,7 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			this._todoRecordsListBox.Name = "_todoRecordsListBox";
 			this._todoRecordsListBox.Size = new System.Drawing.Size(120, 156);
 			this._todoRecordsListBox.TabIndex = 2;
-			this._todoRecordsListBox.View = System.Windows.Forms.View.SmallIcon;
+			//this._todoRecordsListBox.View = System.Windows.Forms.View.SmallIcon;
 			//
 			// _completedBox
 			//
@@ -183,7 +185,7 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			this._completedRecordsListBox.Name = "_completedRecordsListBox";
 			this._completedRecordsListBox.Size = new System.Drawing.Size(120, 203);
 			this._completedRecordsListBox.TabIndex = 3;
-			this._completedRecordsListBox.View = System.Windows.Forms.View.SmallIcon;
+			//this._completedRecordsListBox.View = System.Windows.Forms.View.SmallIcon;
 			//
 			// _entryViewAndButtons
 			//
@@ -307,12 +309,12 @@ namespace WeSay.LexicalTools.AddMissingInfo
 		private SplitContainer splitContainer1;
 		private SplitContainer splitContainer2;
 
-		internal WeSayListView _todoRecordsListBox;
+		internal GeckoListView _todoRecordsListBox;
 		private EntryViewControl _entryViewControl;
 		private CongratulationsControl _congratulationsControl;
 		private Label label1;
 		private Label _completedRecordsLabel;
-		internal WeSayListView _completedRecordsListBox;
+		internal GeckoListView _completedRecordsListBox;
 		private Label labelNextHotKey;
 		private TableLayoutPanel _todoBox;
 		private TableLayoutPanel _completedBox;

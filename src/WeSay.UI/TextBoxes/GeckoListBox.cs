@@ -13,7 +13,7 @@ using Palaso.WritingSystems;
 
 namespace WeSay.UI.TextBoxes
 {
-	public partial class GeckoComboBox : UserControl, IControlThatKnowsWritingSystem
+	public partial class GeckoListBox : UserControl, IControlThatKnowsWritingSystem
 	{
 		private GeckoWebBrowser _browser;
 		private bool _browserIsReadyToNavigate;
@@ -30,7 +30,6 @@ namespace WeSay.UI.TextBoxes
 		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
 		private EventHandler<GeckoDomEventArgs> _domBlurHandler;
 		private EventHandler _domDocumentChangedHandler;
-		private EventHandler<GeckoDomEventArgs> _domClickHandler;
 		private EventHandler _backColorChangedHandler;
 		private readonly string _nameForLogging;
 		private bool _inFocus;
@@ -38,7 +37,7 @@ namespace WeSay.UI.TextBoxes
 		private readonly StringBuilder _itemHtml;
 		public event EventHandler SelectedValueChanged;
 
-		public GeckoComboBox()
+		public GeckoListBox()
 		{
 			InitializeComponent();
 
@@ -59,7 +58,7 @@ namespace WeSay.UI.TextBoxes
 			if (designMode)
 				return;
 
-			Debug.WriteLine("New GeckoComboBox");
+			Debug.WriteLine("New GeckoListBox");
 			_browser = new GeckoWebBrowser();
 			_browser.Dock = DockStyle.Fill;
 			_browser.Parent = this;
@@ -75,17 +74,13 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
-#if __MonoCS__
-			_domClickHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomClick);
-			_browser.DomClick += _domClickHandler;
-#endif
 			_backColorChangedHandler = new EventHandler(OnBackColorChanged);
 			this.BackColorChanged += _backColorChangedHandler;
 
 			this.ResumeLayout(false);
 		}
 
-		public GeckoComboBox(IWritingSystemDefinition ws, string nameForLogging)
+		public GeckoListBox(IWritingSystemDefinition ws, string nameForLogging)
 			: this()
 		{
 			_nameForLogging = nameForLogging;
@@ -111,10 +106,6 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomFocus -= _domFocusHandler;
 			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
-#if __MonoCS__
-			_browser.DomClick -= _domClickHandler;
-			_domClickHandler = null;
-#endif
 			this.BackColorChanged -= _backColorChangedHandler;
 			_items = null;
 			_loadHandler = null;
@@ -122,6 +113,7 @@ namespace WeSay.UI.TextBoxes
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
 			_backColorChangedHandler = null;
+			_browser.Stop();
 			_browser.Dispose();
 			_browser = null;
 		}
@@ -247,7 +239,7 @@ namespace WeSay.UI.TextBoxes
 			html.AppendFormat("<body style='background:{0}; width:{1}; overflow-x:hidden' id='mainbody'>", 
 				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)),
 				this.Width);
-			html.Append("<select id='itemList' style='" + SelectStyle() + "' onchange=\"fireEvent('selectChanged','changed');\">");
+			html.Append("<select size='10' id='itemList' style='" + SelectStyle() + "' onchange=\"fireEvent('selectChanged','changed');\">");
 			// The following line is removed at this point and done later as a change to the inner 
 			// html because otherwise the browser blows up because of the length of the 
 			// navigation line.  Leaving this and this comment in as a warning to anyone who
@@ -263,12 +255,18 @@ namespace WeSay.UI.TextBoxes
 				SelectedValueChanged.Invoke(this, null);
 			}
 		}
-
-		private void _browser_DomClick(object sender, GeckoDomEventArgs e)
+		private void OnBackColorChanged(object sender, EventArgs e)
 		{
-			_browser.Focus ();
+			// if it's already loaded, change it
+			if (_initialSelectLoad)
+			{
+				var content = (GeckoSelectElement) _browser.Document.GetElementById("itemList");
+				if (content != null)
+				{
+					content.SetAttribute("style", SelectStyle());
+				}
+			}
 		}
-
 		private void _browser_DomDocumentChanged(object sender, EventArgs e)
 		{
 			_browserDocumentLoaded = true;  // Document loaded once
@@ -284,18 +282,6 @@ namespace WeSay.UI.TextBoxes
 				_pendingInitialIndex = -1;
 			}
 			AdjustHeight();
-		}
-		private void OnBackColorChanged(object sender, EventArgs e)
-		{
-			// if it's already loaded, change it
-			if (_initialSelectLoad)
-			{
-				var content = (GeckoSelectElement) _browser.Document.GetElementById("itemList");
-				if (content != null)
-				{
-					content.SetAttribute("style", SelectStyle());
-				}
-			}
 		}
 
 		void AdjustHeight()
@@ -318,7 +304,9 @@ namespace WeSay.UI.TextBoxes
 		private delegate void ChangeFocusDelegate(GeckoSelectElement ctl);
 		private void _browser_DomFocus(object sender, GeckoDomEventArgs e)
 		{
-//			Console.WriteLine("Got Focus: " );
+#if DEBUG
+			Debug.WriteLine("Got Focus: " + Text);
+#endif
 			var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
 			if (content != null)
 			{
@@ -328,6 +316,9 @@ namespace WeSay.UI.TextBoxes
 				if (!_inFocus)
 				{
 					_inFocus = true;
+#if DEBUG
+					Debug.WriteLine("Got Focus2: " + Text);
+#endif
 					_selectElement = (GeckoSelectElement)content;
 					this.BeginInvoke(new ChangeFocusDelegate(changeFocus), _selectElement);
 				}
@@ -336,10 +327,16 @@ namespace WeSay.UI.TextBoxes
 		private void _browser_DomBlur(object sender, GeckoDomEventArgs e)
 		{
 			_inFocus = false;
+#if DEBUG
+			Debug.WriteLine("Got Blur: " + Text);
+#endif
 		}
 
 		private void changeFocus(GeckoSelectElement ctl)
 		{
+#if DEBUG
+			Debug.WriteLine("Change Focus: " + Text);
+#endif
 			ctl.Focus();
 		}
 
@@ -351,6 +348,9 @@ namespace WeSay.UI.TextBoxes
 				if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
 				{
 					int a = ParentForm.Controls.Count;
+#if DEBUG
+					Debug.WriteLine ("Got a Tab Key " );
+#endif
 					if (e.ShiftKey)
 					{
 						if (!ParentForm.SelectNextControl(this, false, true, true, true))
@@ -383,6 +383,9 @@ namespace WeSay.UI.TextBoxes
 			_browser.AddMessageEventListener("selectChanged", ((string s) => this.OnSelectedValueChanged(s)));
 			if (_pendingHtmlLoad != null)
 			{
+#if DEBUG
+				Debug.WriteLine("Load: " + _pendingHtmlLoad);
+#endif
 				SetHtml(_pendingHtmlLoad);
 				_pendingHtmlLoad = null;
 			}
@@ -396,11 +399,13 @@ namespace WeSay.UI.TextBoxes
 			}
 			else
 			{
+				Debug.WriteLine("SetHTML: " + html);
 				const string type = "text/html";
 				var bytes = System.Text.Encoding.UTF8.GetBytes(html);
 				_browser.Navigate(string.Format("data:{0};base64,{1}", type, Convert.ToBase64String(bytes)),  
 					GeckoLoadFlags.BypassHistory);
 
+//				_browser.LoadHtml(html);
 			}
 				
 		}

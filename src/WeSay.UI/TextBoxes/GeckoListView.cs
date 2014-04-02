@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,12 +9,15 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Gecko;
 using Gecko.DOM;
+using Palaso.DictionaryServices.Model;
+using Palaso.Data;
+using Palaso.i18n;
 using Palaso.Reporting;
 using Palaso.WritingSystems;
 
 namespace WeSay.UI.TextBoxes
 {
-	public partial class GeckoComboBox : UserControl, IControlThatKnowsWritingSystem
+	public partial class GeckoListView : UserControl, IControlThatKnowsWritingSystem
 	{
 		private GeckoWebBrowser _browser;
 		private bool _browserIsReadyToNavigate;
@@ -24,21 +28,22 @@ namespace WeSay.UI.TextBoxes
 		private IWritingSystemDefinition _writingSystem;
 		private bool _keyPressed;
 		private GeckoSelectElement _selectElement;
-		private GeckoBodyElement _bodyElement;
+		private GeckoOptionElement _optionElement;
+		private int _optionHeight;
 		private EventHandler _loadHandler;
 		private EventHandler<GeckoDomKeyEventArgs> _domKeyDownHandler;
 		private EventHandler<GeckoDomEventArgs> _domFocusHandler;
 		private EventHandler<GeckoDomEventArgs> _domBlurHandler;
 		private EventHandler _domDocumentChangedHandler;
-		private EventHandler<GeckoDomEventArgs> _domClickHandler;
 		private EventHandler _backColorChangedHandler;
 		private readonly string _nameForLogging;
 		private bool _inFocus;
 		private List<Object> _items;
 		private readonly StringBuilder _itemHtml;
 		public event EventHandler SelectedValueChanged;
+		private IList _dataSource;
 
-		public GeckoComboBox()
+		public GeckoListView()
 		{
 			InitializeComponent();
 
@@ -54,12 +59,13 @@ namespace WeSay.UI.TextBoxes
 			_pendingInitialIndex = -1;
 			_items = new List<object>();
 			_itemHtml = new StringBuilder();
+			MaxLength = 50;  // Default value
 
 			var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			if (designMode)
 				return;
 
-			Debug.WriteLine("New GeckoComboBox");
+			Debug.WriteLine("New GeckoListView");
 			_browser = new GeckoWebBrowser();
 			_browser.Dock = DockStyle.Fill;
 			_browser.Parent = this;
@@ -75,17 +81,13 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomBlur += _domBlurHandler;
 			_domDocumentChangedHandler = new EventHandler(_browser_DomDocumentChanged);
 			_browser.DocumentCompleted += _domDocumentChangedHandler;
-#if __MonoCS__
-			_domClickHandler = new EventHandler<GeckoDomEventArgs>(_browser_DomClick);
-			_browser.DomClick += _domClickHandler;
-#endif
 			_backColorChangedHandler = new EventHandler(OnBackColorChanged);
 			this.BackColorChanged += _backColorChangedHandler;
 
 			this.ResumeLayout(false);
 		}
 
-		public GeckoComboBox(IWritingSystemDefinition ws, string nameForLogging)
+		public GeckoListView(IWritingSystemDefinition ws, string nameForLogging)
 			: this()
 		{
 			_nameForLogging = nameForLogging;
@@ -111,10 +113,6 @@ namespace WeSay.UI.TextBoxes
 			_browser.DomFocus -= _domFocusHandler;
 			_browser.DomBlur -= _domBlurHandler;
 			_browser.DocumentCompleted -= _domDocumentChangedHandler;
-#if __MonoCS__
-			_browser.DomClick -= _domClickHandler;
-			_domClickHandler = null;
-#endif
 			this.BackColorChanged -= _backColorChangedHandler;
 			_items = null;
 			_loadHandler = null;
@@ -129,7 +127,33 @@ namespace WeSay.UI.TextBoxes
 		public void AddItem(Object item)
 		{
 			_items.Add(item);
-			var paddedItem = Regex.Replace(item.ToString(), @"(?<=^\s*)\s", "&nbsp;");
+			var paddedItem = item.ToString();
+			if (paddedItem.Length < MinLength)
+			{
+				// Add characters to fill at the end of the string to the min length
+				if (_writingSystem != null && WritingSystem.RightToLeftScript)
+				{
+					paddedItem = paddedItem.PadLeft(MinLength);
+				}
+				else
+				{
+					paddedItem = paddedItem.PadRight(MinLength);					
+				}
+			}
+			if ((MaxLength > MinLength) && (paddedItem.Length > MaxLength))
+			{
+				string tempString = paddedItem;
+				if (_writingSystem != null && WritingSystem.RightToLeftScript)
+				{
+					paddedItem = String.Format("...{0}", paddedItem.Remove(MaxLength - 4));
+				}
+				else
+				{
+					paddedItem = String.Format("{0}...", paddedItem.Remove(MaxLength - 4));
+				}
+			}
+			paddedItem = Regex.Replace(paddedItem, @"(?<=^\s*)\s", "&nbsp;");
+			paddedItem = Regex.Replace(paddedItem, @"\s(?=\s*$)", "&nbsp;");
 			_itemHtml.AppendFormat("<option value=\"{0}\">{1}</option>", item.ToString().Trim(), paddedItem);
 		}
 
@@ -168,12 +192,9 @@ namespace WeSay.UI.TextBoxes
 			}
 			set
 			{
-				if (!_browserDocumentLoaded)
+				if (!_initialSelectLoad || !_browserDocumentLoaded || _browser.Document == null)
 				{
 					_pendingInitialIndex = value;
-				}
-				if (_browser.Document == null)
-				{
 					return;
 				}
 				var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
@@ -183,6 +204,11 @@ namespace WeSay.UI.TextBoxes
 				}
 			}
 		}
+
+		public int MaxLength { get; set; }
+
+		public int MinLength { get; set; }
+
 		public int Length
 		{
 			get
@@ -211,7 +237,11 @@ namespace WeSay.UI.TextBoxes
 				return null;				
 			}
 		}
-
+		protected override void OnResize(EventArgs e)
+		{
+			AdjustHeight();
+			base.OnResize(e);
+		}
 		private String SelectStyle()
 		{
 			String justification = "left";
@@ -219,10 +249,10 @@ namespace WeSay.UI.TextBoxes
 			{
 				justification = "right";
 			}
-
-			return String.Format("min-height:15px; font-family:{0}; font-size:{1}pt; text-align:{2}; font-weight:{3}; background:{4}; width:{5}",
-				Font.Name,
-				Font.Size, justification,
+			return String.Format("min-height:15px; width=30em; font-family:{0}; font-size:{1}pt; text-align:{2}; font-weight:{3}; background:{4}; width:{5}",
+				WritingSystem.DefaultFontName,
+				WritingSystem.DefaultFontSize,
+				justification,
 				Font.Bold ? "bold" : "normal",
 				System.Drawing.ColorTranslator.ToHtml(BackColor),
 				this.Width);
@@ -244,15 +274,17 @@ namespace WeSay.UI.TextBoxes
 			html.Append(" }");
 			html.Append("</script>");
 			html.Append("</head>");
-			html.AppendFormat("<body style='background:{0}; width:{1}; overflow-x:hidden' id='mainbody'>", 
-				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)),
+			html.AppendFormat("<body style='background:{0}; width:{1}' id='mainbody'>", 
+//				System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255,203,255,185)),
+				System.Drawing.ColorTranslator.ToHtml(Color.White),
 				this.Width);
-			html.Append("<select id='itemList' style='" + SelectStyle() + "' onchange=\"fireEvent('selectChanged','changed');\">");
+			html.Append("<select size='10' id='itemList' style='" + SelectStyle() + "' onchange=\"fireEvent('selectChanged','changed');\">");
 			// The following line is removed at this point and done later as a change to the inner 
 			// html because otherwise the browser blows up because of the length of the 
 			// navigation line.  Leaving this and this comment in as a warning to anyone who
 			// may be tempted to try the same thing.
 			// html.Append(_itemHtml);
+			html.Append("<option id='optionElement' value=\" \">&nbsp</option>");
 			html.Append("</select></body></html>");
 			SetHtml(html.ToString());
 		}
@@ -262,28 +294,6 @@ namespace WeSay.UI.TextBoxes
 			{
 				SelectedValueChanged.Invoke(this, null);
 			}
-		}
-
-		private void _browser_DomClick(object sender, GeckoDomEventArgs e)
-		{
-			_browser.Focus ();
-		}
-
-		private void _browser_DomDocumentChanged(object sender, EventArgs e)
-		{
-			_browserDocumentLoaded = true;  // Document loaded once
-			if (!_initialSelectLoad)
-			{
-				_initialSelectLoad = true;
-				var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
-				content.InnerHtml = _itemHtml.ToString();
-			}
-			if (_pendingInitialIndex > -1)
-			{
-				SelectedIndex = _pendingInitialIndex;
-				_pendingInitialIndex = -1;
-			}
-			AdjustHeight();
 		}
 		private void OnBackColorChanged(object sender, EventArgs e)
 		{
@@ -297,28 +307,63 @@ namespace WeSay.UI.TextBoxes
 				}
 			}
 		}
+		private void _browser_DomDocumentChanged(object sender, EventArgs e)
+		{
+			_browserDocumentLoaded = true;  // Document loaded once
+			AdjustHeight();
+			if (!_initialSelectLoad)
+			{
+				_initialSelectLoad = true;
+				var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
+				content.InnerHtml = _itemHtml.ToString();
+			}
+			if (_pendingInitialIndex > -1)
+			{
+				SelectedIndex = _pendingInitialIndex;
+				SelectedValueChanged.Invoke(this, null);
+				_pendingInitialIndex = -1;
+			}
+		}
 
 		void AdjustHeight()
 		{
-			if (_browser.Document == null)
+			if ((_browser == null) ||(_browser.Document == null))
 			{
 				return;
 			}
-			var content = _browser.Document.GetElementById("mainbody");
-			if (content != null)
+
+			if (_optionElement == null)
 			{
-				if (content is GeckoBodyElement)
+				var content = (GeckoOptionElement) _browser.Document.GetElementById("optionElement");
+				if (content != null)
 				{
-					_bodyElement = (GeckoBodyElement)content;
-					Height = _bodyElement.Parent.ScrollHeight;
+					_optionElement = (GeckoOptionElement) content;
+					_optionHeight = _optionElement.ClientHeight;
+					_selectElement = (GeckoSelectElement) _optionElement.Parent;
 				}
+				else
+				{
+					return;
+				}
+			}
+			var selectElement = (GeckoSelectElement) _browser.Document.GetElementById("itemList");
+			if (selectElement != null)
+			{
+				int numberOfEntries = (Height/_optionHeight) - 1;
+				if (numberOfEntries <= 0)
+				{
+					numberOfEntries = 10;
+				}
+				selectElement.Size = numberOfEntries;
 			}
 		}
 
 		private delegate void ChangeFocusDelegate(GeckoSelectElement ctl);
 		private void _browser_DomFocus(object sender, GeckoDomEventArgs e)
 		{
-//			Console.WriteLine("Got Focus: " );
+#if DEBUG
+			Debug.WriteLine("Got Focus: " + Text);
+#endif
 			var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
 			if (content != null)
 			{
@@ -328,6 +373,9 @@ namespace WeSay.UI.TextBoxes
 				if (!_inFocus)
 				{
 					_inFocus = true;
+#if DEBUG
+					Debug.WriteLine("Got Focus2: " + Text);
+#endif
 					_selectElement = (GeckoSelectElement)content;
 					this.BeginInvoke(new ChangeFocusDelegate(changeFocus), _selectElement);
 				}
@@ -336,10 +384,16 @@ namespace WeSay.UI.TextBoxes
 		private void _browser_DomBlur(object sender, GeckoDomEventArgs e)
 		{
 			_inFocus = false;
+#if DEBUG
+			Debug.WriteLine("Got Blur: " + Text);
+#endif
 		}
 
 		private void changeFocus(GeckoSelectElement ctl)
 		{
+#if DEBUG
+			Debug.WriteLine("Change Focus: " + Text);
+#endif
 			ctl.Focus();
 		}
 
@@ -348,32 +402,7 @@ namespace WeSay.UI.TextBoxes
 		{
 			if (_inFocus)
 			{
-				if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
-				{
-					int a = ParentForm.Controls.Count;
-					if (e.ShiftKey)
-					{
-						if (!ParentForm.SelectNextControl(this, false, true, true, true))
-						{
-#if DEBUG
-							Debug.WriteLine("Failed to advance");
-#endif
-						}
-					}
-					else
-					{
-						if (!ParentForm.SelectNextControl(this, true, true, true, true))
-						{
-#if DEBUG
-							Debug.WriteLine("Failed to advance");
-#endif
-						}
-					}
-				}
-				else
-				{
-					this.RaiseKeyEvent(Keys.A, new KeyEventArgs(Keys.A));
-				}
+				OnKeyDown (new KeyEventArgs((Keys)e.KeyCode));
 			}
 		}
 
@@ -383,6 +412,9 @@ namespace WeSay.UI.TextBoxes
 			_browser.AddMessageEventListener("selectChanged", ((string s) => this.OnSelectedValueChanged(s)));
 			if (_pendingHtmlLoad != null)
 			{
+#if DEBUG
+				Debug.WriteLine("Load: " + _pendingHtmlLoad);
+#endif
 				SetHtml(_pendingHtmlLoad);
 				_pendingHtmlLoad = null;
 			}
@@ -396,11 +428,13 @@ namespace WeSay.UI.TextBoxes
 			}
 			else
 			{
+				Debug.WriteLine("SetHTML: " + html);
 				const string type = "text/html";
 				var bytes = System.Text.Encoding.UTF8.GetBytes(html);
 				_browser.Navigate(string.Format("data:{0};base64,{1}", type, Convert.ToBase64String(bytes)),  
 					GeckoLoadFlags.BypassHistory);
 
+//				_browser.LoadHtml(html);
 			}
 				
 		}
@@ -424,6 +458,70 @@ namespace WeSay.UI.TextBoxes
 					throw new ArgumentNullException();
 				}
 				_writingSystem = value;
+			}
+		}
+
+		[DefaultValue(null)]
+		public IList DataSource
+		{
+			get { return _dataSource; }
+			set
+			{
+				Clear();
+				_dataSource = value;
+				//foreach (RecordToken<LexEntry> recordEntry in _dataSource)
+				foreach (var recordEntry in _dataSource)
+				{
+					LexEntry entry = null;
+					if (recordEntry is LexEntry)
+					{
+						entry = (LexEntry)recordEntry;
+					}
+					else if (recordEntry is RecordToken<LexEntry>)
+					{
+						entry = ((RecordToken<LexEntry>) recordEntry).RealObject;
+					}
+					if (entry == null)
+					{
+						// Usually comes in as that.  For GatherWordListTask, it comes in
+						// as just the LexEntry
+						
+					}
+					if (entry != null)
+					{
+						var form = entry.GetHeadWordForm(_writingSystem.Id);
+						if (string.IsNullOrEmpty(form))
+						{
+							form = entry.ToString();
+							if (string.IsNullOrEmpty(form))
+							{
+								form = "(";
+								form += StringCatalog.Get("~Empty",
+																	"This is what shows for a word in a list when the user hasn't yet typed anything in for the word.  Like if you click the 'New Word' button repeatedly.");
+								form += ")";								//this is only going to come up with something in two very unusual cases:
+								//1) a monolingual dictionary (well, one with meanings in the same WS as the lexical units)
+								//2) the SIL CAWL list, where the translator adds glosses, and fails to add
+								//lexical entries.
+								//form = entry.GetSomeMeaningToUseInAbsenseOfHeadWord(_writingSystem.Id);
+							}
+						}
+						
+						AddItem(form);
+					}
+					else
+					{
+						AddItem(recordEntry.ToString());
+					}					
+				}
+				if (!_browserDocumentLoaded)
+				{
+					ListCompleted();
+				}
+				else
+				{
+					var content = (GeckoSelectElement)_browser.Document.GetElementById("itemList");
+					content.InnerHtml = _itemHtml.ToString();
+				}
 			}
 		}
 

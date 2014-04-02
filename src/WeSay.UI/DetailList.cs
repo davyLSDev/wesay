@@ -235,7 +235,6 @@ namespace WeSay.UI
 				}
 				Controls[0].Dispose();
 			}
-			ClearLayouters();
 			Controls.Clear();
 			// Debug.WriteLine("VBox " + Name + "   Clearing DONE");
 		}
@@ -338,7 +337,11 @@ namespace WeSay.UI
 			// we eventually get around this by making control invisible while it lays out
 			// and then making it visible again. (See EntryViewControl.cs:RefreshEntryDetail)
 			Controls.Add(editWidget, _indexOfWidget, insertAtRow);
-
+			int tabIndex = 0;
+			foreach (Control control in Controls)
+			{
+				control.TabIndex = tabIndex++;
+			}
 			return editWidget;
 		}
 
