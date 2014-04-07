@@ -201,7 +201,7 @@
     <Compile Include="TextBoxes\GeckoListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoListBox.designer.cs">
+    <Compile Include="TextBoxes\GeckoListBox.Designer.cs">
       <DependentUpon>GeckoListBox.cs</DependentUpon>
     </Compile>
     <Compile Include="TextBoxes\GeckoListView.cs">

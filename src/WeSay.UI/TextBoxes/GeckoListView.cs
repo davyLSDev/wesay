@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,6 +60,7 @@ namespace WeSay.UI.TextBoxes
 			_items = new List<object>();
 			_itemHtml = new StringBuilder();
 			MaxLength = 50;  // Default value
+			_optionHeight = 10; // Default value
 
 			var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			if (designMode)
@@ -142,7 +143,8 @@ namespace WeSay.UI.TextBoxes
 			}
 			if ((MaxLength > MinLength) && (paddedItem.Length > MaxLength))
 			{
-				string tempString = paddedItem;
+				// Truncate items from the end of the string and attach an elipsis to 
+				// the appropriate end of the string
 				if (_writingSystem != null && WritingSystem.RightToLeftScript)
 				{
 					paddedItem = String.Format("...{0}", paddedItem.Remove(MaxLength - 4));
@@ -152,6 +154,8 @@ namespace WeSay.UI.TextBoxes
 					paddedItem = String.Format("{0}...", paddedItem.Remove(MaxLength - 4));
 				}
 			}
+			// replace leading and trailing spaces that may have been added with
+			// the &nbsp markers.
 			paddedItem = Regex.Replace(paddedItem, @"(?<=^\s*)\s", "&nbsp;");
 			paddedItem = Regex.Replace(paddedItem, @"\s(?=\s*$)", "&nbsp;");
 			_itemHtml.AppendFormat("<option value=\"{0}\">{1}</option>", item.ToString().Trim(), paddedItem);
@@ -284,6 +288,8 @@ namespace WeSay.UI.TextBoxes
 			// navigation line.  Leaving this and this comment in as a warning to anyone who
 			// may be tempted to try the same thing.
 			// html.Append(_itemHtml);
+			
+			// Adding a one character option instead to get an accurate height for the font
 			html.Append("<option id='optionElement' value=\" \">&nbsp</option>");
 			html.Append("</select></body></html>");
 			SetHtml(html.ToString());
