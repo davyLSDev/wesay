@@ -71,18 +71,16 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			_todoRecordsListBox.MinLength = 15;
 			_todoRecordsListBox.DataSource = _todoRecords;
 			_todoRecordsListBox.BorderStyle = BorderStyle.None;
-			//_todoRecordsListBox.ItemSelectionChanged += OnTodoRecordSelectionChanged;
-			_todoRecordsListBox.SelectedValueChanged += OnTodoRecordSelectionChanged;
-//			_todoRecordsListBox.RetrieveVirtualItem += OnRetrieveVirtualItemEvent;
+			_todoRecordsListBox.ItemSelectionChanged += OnTodoRecordSelectionChanged;
+			_todoRecordsListBox.RetrieveVirtualItem += OnRetrieveVirtualItemEvent;
 
 			_completedRecordsListBox.MinLength = 15;
 			_completedRecordsListBox.WritingSystem = listWritingSystem;
 			_completedRecords = new List<RecordToken<LexEntry>>();
 			_completedRecordsListBox.DataSource = _completedRecords;
 			_completedRecordsListBox.BorderStyle = BorderStyle.None;
-			_completedRecordsListBox.SelectedValueChanged += OnCompletedRecordSelectionChanged;
-//			_completedRecordsListBox.ItemSelectionChanged += OnCompletedRecordSelectionChanged;
-			//_completedRecordsListBox.RetrieveVirtualItem += OnRetrieveVirtualItemEvent;
+			_completedRecordsListBox.ItemSelectionChanged += OnCompletedRecordSelectionChanged;
+			_completedRecordsListBox.RetrieveVirtualItem += OnRetrieveVirtualItemEvent;
 
 			labelNextHotKey.BringToFront();
 			_btnNext.BringToFront();
@@ -363,7 +361,7 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			{
 				if (RecordListCurrentIndex == -1)
 				{
-					if (_todoRecordsListBox.Items.Count > 0)
+					if (_todoRecordsListBox.Length > 0)
 					{
 						_todoRecordsListBox.SelectedIndex = 0;
 					}
@@ -387,7 +385,7 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			}
 		}
 
-		private bool MoveIndex(List<RecordToken<LexEntry>> recordList, GeckoListView listBox, GeckoListView oppositeListBox)
+		private bool MoveIndex(List<RecordToken<LexEntry>> recordList, IWeSayListView listBox, IWeSayListView oppositeListBox)
 		{
 			if (listBox.SelectedIndex != -1)
 			{

@@ -339,8 +339,19 @@ namespace WeSay.UI.TextBoxes
 			}
 			else
 			{
-				var box = new GeckoBox(writingSystem, Name);// WeSayTextBox(writingSystem, Name);
-				control = box;
+				IWeSayTextBox box = null;
+				if (_serviceProvider != null)
+				{
+					box = _serviceProvider.GetService(typeof (IWeSayTextBox)) as IWeSayTextBox;
+				}
+				else
+				{
+					// Shouldn't get to this but just in case.
+					box = new WeSayTextBox();
+				}
+				box.Init(writingSystem, Name);
+
+				control = (Control) box;
 				control.SuspendLayout();
 				box.ReadOnly = (_visibility == CommonEnumerations.VisibilitySetting.ReadOnly);
 				box.Multiline = true;
@@ -349,7 +360,7 @@ namespace WeSay.UI.TextBoxes
 				box.IsSpellCheckingEnabled = IsSpellCheckingEnabled;
 				//box.Enabled = !box.ReadOnly;
 				if (!box.ReadOnly)
-					Palaso.UI.WindowsForms.Keyboarding.KeyboardController.Register(box);
+					Palaso.UI.WindowsForms.Keyboarding.KeyboardController.Register((Control)box);
 			}
 
 			_inputBoxes.Add(control);

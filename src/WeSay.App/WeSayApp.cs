@@ -101,9 +101,9 @@ namespace WeSay.App
 
 		public static void SetUpXulRunner()
 		{
+#if __MonoCS__
 			try
 			{
-#if __MonoCS__
 				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
 				if (String.IsNullOrEmpty(xulRunnerLocation))
@@ -111,17 +111,7 @@ namespace WeSay.App
 				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 				if (!librarySearchPath.Contains(xulRunnerLocation))
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
-#else
-				string xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution, "xulrunner");
-				if (!Directory.Exists(xulRunnerLocation))
-				{
-					throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
-				}
-				if (!SetDllDirectory(xulRunnerLocation))
-				{
-					throw new ApplicationException("SetDllDirectory failed for " + xulRunnerLocation);
-				}
-#endif
+
 				Xpcom.Initialize(xulRunnerLocation);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
 			}
@@ -133,12 +123,47 @@ namespace WeSay.App
 			{
 				ErrorReport.NotifyUserOfProblem(e.Message);
 			}
-
+#else
+			// For windows, only initialize xulrunner if we are using the gecko browser control option
+			string geckoBrowserOption = Environment.GetEnvironmentVariable("WeSayGecko") ?? String.Empty;
+			if (geckoBrowserOption.ToLower().Contains("y"))
+			{
+				try
+				{
+					string xulRunnerLocation = Path.Combine(FileLocator.DirectoryOfApplicationOrSolution, "xulrunner");
+					if (!Directory.Exists(xulRunnerLocation))
+					{
+						throw new ApplicationException("XULRunner needs to be installed to " + xulRunnerLocation);
+					}
+					if (!SetDllDirectory(xulRunnerLocation))
+					{
+						throw new ApplicationException("SetDllDirectory failed for " + xulRunnerLocation);
+					}
+					Xpcom.Initialize(xulRunnerLocation);
+					GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+				}
+				catch (ApplicationException e)
+				{
+					ErrorReport.NotifyUserOfProblem(e.Message);
+				}
+				catch (Exception e)
+				{
+					ErrorReport.NotifyUserOfProblem(e.Message);
+				}
+			}
+#endif
 
 		}
 		private static void ShutDownXulRunner()
 		{
+#if __MonoCS__
 			if (Xpcom.IsInitialized)
+#else
+			// For Windows, xulrunner only will have been initialized if the gecko browser option
+			// was selected.
+			string geckoBrowserOption = Environment.GetEnvironmentVariable("WeSayGecko") ?? String.Empty;
+			if ((geckoBrowserOption.ToLower().Contains("y")) && (Xpcom.IsInitialized))
+#endif
 			{
 				// The following line appears to be necessary to keep Xpcom.Shutdown()
 				// from triggering a scary looking "double free or corruption" message most

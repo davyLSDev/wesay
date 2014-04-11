@@ -15,7 +15,7 @@ namespace WeSay.UI
 	public partial class SingleOptionControl: UserControl, IBindableControl<string>
 	{
 		private readonly OptionsList _list;
-		private readonly GeckoComboBox _control = new GeckoComboBox();
+		private readonly IWeSayComboBox _control = null;
 		private readonly string _nameForLogging;
 		private readonly IWritingSystemDefinition _preferredWritingSystem;
 
@@ -38,14 +38,26 @@ namespace WeSay.UI
 			base.OnHandleDestroyed(e);
 		}
 
-		public SingleOptionControl(IValueHolder<string> optionRef, OptionsList list, string nameForLogging, IWritingSystemDefinition preferredWritingSystem)
+		public SingleOptionControl(IValueHolder<string> optionRef, OptionsList list, string nameForLogging,
+			IWritingSystemDefinition preferredWritingSystem)
+			: this(optionRef, list, nameForLogging, preferredWritingSystem, null)
+		{
+			
+		}
+
+		public SingleOptionControl(IValueHolder<string> optionRef, OptionsList list, string nameForLogging, IWritingSystemDefinition preferredWritingSystem, IServiceProvider serviceProvider )
 		{
 			AutoSize = true;
 			AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			_list = list;
 			_nameForLogging = nameForLogging;
 			_preferredWritingSystem = preferredWritingSystem;
+			_control = serviceProvider.GetService(typeof(IWeSayComboBox)) as IWeSayComboBox;
 			InitializeComponent();
+			_control.AutoCompleteMode = AutoCompleteMode.Append;
+			_control.AutoCompleteSource = AutoCompleteSource.ListItems;
+			_control.Sorted = false;
+			_control.MaxDropDownItems = 100;
 			_control.Font = WritingSystemInfo.CreateFont(_preferredWritingSystem);
 			_control.Height = WritingSystemInfo.CreateFont(_preferredWritingSystem).Height + 10;
 			BuildBoxes(optionRef);
@@ -55,7 +67,6 @@ namespace WeSay.UI
 		{
 			get
 			{
-				//review
 				if (_control.SelectedItem != null)
 				{
 					string key = "";
@@ -74,31 +85,24 @@ namespace WeSay.UI
 					return key;
 				}
 				return _control.Text;
-				// situation where the value isn't currently a member of the approved list
 			}
 			set
 			{
-				//if (value != null && value.Length == 0)
-				//{
-				//    _control.SelectedIndex = -1; //enhance: have a default value
-				//    SetStatusColor();
-				//    return;
-				//}
-				for (int i = 0; i < _control.Items.Count; i++)
+				for (int i = 0; i < _control.Length; i++)
 				{
 					String selectedItemText = "";
-					if (ConfiguredListItem(_control.Items[i]))
+					if (ConfiguredListItem(_control.GetItem(i)))
 					{
-						selectedItemText = ((Option.OptionDisplayProxy) _control.Items[i]).Key;
+						selectedItemText = ((Option.OptionDisplayProxy)_control.GetItem(i)).Key;
 					}
 					else
 					{
-						selectedItemText = (String) _control.Items[i];
+						selectedItemText = (String)_control.GetItem(i);
 					}
 					if (selectedItemText.Equals(value, StringComparison.OrdinalIgnoreCase))
 					{
 						_control.SelectedIndex = i;
-						SetStatusColor(ConfiguredListItem(_control.Items[i]));
+						SetStatusColor(ConfiguredListItem(_control.GetItem(i)));
 						return;
 					}
 				}
@@ -107,13 +111,17 @@ namespace WeSay.UI
 				if (value.Length > 0)
 				{
 					_control.AddItem(value);
-					_control.SelectedIndex = _control.Items.Count - 1;
+					_control.SelectedIndex = _control.Length - 1;
 					SetStatusColor(false); //must do this before trying to change to a non-list value
 				}
 				else
 				{
+					_control.DropDownStyle = ComboBoxStyle.DropDown;
+					_control.AutoCompleteMode = AutoCompleteMode.None;
+					_control.Text = value;
 					SetStatusColor(true);
 				}
+
 			}
 		}
 
@@ -127,10 +135,12 @@ namespace WeSay.UI
 			if (!configuredItem)
 			{
 				_control.BackColor = Color.Red;
+				_control.DropDownStyle = ComboBoxStyle.DropDown;
 			}
 			else
 			{
 				_control.BackColor = Color.White;
+				_control.DropDownStyle = ComboBoxStyle.DropDownList;
 			}
 		}
 
@@ -142,9 +152,9 @@ namespace WeSay.UI
 			const int initialPanelWidth = 200;
 			SetupComboControl(optionRef);
 
-			components.Add(_control); //so it will get disposed of when we are
+			components.Add((Control)_control); //so it will get disposed of when we are
 
-			Controls.Add(_control);
+			Controls.Add((Control)_control);
 			//Height += p.Height;
 			ResumeLayout(false);
 		}
@@ -176,7 +186,7 @@ namespace WeSay.UI
 			_control.SelectedValueChanged += OnSelectedValueChanged;
 
 			//don't let the mousewheel do the scrolling, as it's likely an accident (http://jira.palaso.org/issues/browse/WS-34670)
-			_control.MouseWheel += (sender, e) => {((HandledMouseEventArgs)e).Handled = true;};
+			((Control)_control).MouseWheel += (sender, e) => {((HandledMouseEventArgs)e).Handled = true;};
 		}
 
 		private int CompareItems(Option a, Option b)

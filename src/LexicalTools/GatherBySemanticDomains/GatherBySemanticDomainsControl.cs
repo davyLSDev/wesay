@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using WeSay.LexicalTools.Properties;
+using WeSay.Project;
 using WeSay.UI;
 using WeSay.UI.TextBoxes;
 
@@ -94,7 +95,7 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			//this box, which wasn't really designed to work well with auto-generated designer code.
 			//so all this is to be able to turn IsSpellCheckingEnabled before the box is built.
 
-			var meaning = new MultiTextControl(_presentationModel.ViewTemplate.WritingSystems, null)
+			var meaning = new MultiTextControl(_presentationModel.ViewTemplate.WritingSystems, WeSayWordsProject.Project.ServiceLocator)
 				{
 					IsSpellCheckingEnabled = true,
 					ShowAnnotationWidget = false,

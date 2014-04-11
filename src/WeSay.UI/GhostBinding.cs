@@ -157,8 +157,8 @@ namespace WeSay.UI
 
 			_textBoxTarget.KeyDown -= _textBoxTarget_KeyDown;
 			_textBoxTarget.LostFocus -= _textBoxTarget_LostFocus;
-			_textBoxTarget.Enter -= OnTextBoxEntered;
 			_textBoxTarget.Leave -= _textBoxTarget_LostFocus;
+			_textBoxTarget.Enter -= OnTextBoxEntered;
 			_textBoxTarget.HandleDestroyed -= _textBoxTarget_HandleDestroyed;
 			_textBoxTarget.Disposed -= _textBoxTarget_Disposed;
 			_textBoxTarget = null;

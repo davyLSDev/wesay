@@ -17,7 +17,7 @@ using Palaso.WritingSystems;
 
 namespace WeSay.UI.TextBoxes
 {
-	public partial class GeckoListView : UserControl, IControlThatKnowsWritingSystem
+	public partial class GeckoListView : UserControl, IControlThatKnowsWritingSystem, IWeSayListView
 	{
 		private GeckoWebBrowser _browser;
 		private bool _browserIsReadyToNavigate;
@@ -40,7 +40,8 @@ namespace WeSay.UI.TextBoxes
 		private bool _inFocus;
 		private List<Object> _items;
 		private readonly StringBuilder _itemHtml;
-		public event EventHandler SelectedValueChanged;
+		public event EventHandler<ListViewItemSelectionChangedEventArgs> ItemSelectionChanged;
+		public event EventHandler<RetrieveVirtualItemEventArgs> RetrieveVirtualItem;
 		private IList _dataSource;
 
 		public GeckoListView()
@@ -102,7 +103,10 @@ namespace WeSay.UI.TextBoxes
 
 		public void Clear()
 		{
-			_items.Clear();
+			if (_items != null)
+			{
+				_items.Clear();
+			}
 			_itemHtml.Clear();
 		}
 
@@ -110,10 +114,15 @@ namespace WeSay.UI.TextBoxes
 		{
 			Clear();
 			this.Load -= _loadHandler;
-			_browser.DomKeyDown -= _domKeyDownHandler;
-			_browser.DomFocus -= _domFocusHandler;
-			_browser.DomBlur -= _domBlurHandler;
-			_browser.DocumentCompleted -= _domDocumentChangedHandler;
+			if (_browser != null)
+			{
+				_browser.DomKeyDown -= _domKeyDownHandler;
+				_browser.DomFocus -= _domFocusHandler;
+				_browser.DomBlur -= _domBlurHandler;
+				_browser.DocumentCompleted -= _domDocumentChangedHandler;
+				_browser.Dispose();
+				_browser = null;
+			}
 			this.BackColorChanged -= _backColorChangedHandler;
 			_items = null;
 			_loadHandler = null;
@@ -121,8 +130,6 @@ namespace WeSay.UI.TextBoxes
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
 			_backColorChangedHandler = null;
-			_browser.Dispose();
-			_browser = null;
 		}
 
 		public void AddItem(Object item)
@@ -296,9 +303,9 @@ namespace WeSay.UI.TextBoxes
 		}
 		private void OnSelectedValueChanged(String s)
 		{
-			if (SelectedValueChanged != null)
+			if (ItemSelectionChanged != null)
 			{
-				SelectedValueChanged.Invoke(this, null);
+				ItemSelectionChanged.Invoke(this, new ListViewItemSelectionChangedEventArgs(null, SelectedIndex, true));
 			}
 		}
 		private void OnBackColorChanged(object sender, EventArgs e)
@@ -326,7 +333,10 @@ namespace WeSay.UI.TextBoxes
 			if (_pendingInitialIndex > -1)
 			{
 				SelectedIndex = _pendingInitialIndex;
-				SelectedValueChanged.Invoke(this, null);
+				if (ItemSelectionChanged != null)
+				{
+					ItemSelectionChanged.Invoke(this, new ListViewItemSelectionChangedEventArgs(null, _pendingInitialIndex, true));
+				}
 				_pendingInitialIndex = -1;
 			}
 		}
@@ -408,9 +418,35 @@ namespace WeSay.UI.TextBoxes
 		{
 			if (_inFocus)
 			{
-				OnKeyDown (new KeyEventArgs((Keys)e.KeyCode));
+				if ((e.KeyCode == 9) && !e.CtrlKey && !e.AltKey)
+				{
+					int a = ParentForm.Controls.Count;
+					if (e.ShiftKey)
+					{
+						if (!ParentForm.SelectNextControl(this, false, true, true, true))
+						{
+#if DEBUG
+							Debug.WriteLine("Failed to advance");
+#endif
+						}
+					}
+					else
+					{
+						if (!ParentForm.SelectNextControl(this, true, true, true, true))
+						{
+#if DEBUG
+							Debug.WriteLine("Failed to advance");
+#endif
+						}
+					}
+				}
+				else
+				{
+					OnKeyDown(new KeyEventArgs((Keys)e.KeyCode));
+				}
 			}
 		}
+
 
 		private void GeckoBox_Load(object sender, EventArgs e)
 		{
@@ -551,7 +587,7 @@ namespace WeSay.UI.TextBoxes
 
 
 		public bool ReadOnly { get; set; }
-
+		public View View { get; set; }
 
 
 		/// <summary>

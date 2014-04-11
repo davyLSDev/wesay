@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using WeSay.Project;
 using WeSay.UI;
 using WeSay.UI.AutoCompleteTextBox;
 using WeSay.UI.TextBoxes;
@@ -25,7 +26,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryControl));
 			this._searchAndListBoxTable = new System.Windows.Forms.TableLayoutPanel();
-			this._recordsListBox = new WeSay.UI.TextBoxes.GeckoListView();
+			this._recordsListBox = WeSayWordsProject.Project.ServiceLocator.GetService(typeof(IWeSayListView)) as IWeSayListView;
 			this._searchTextBoxControl = new WeSay.LexicalTools.DictionaryBrowseAndEdit.SearchBoxControl();
 			this._showAllFieldsToggleButton = new System.Windows.Forms.Button();
 			this._btnDeleteWord = new System.Windows.Forms.Button();
@@ -48,7 +49,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			//
 			this._searchAndListBoxTable.ColumnCount = 1;
 			this._searchAndListBoxTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._searchAndListBoxTable.Controls.Add(this._recordsListBox, 0, 1);
+			this._searchAndListBoxTable.Controls.Add((Control)this._recordsListBox, 0, 1);
 			this._searchAndListBoxTable.Controls.Add(this._searchTextBoxControl, 0, 0);
 			this._searchAndListBoxTable.Dock = System.Windows.Forms.DockStyle.Left;
 			this._searchAndListBoxTable.Location = new System.Drawing.Point(0, 0);
@@ -66,7 +67,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 			this._recordsListBox.Name = "_recordsListBox";
 			this._recordsListBox.Size = new System.Drawing.Size(140, 212);
 			this._recordsListBox.TabIndex = 4;
-			//this._recordsListBox.View = System.Windows.Forms.View.SmallIcon;
+			this._recordsListBox.View = System.Windows.Forms.View.SmallIcon;
 			//
 			// _searchTextBoxControl
 			//
@@ -235,7 +236,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 
 		#endregion
 
-		private GeckoListView _recordsListBox;
+		private IWeSayListView _recordsListBox;
 		private Button _btnDeleteWord;
 		private Button _btnNewWord;
 		private Button _showAllFieldsToggleButton;

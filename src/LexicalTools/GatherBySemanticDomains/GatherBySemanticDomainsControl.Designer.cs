@@ -1,5 +1,7 @@
 using System;
+using System.Windows.Forms;
 using Palaso.UI.WindowsForms.Widgets.Flying;
+using WeSay.Project;
 using WeSay.UI;
 using WeSay.UI.Buttons;
 using WeSay.UI.TextBoxes;
@@ -37,7 +39,7 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.ListViewItem listViewItem61 = new System.Windows.Forms.ListViewItem("blah");
 			System.Windows.Forms.ListViewItem listViewItem62 = new System.Windows.Forms.ListViewItem("stuff");
-			this._domainListComboBox = new WeSay.UI.TextBoxes.GeckoComboBox();
+			this._domainListComboBox = WeSayWordsProject.Project.ServiceLocator.GetService(typeof(IWeSayComboBox)) as IWeSayComboBox;
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this._instructionLabel = new System.Windows.Forms.Label();
@@ -55,16 +57,16 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._btnPrevious = new WeSay.UI.Buttons.RectangularImageButton();
 			this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-			this._vernacularBox = new WeSay.UI.TextBoxes.MultiTextControl();
-			this._meaningBox = new WeSay.UI.TextBoxes.MultiTextControl();
+			this._vernacularBox = new WeSay.UI.TextBoxes.MultiTextControl(null, WeSayWordsProject.Project.ServiceLocator);
+			this._meaningBox = new WeSay.UI.TextBoxes.MultiTextControl(null, WeSayWordsProject.Project.ServiceLocator);
 			this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
 			this._btnAddWord = new WeSay.UI.Buttons.RectangularImageButton();
 			this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
 			this._listViewWords = new WeSay.UI.WeSayListBox();
 			this._flyingLabel = new Palaso.UI.WindowsForms.Widgets.Flying.FlyingLabel();
-			this.multiTextControl2 = new WeSay.UI.TextBoxes.MultiTextControl();
-			this.multiTextControl1 = new WeSay.UI.TextBoxes.MultiTextControl();
-			this.multiTextControl3 = new WeSay.UI.TextBoxes.MultiTextControl();
+			this.multiTextControl2 = new WeSay.UI.TextBoxes.MultiTextControl(null, WeSayWordsProject.Project.ServiceLocator);
+			this.multiTextControl1 = new WeSay.UI.TextBoxes.MultiTextControl(null, WeSayWordsProject.Project.ServiceLocator);
+			this.multiTextControl3 = new WeSay.UI.TextBoxes.MultiTextControl(null, WeSayWordsProject.Project.ServiceLocator);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -80,13 +82,9 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._domainListComboBox.BackColor = System.Drawing.SystemColors.Control;
 			this._domainListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._domainListComboBox.IsSpellCheckingEnabled = false;
 			this._domainListComboBox.Location = new System.Drawing.Point(0, 0);
 			this._domainListComboBox.Margin = new System.Windows.Forms.Padding(0);
-			this._domainListComboBox.MultiParagraph = false;
 			this._domainListComboBox.Name = "_domainListComboBox";
-			this._domainListComboBox.ReadOnly = false;
-			this._domainListComboBox.SelectionStart = 0;
 			this._domainListComboBox.Size = new System.Drawing.Size(434, 27);
 			this._domainListComboBox.TabIndex = 20;
 			this._domainListComboBox.SelectedValueChanged += new System.EventHandler((this._domainName_SelectedIndexChanged));
@@ -214,7 +212,7 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.Controls.Add(this._questionIndicator, 0, 1);
-			this.tableLayoutPanel2.Controls.Add(this._domainListComboBox, 0, 0);
+			this.tableLayoutPanel2.Controls.Add(((Control)this._domainListComboBox), 0, 0);
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 34);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(3, 34, 3, 3);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -1205,7 +1203,7 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 
 		private MultiTextControl _vernacularBox;
 //		private System.Windows.Forms.ComboBox _domainListComboBox;
-		private GeckoComboBox _domainListComboBox;
+		private IWeSayComboBox _domainListComboBox;
 		private System.Windows.Forms.Label label3;
 		private WeSayListBox _listViewWords;
 		private System.Windows.Forms.Label label4;

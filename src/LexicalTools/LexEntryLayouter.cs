@@ -21,7 +21,6 @@ namespace WeSay.LexicalTools
 	{
 		private bool _sensesAreDeletable = false;
 		private readonly ConfirmDeleteFactory _confirmDeleteFactory;
-		private List<LexSenseLayouter> _senseLayouters;
 
 		public LexEntry Entry { get; set; }
 
@@ -39,18 +38,12 @@ namespace WeSay.LexicalTools
 			_sensesAreDeletable = sensesAreDeletable;
 			_confirmDeleteFactory = confirmDeleteFactory;
 			DetailList.LabelsChanged += OnLabelsChanged;
-			_senseLayouters = new List<LexSenseLayouter>();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				foreach (var layouter in _senseLayouters)
-				{
-					layouter.DeleteClicked -= OnSenseDeleteClicked;
-				}
-				_senseLayouters = null;
 				DetailList.LabelsChanged-= OnLabelsChanged;
 			}
 			base.Dispose(disposing);

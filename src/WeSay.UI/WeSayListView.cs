@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 using Palaso.DictionaryServices.Model;
 using Palaso.WritingSystems;
@@ -10,7 +11,40 @@ using WeSay.LexicalModel.Foundation;
 
 namespace WeSay.UI
 {
-	public partial class WeSayListView: ListView
+	public interface IWeSayListView
+	{
+		[Browsable(false)]
+		string Text { set; get; }
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		IWritingSystemDefinition WritingSystem { get; set; }
+
+		int MinLength { get; set; }
+		int MaxLength { get; set; }
+		int SelectedIndex { get; set; }
+		Rectangle Bounds { get; set; }
+		IList DataSource { get; set; }
+		int Length { get; }
+		DockStyle Dock { get; set; }
+		Point Location { get; set; }
+		string Name { get; set; }
+		Size Size { get; set; }
+		int TabIndex { get; set; }
+		View View { get; set; }
+		BorderStyle BorderStyle { get; set; }
+		Object SelectedItem { get; }
+		AnchorStyles Anchor { get; set; }
+
+		void SetBounds(int x, int y, int width, int height);
+		bool Focus();
+		Size MinimumSize { get; set; }
+
+		event EventHandler<ListViewItemSelectionChangedEventArgs> ItemSelectionChanged;
+		event EventHandler<RetrieveVirtualItemEventArgs> RetrieveVirtualItem;
+	}
+
+	public partial class WeSayListView: ListView, IWeSayListView
 	{
 		private IWritingSystemDefinition _writingSystem;
 		private int _itemToNotDrawYet = -1;
@@ -18,6 +52,8 @@ namespace WeSay.UI
 		private readonly Dictionary<int, ListViewItem> _itemsCache;
 
 		private bool _ensureVisibleCalledBeforeWindowHandleCreated = false;
+		public new event EventHandler<ListViewItemSelectionChangedEventArgs> ItemSelectionChanged;
+		public new event EventHandler<RetrieveVirtualItemEventArgs> RetrieveVirtualItem;
 
 		public WeSayListView()
 		{
@@ -115,6 +151,10 @@ namespace WeSay.UI
 				result = GetVirtualItem(e.ItemIndex);
 			}
 			e.Item = result;
+			if (RetrieveVirtualItem != null)
+			{
+				RetrieveVirtualItem.Invoke(this, e);
+			}
 		}
 
 		// ask for a real virtual item using RetrieveVirtualItem event
@@ -245,6 +285,11 @@ namespace WeSay.UI
 		protected override void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
 		{
 			if (_mouseDownInfo.MouseIsDown) return;
+
+			if (ItemSelectionChanged != null)
+			{
+				ItemSelectionChanged.Invoke(this, e);
+			}
 
 			base.OnItemSelectionChanged(e);
 		}
@@ -459,7 +504,7 @@ namespace WeSay.UI
 		public int SelectedIndex
 		{
 			get
-			{
+			{ 
 				if (SelectedIndices.Count > 0)
 				{
 					return SelectedIndices[0];
@@ -589,5 +634,16 @@ namespace WeSay.UI
 												flags);
 			}
 		}
+
+		public int Length
+		{
+			get
+			{
+				return Items.Count;
+			}
+		}
+
+		public int MinLength { get; set; }
+		public int MaxLength { get; set; }
 	}
 }

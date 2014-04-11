@@ -35,7 +35,8 @@ namespace WeSay.ConfigTool
 		public ConfigurationWindow(string[] args)
 		{
 			InitializeComponent();
-
+			//For now, Gecko boxes are only valid from the WeSay App, not the config tool
+			Environment.SetEnvironmentVariable("WeSayGecko", "N");
 			_helpProvider.RegisterPrimaryHelpFileMapping("wesay.helpmap");
 			_helpProvider.RegisterSecondaryHelpMapping("chorus.helpmap");
 

@@ -236,7 +236,7 @@ namespace WeSay.LexicalTools
 														  false,
 														  BasilProject.Project.WritingSystems,
 														  field.Visibility,
-														  field.IsSpellCheckingEnabled, false, null);
+														  field.IsSpellCheckingEnabled, false, _serviceProvider);
 
 				Control refWidget = DetailList.AddWidgetRow(label,
 															isHeading,
@@ -493,7 +493,8 @@ namespace WeSay.LexicalTools
 			SingleOptionControl control = new SingleOptionControl(optionRefTarget,
 																  list,
 																  field.FieldName,
-																  preferredWritingSystem);
+																  preferredWritingSystem,
+																  WeSayWordsProject.Project.ServiceLocator);
 			SimpleBinding<string> binding = new SimpleBinding<string>(optionRefTarget, control);
 			binding.CurrentItemChanged += _detailList.OnBinding_ChangeOfWhichItemIsInFocus;
 			return control;

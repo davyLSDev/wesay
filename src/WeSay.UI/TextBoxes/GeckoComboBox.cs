@@ -13,7 +13,7 @@ using Palaso.WritingSystems;
 
 namespace WeSay.UI.TextBoxes
 {
-	public partial class GeckoComboBox : UserControl, IControlThatKnowsWritingSystem
+	public partial class GeckoComboBox : UserControl, IControlThatKnowsWritingSystem, IWeSayComboBox
 	{
 		private GeckoWebBrowser _browser;
 		private bool _browserIsReadyToNavigate;
@@ -37,6 +37,8 @@ namespace WeSay.UI.TextBoxes
 		private List<Object> _items;
 		private readonly StringBuilder _itemHtml;
 		public event EventHandler SelectedValueChanged;
+		public event EventHandler DrawItem;
+		public event EventHandler MeasureItem;
 
 		public GeckoComboBox()
 		{
@@ -48,7 +50,6 @@ namespace WeSay.UI.TextBoxes
 			}
 			Name = _nameForLogging;
 			_keyPressed = false;
-			ReadOnly = false;
 			_inFocus = false;
 			_initialSelectLoad = false;
 			_pendingInitialIndex = -1;
@@ -99,18 +100,26 @@ namespace WeSay.UI.TextBoxes
 
 		public void Clear()
 		{
-			_items.Clear();
+			if (_items != null)
+			{
+				_items.Clear();
+			}
 			_itemHtml.Clear();
 		}
 
-		public void Closing()
+		private void Closing()
 		{
 			Clear();
 			this.Load -= _loadHandler;
-			_browser.DomKeyDown -= _domKeyDownHandler;
-			_browser.DomFocus -= _domFocusHandler;
-			_browser.DomBlur -= _domBlurHandler;
-			_browser.DocumentCompleted -= _domDocumentChangedHandler;
+			if (_browser != null)
+			{
+				_browser.DomKeyDown -= _domKeyDownHandler;
+				_browser.DomFocus -= _domFocusHandler;
+				_browser.DomBlur -= _domBlurHandler;
+				_browser.DocumentCompleted -= _domDocumentChangedHandler;
+				_browser.Dispose();
+				_browser = null;
+			}
 #if __MonoCS__
 			_browser.DomClick -= _domClickHandler;
 			_domClickHandler = null;
@@ -122,8 +131,6 @@ namespace WeSay.UI.TextBoxes
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
 			_backColorChangedHandler = null;
-			_browser.Dispose();
-			_browser = null;
 		}
 
 		public void AddItem(Object item)
@@ -191,12 +198,9 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		public List<Object> Items
+		public Object GetItem(int i)
 		{
-			get
-			{
-				return _items;
-			}
+			return this._items[i];
 		}
 
 		public String SelectedText
@@ -388,7 +392,7 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		public void SetHtml(string html)
+		private void SetHtml(string html)
 		{
 			if (!_browserIsReadyToNavigate)
 			{
@@ -427,45 +431,12 @@ namespace WeSay.UI.TextBoxes
 			}
 		}
 
-		public bool MultiParagraph { get; set; }
+		public bool Sorted { get; set; }
+		public AutoCompleteSource AutoCompleteSource { get; set; }
+		public AutoCompleteMode AutoCompleteMode { get; set; }
+		public ComboBoxStyle DropDownStyle { get; set; }
+		public int MaxDropDownItems { get; set; }
 
-		public bool IsSpellCheckingEnabled { get; set; }
-
-
-		public int SelectionStart
-		{
-			get
-			{
-				//TODO
-				return 0;
-			}
-			set
-			{
-				//TODO
-			}
-		}
-
-
-		public bool ReadOnly { get; set; }
-
-
-
-		/// <summary>
-		/// for automated tests
-		/// </summary>
-		public void PretendLostFocus()
-		{
-			OnLostFocus(new EventArgs());
-		}
-
-		/// <summary>
-		/// for automated tests
-		/// </summary>
-		public void PretendSetFocus()
-		{
-			Debug.Assert(_browser != null, "_browser != null");
-			_browser.Focus();
-		}
 
 	}
 }

@@ -211,6 +211,9 @@
       <DependentUpon>GeckoListView.cs</DependentUpon>
     </Compile>
     <Compile Include="TextBoxes\IControlThatKnowsWritingSystem.cs" />
+    <Compile Include="TextBoxes\WeSayComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WeSayListView.cs">
       <SubType>Component</SubType>
     </Compile>

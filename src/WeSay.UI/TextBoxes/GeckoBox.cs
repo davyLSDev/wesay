@@ -27,7 +27,7 @@ namespace WeSay.UI.TextBoxes
 		private EventHandler<GeckoDomEventArgs> _domClickHandler;
 		private EventHandler _domDocumentChangedHandler;
 		private EventHandler _textChangedHandler;
-		private readonly string _nameForLogging;
+		private string _nameForLogging;
 		private bool _inFocus;
 
 		public GeckoBox()
@@ -87,19 +87,38 @@ namespace WeSay.UI.TextBoxes
 			WritingSystem = ws;
 		}
 
+		public void Init(IWritingSystemDefinition writingSystem, String name)
+		{
+			_writingSystem = writingSystem;
+			_nameForLogging = name;
+			Name = name;
+		}
+
 		public void Closing()
 		{
 			this.Load -= _loadHandler;
-			_browser.DomKeyDown -= _domKeyDownHandler;
-			_browser.DomKeyUp -= _domKeyUpHandler;
-			_browser.DomFocus -= _domFocusHandler;
-			_browser.DomBlur -= _domBlurHandler;
-			_browser.DocumentCompleted -= _domDocumentChangedHandler;
-#if __MonoCS__
-			_browser.DomClick -= _domClickHandler;
-			_domClickHandler = null;
-#endif
 			this.TextChanged -= _textChangedHandler;
+			if (_browser != null)
+			{
+				_browser.DomKeyDown -= _domKeyDownHandler;
+				_browser.DomKeyUp -= _domKeyUpHandler;
+				_browser.DomFocus -= _domFocusHandler;
+				_browser.DomBlur -= _domBlurHandler;
+				_browser.DocumentCompleted -= _domDocumentChangedHandler;
+#if __MonoCS__
+				_browser.DomClick -= _domClickHandler;
+				_browser.Dispose();
+				_browser = null;
+			}
+			_domClickHandler = null;
+#else
+				if (Xpcom.IsInitialized)
+				{
+					_browser.Dispose();
+					_browser = null;
+				}
+			}
+#endif
 			_loadHandler = null;
 			_domKeyDownHandler = null;
 			_domKeyUpHandler = null;
@@ -107,8 +126,6 @@ namespace WeSay.UI.TextBoxes
 			_domFocusHandler = null;
 			_domDocumentChangedHandler = null;
 			_divElement = null;
-			_browser.Dispose();
-			_browser = null;
 		}
 
 		/// <summary>
@@ -203,9 +220,37 @@ namespace WeSay.UI.TextBoxes
 					e.Handled = true;
 					
 				}
+				else if ((e.KeyCode == (uint)Keys.Tab) && !e.CtrlKey && !e.AltKey)
+				{
+					e.Handled = true;
+#if DEBUG
+					Debug.WriteLine ("Got a Tab Key " + Text );
+#endif
+					if (e.ShiftKey)
+					{
+						if (!ParentForm.SelectNextControl(this, false, true, true, true))
+						{
+#if DEBUG
+							Debug.WriteLine("Failed to advance");
+#endif
+						}
+					}
+					else
+					{
+						if (!ParentForm.SelectNextControl(this, true, true, true, true))
+						{
+#if DEBUG
+							Debug.WriteLine("Failed to advance");
+#endif
+						}
+					}
+					e.Handled = true;
+					return;
+				}
 				OnKeyDown (new KeyEventArgs((Keys)e.KeyCode));
 			}
 		}
+
 
 		private void GeckoBox_Load(object sender, EventArgs e)
 		{

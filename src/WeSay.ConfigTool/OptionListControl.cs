@@ -171,7 +171,8 @@ namespace WeSay.ConfigTool
 					false,
 					BasilProject.Project.WritingSystems,
 					CommonEnumerations.VisibilitySetting.Visible,
-					_currentField.IsSpellCheckingEnabled, false, null
+					_currentField.IsSpellCheckingEnabled, false,
+					WeSayWordsProject.Project.ServiceLocator
 				);
 				m.SizeChanged += OnNameControlSizeChanged;
 				m.Bounds = _nameMultiTextControl.Bounds;

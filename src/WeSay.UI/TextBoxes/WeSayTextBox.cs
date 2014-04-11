@@ -28,10 +28,11 @@ namespace WeSay.UI.TextBoxes
 		int SelectionStart { get; set; }
 		void AssignKeyboardFromWritingSystem();
 		void ClearKeyboard();
+		void Init(IWritingSystemDefinition writingSystem, String name);
 
-		bool ReadOnly { get; set; }
 		bool Multiline { get; set; }
 		bool WordWrap { get; set; }
+		bool ReadOnly { get; set; }
 
 		/// <summary>
 		/// for automated tests
@@ -51,7 +52,7 @@ namespace WeSay.UI.TextBoxes
 		private IWritingSystemDefinition _writingSystem;
 
 		private bool _multiParagraph;
-		private readonly string _nameForLogging;
+		private string _nameForLogging;
 		private bool _haveAlreadyLoggedTextChanged;
 		private bool _isSpellCheckingEnabled;
 
@@ -81,6 +82,12 @@ namespace WeSay.UI.TextBoxes
 			Name = _nameForLogging;
 		}
 
+		public void Init(IWritingSystemDefinition writingSystem, String name)
+		{
+			_writingSystem = writingSystem;
+			_nameForLogging = name;
+			Name = name;
+		}
 		private void OnKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.F4)
