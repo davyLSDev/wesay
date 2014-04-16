@@ -117,15 +117,17 @@ namespace WeSay.UI.TextBoxes
 				_browser.DomFocus -= _domFocusHandler;
 				_browser.DomBlur -= _domBlurHandler;
 				_browser.DocumentCompleted -= _domDocumentChangedHandler;
+#if __MonoCS__
+				_browser.DomClick -= _domClickHandler;
+#endif
 				_browser.Dispose();
 				_browser = null;
 			}
-#if __MonoCS__
-			_browser.DomClick -= _domClickHandler;
-			_domClickHandler = null;
-#endif
 			this.BackColorChanged -= _backColorChangedHandler;
 			_items = null;
+#if __MonoCS__
+			_domClickHandler = null;
+#endif
 			_loadHandler = null;
 			_domKeyDownHandler = null;
 			_domFocusHandler = null;
