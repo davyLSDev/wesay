@@ -50,13 +50,13 @@ namespace WeSay.LexicalTools.GatherByWordList
 			_verticalWordListView.MinLength = 10;  // Space fill to this length
 			_verticalWordListView.DataSource = task.Words;
 			UpdateStuff();
-			_verticalWordListView.ItemSelectionChanged += new EventHandler<ListViewItemSelectionChangedEventArgs>(OnWordsList_SelectedIndexChanged);
+			_verticalWordListView.ItemSelectionChanged += OnWordsList_SelectedIndexChanged;
 
 			_flyingLabel.Font = _vernacularBox.TextBoxes[0].Font;
 			_flyingLabel.Finished += OnAnimator_Finished;
 		}
 
-		private void OnWordsList_SelectedIndexChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+		void OnWordsList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (_settingIndexInCode)
 				return;

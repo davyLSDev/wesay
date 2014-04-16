@@ -40,8 +40,8 @@ namespace WeSay.UI
 		bool Focus();
 		Size MinimumSize { get; set; }
 
-		event EventHandler<ListViewItemSelectionChangedEventArgs> ItemSelectionChanged;
-		event EventHandler<RetrieveVirtualItemEventArgs> RetrieveVirtualItem;
+		event ListViewItemSelectionChangedEventHandler ItemSelectionChanged;
+		event RetrieveVirtualItemEventHandler RetrieveVirtualItem;
 	}
 
 	public partial class WeSayListView: ListView, IWeSayListView
@@ -151,10 +151,6 @@ namespace WeSay.UI
 				result = GetVirtualItem(e.ItemIndex);
 			}
 			e.Item = result;
-			if (RetrieveVirtualItem != null)
-			{
-				RetrieveVirtualItem.Invoke(this, e);
-			}
 		}
 
 		// ask for a real virtual item using RetrieveVirtualItem event
@@ -285,11 +281,6 @@ namespace WeSay.UI
 		protected override void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
 		{
 			if (_mouseDownInfo.MouseIsDown) return;
-
-			if (ItemSelectionChanged != null)
-			{
-				ItemSelectionChanged.Invoke(this, e);
-			}
 
 			base.OnItemSelectionChanged(e);
 		}

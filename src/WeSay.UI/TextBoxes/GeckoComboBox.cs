@@ -37,8 +37,8 @@ namespace WeSay.UI.TextBoxes
 		private List<Object> _items;
 		private readonly StringBuilder _itemHtml;
 		public event EventHandler SelectedValueChanged;
-		public event EventHandler DrawItem;
-		public event EventHandler MeasureItem;
+		public event DrawItemEventHandler DrawItem;
+		public event MeasureItemEventHandler MeasureItem;
 
 		public GeckoComboBox()
 		{
@@ -438,6 +438,8 @@ namespace WeSay.UI.TextBoxes
 		public AutoCompleteMode AutoCompleteMode { get; set; }
 		public ComboBoxStyle DropDownStyle { get; set; }
 		public int MaxDropDownItems { get; set; }
+		public DrawMode DrawMode { get; set; }
+		public FlatStyle FlatStyle { get; set; }
 
 
 	}

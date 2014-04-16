@@ -38,6 +38,8 @@ namespace WeSay.UI.TextBoxes
 		string Name { get; set; }
 		int TabIndex { get; set; }
 		Size Size { get; set; }
+		DrawMode DrawMode { get; set; }
+		FlatStyle FlatStyle { get; set; }
 		String SelectedText { get; }
 		Object GetItem(int i);
 		void Clear();
@@ -45,11 +47,14 @@ namespace WeSay.UI.TextBoxes
 		void ListCompleted();
 
 		event EventHandler SelectedValueChanged;
+		event DrawItemEventHandler DrawItem;
+		event MeasureItemEventHandler MeasureItem;
 	}
 
 	public class WeSayComboBox : ComboBox, IWeSayComboBox
 	{
 		private IWritingSystemDefinition _writingSystem;
+		public new event EventHandler<DrawItemEventArgs> DrawItem;
 
 		public IWritingSystemDefinition WritingSystem
 		{

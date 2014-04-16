@@ -146,7 +146,7 @@ namespace WeSay.LexicalTools.AddMissingInfo
 			this._todoRecordsListBox.Name = "_todoRecordsListBox";
 			this._todoRecordsListBox.Size = new System.Drawing.Size(120, 156);
 			this._todoRecordsListBox.TabIndex = 2;
-			//this._todoRecordsListBox.View = System.Windows.Forms.View.SmallIcon;
+			this._todoRecordsListBox.View = System.Windows.Forms.View.SmallIcon;
 			//
 			// _completedBox
 			//

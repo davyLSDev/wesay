@@ -142,7 +142,7 @@ namespace WeSay.LexicalTools.GatherByWordList
 			this._verticalWordListView.Name = "_verticalWordListView";
 			this._verticalWordListView.Size = new System.Drawing.Size(177, 346);
 			this._verticalWordListView.TabIndex = 11;
-			//this._verticalWordListView.View = System.Windows.Forms.View.SmallIcon;
+			this._verticalWordListView.View = System.Windows.Forms.View.SmallIcon;
 			//
 			// _vernacularBox
 			//

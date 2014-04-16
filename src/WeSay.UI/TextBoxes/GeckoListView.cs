@@ -40,8 +40,8 @@ namespace WeSay.UI.TextBoxes
 		private bool _inFocus;
 		private List<Object> _items;
 		private readonly StringBuilder _itemHtml;
-		public event EventHandler<ListViewItemSelectionChangedEventArgs> ItemSelectionChanged;
-		public event EventHandler<RetrieveVirtualItemEventArgs> RetrieveVirtualItem;
+		public event ListViewItemSelectionChangedEventHandler ItemSelectionChanged;
+		public event RetrieveVirtualItemEventHandler RetrieveVirtualItem;
 		private IList _dataSource;
 
 		public GeckoListView()

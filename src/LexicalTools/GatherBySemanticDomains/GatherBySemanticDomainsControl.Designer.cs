@@ -81,12 +81,17 @@ namespace WeSay.LexicalTools.GatherBySemanticDomains
 			this._domainListComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._domainListComboBox.BackColor = System.Drawing.SystemColors.Control;
+			this._domainListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this._domainListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._domainListComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._domainListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._domainListComboBox.Location = new System.Drawing.Point(0, 0);
+			this._domainListComboBox.Location = new System.Drawing.Point(3, 3);
 			this._domainListComboBox.Margin = new System.Windows.Forms.Padding(0);
 			this._domainListComboBox.Name = "_domainListComboBox";
 			this._domainListComboBox.Size = new System.Drawing.Size(434, 27);
 			this._domainListComboBox.TabIndex = 20;
+			this._domainListComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this._domainName_DrawItem);
+			this._domainListComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this._domainName_MeasureItem);
 			this._domainListComboBox.SelectedValueChanged += new System.EventHandler((this._domainName_SelectedIndexChanged));
 			// 
 			// label3
