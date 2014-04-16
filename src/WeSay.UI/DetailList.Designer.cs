@@ -17,7 +17,6 @@ namespace WeSay.UI
 		{
 			if (disposing)
 			{
-				ClearLayouters();
 				LabelsChanged -= OnLabelsChanged;
 				if (components != null)
 				{

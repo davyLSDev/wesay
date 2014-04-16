@@ -34,7 +34,6 @@ namespace WeSay.UI
 		public EventHandler MouseEnteredBounds;
 		public EventHandler MouseLeftBounds;
 		private bool _mouseIsInBounds;
-		private List<IDisposable> _layouters;
 
 		public DetailList()
 		{
@@ -55,25 +54,10 @@ namespace WeSay.UI
 
 			MouseClick += OnMouseClick;
 
-			_layouters = new List<IDisposable>();
-
 			this.ResumeLayout(false);
 			//CellPaint += OnCellPaint;
 			//var rand = new Random();
 			//BackColor = Color.FromArgb(255, rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255));
-		}
-		public void AddLayouter (IDisposable layouter)
-		{
-			_layouters.Add(layouter);
-		}
-
-		public void ClearLayouters()
-		{
-			foreach (var layouter in _layouters)
-			{
-				layouter.Dispose();
-			}
-			_layouters = null;
 		}
 
 		public float LabelColumnWidth
