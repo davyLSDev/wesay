@@ -37,8 +37,8 @@
 
 	<Target Name="DownloadDistFiles">
 		<MakeDir Directories= "$(RootDir)\External"/>
-		<WebDownload FileUri="https://dl.dropboxusercontent.com/s/599lb0od6shtqqa/WeSay_Helps.chm?dl=1" FileName="$(RootDir)\External\WeSay_Helps.chm"></WebDownload>
-		<WebDownload FileUri="https://dl.dropboxusercontent.com/s/kj91auval00jv90/wesay.helpmap?dl=1" FileName="$(RootDir)\External\wesay.helpmap"></WebDownload>
+		<WebDownload FileUri="https://www.dropbox.com/sh/udf1oz964llid9v/AAD-HcONktuXQL7XAIH_3ctba/WeSay_Helps.chm?dl=1" FileName="$(RootDir)\External\WeSay_Helps.chm"></WebDownload>
+		<WebDownload FileUri="https://www.dropbox.com/sh/udf1oz964llid9v/AACZqQOoWl-uHtJ-IWeaRZe_a/wesay.helpmap?dl=1" FileName="$(RootDir)\External\wesay.helpmap"></WebDownload>
 	</Target>
 
 	<Target Name="Build">
