@@ -17,7 +17,9 @@ using WeSay.LexicalModel;
 using WeSay.LexicalTools;
 using WeSay.Project;
 using WeSay.UI;
+#if !NO_GECKO
 using Gecko;
+#endif
 
 namespace WeSay.App
 {
@@ -70,8 +72,9 @@ namespace WeSay.App
 			OsCheck();
 			Logger.Init();
 			SetupErrorHandling();
-
+#if !NO_GECKO
 			SetUpXulRunner();
+#endif			
 			//problems with user.config: http://blogs.msdn.com/rprabhu/articles/433979.aspx
 
 			//bring in settings from any previous version
@@ -93,6 +96,7 @@ namespace WeSay.App
 			}
 		}
 
+#if !NO_GECKO
 		public static void SetUpXulRunner()
 		{
 			try
@@ -137,6 +141,7 @@ namespace WeSay.App
 				ErrorReport.NotifyUserOfProblem(e.Message);
 			}
 		}
+#endif		
 
 		private static void SetUpReporting()
 		{

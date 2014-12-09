@@ -555,6 +555,7 @@ namespace WeSay.Project
 		{
 			if (GeckoOption)
 			{
+#if !NO_GECKO			
 				builder.Register<IWeSayTextBox>(c =>
 				{
 					var m = new GeckoBox();
@@ -580,6 +581,7 @@ namespace WeSay.Project
 					var m = new GeckoAutoCompleteTextBox();
 					return m;
 				});
+#endif 				
 			}
 			else
 			{

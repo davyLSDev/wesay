@@ -61,11 +61,12 @@ namespace WeSay.LexicalTools
 
 			if (_geckoOption)
 			{
+#if !NO_GECKO			
 				_entryPreview = new GeckoBox(WeSayWordsProject.Project.DefaultViewTemplate.HeadwordWritingSystem, null);
 				((GeckoBox)_entryPreview).ReadOnly = true;
 				((GeckoBox)_entryPreview).BorderStyle = System.Windows.Forms.BorderStyle.None;
 
-
+#endif
 			}
 			else
 			{
@@ -110,6 +111,7 @@ namespace WeSay.LexicalTools
 		{
 			if (_geckoOption)
 			{
+#if !NO_GECKO			
 				if (record != null)
 				{
 					_formattedTextOfEntry = HtmlRenderer.ToHtml(record,
@@ -118,6 +120,7 @@ namespace WeSay.LexicalTools
 					((GeckoBox)_entryPreview).SetHtml(_formattedTextOfEntry);
 
 				}
+#endif				
 			}
 			else
 			{

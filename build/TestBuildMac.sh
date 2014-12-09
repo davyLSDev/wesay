@@ -4,7 +4,6 @@ root=$PWD
 . environ
 cd  build
 SYSTEM="$(uname -s)"
-echo $SYSTEM
 case $SYSTEM in
 Darwin)
 	DEF_CONSTS="NO_GECKO"

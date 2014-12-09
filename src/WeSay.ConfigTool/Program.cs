@@ -5,7 +5,9 @@ using System.Windows.Forms;
 using Palaso.IO;
 using Palaso.Reporting;
 using WeSay.ConfigTool.Properties;
+#if !NO_GECKO
 using Gecko;
+#endif
 
 namespace WeSay.ConfigTool
 {
@@ -23,7 +25,9 @@ namespace WeSay.ConfigTool
 			SetupErrorHandling();
 			Logger.Init();
 
+#if !NO_GECKO
 			SetUpXulRunner();
+#endif
 
 			//bring in settings from any previous version
 			if (Settings.Default.NeedUpgrade)
@@ -51,6 +55,7 @@ namespace WeSay.ConfigTool
 			}
 		}
 
+#if !NO_GECKO
 		public static void SetUpXulRunner()
 		{
 			try
@@ -78,6 +83,7 @@ namespace WeSay.ConfigTool
 				ErrorReport.NotifyUserOfProblem(e.Message);
 			}
 		}
+#endif		
 
 		private static void SetUpReporting()
 		{

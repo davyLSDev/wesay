@@ -147,7 +147,7 @@
     </Reference>
     <Reference Condition="'$(OS)'!='Windows_NT'" Include="Geckofx-Core"/>
     <Reference Condition="'$(OS)'!='Windows_NT'" Include="Geckofx-Winforms"/>
-    <None Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'">
+    <None Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT' And !'$(NO_GECKO)'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Reference Condition="'$(OS)'=='Windows_NT'" Include="Geckofx-Core">

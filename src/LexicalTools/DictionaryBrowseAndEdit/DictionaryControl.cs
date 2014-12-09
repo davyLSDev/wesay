@@ -606,6 +606,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 
 		private void UpdateListViewIfGecko()
 		{
+#if !NO_GECKO		
 			if (_recordsListBox is GeckoListView)
 			{
 				SetRecordToBeEdited(CurrentEntry);
@@ -613,6 +614,7 @@ namespace WeSay.LexicalTools.DictionaryBrowseAndEdit
 				UpdateDisplay();
 				_recordListBoxIndexBeforeChange = CurrentIndex;
 			}
+#endif			
 		}
 
 		/// <summary>

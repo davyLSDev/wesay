@@ -100,7 +100,7 @@
     </None>
     <Reference Condition="'$(OS)'!='Windows_NT'" Include="Geckofx-Core" />
     <Reference Condition="'$(OS)'!='Windows_NT'" Include="Geckofx-Winforms" />
-    <None Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'">
+    <None Include="\usr\lib\cli\geckofx-29\Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT' And !'$(NO_GECKO)'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Reference Condition="'$(OS)'=='Windows_NT'" Include="Geckofx-Core">
@@ -136,7 +136,7 @@
     <Compile Include="AutoCompleteTextBox\AutoCompleteWithCreationBox.Designer.cs">
       <DependentUpon>AutoCompleteWithCreationBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="AutoCompleteTextBox\GeckoAutoCompleteTextBox.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="AutoCompleteTextBox\GeckoAutoCompleteTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AutoCompleteTextBox\ShortCutTrigger.cs" />
@@ -188,31 +188,31 @@
     <Compile Include="ScrollableContainer.Designer.cs">
       <DependentUpon>ScrollableContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextBoxes\GeckoBase.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoBox.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoBox.Designer.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoBox.Designer.cs">
       <DependentUpon>GeckoBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextBoxes\GeckoComboBox.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoComboBox.Designer.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoComboBox.Designer.cs">
       <DependentUpon>GeckoComboBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextBoxes\GeckoListBox.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoListBox.Designer.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoListBox.Designer.cs">
       <DependentUpon>GeckoListBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextBoxes\GeckoListView.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoListView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxes\GeckoListView.Designer.cs">
+    <Compile Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoListView.Designer.cs">
       <DependentUpon>GeckoListView.cs</DependentUpon>
     </Compile>
     <Compile Include="TextBoxes\IControlThatKnowsWritingSystem.cs" />
@@ -330,13 +330,13 @@
       <SubType>Designer</SubType>
       <DependentUpon>DetailList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextBoxes\GeckoComboBox.resx">
+    <EmbeddedResource Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoComboBox.resx">
       <DependentUpon>GeckoComboBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextBoxes\GeckoListBox.resx">
+    <EmbeddedResource Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoListBox.resx">
       <DependentUpon>GeckoListBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextBoxes\GeckoListView.resx">
+    <EmbeddedResource Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoListView.resx">
       <DependentUpon>GeckoListView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextBoxes\MultiTextControl.resx">
@@ -360,7 +360,7 @@
       <SubType>Designer</SubType>
       <DependentUpon>WeSayTextBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextBoxes\GeckoBox.resx">
+    <EmbeddedResource Condition="!'$(NO_GECKO)'" Include="TextBoxes\GeckoBox.resx">
       <DependentUpon>GeckoBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
