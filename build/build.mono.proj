@@ -62,8 +62,6 @@
 	</Target>
 
 	<Target Name="UnzipMercurial">
-	    <Message Text="OS reported on Mac is: '$(OS)'" />
-	    <Message Text="System reported on this Mac is: '$(uname -s)' " />
 		<Exec Command="unzip -uqo $(RootDir)/lib/common/Mercurial-`uname -s`-`uname -m`.zip -d $(RootDir)" ContinueOnError="true" />
 		<Exec Command="rm -rf $(RootDir)/__MACOSX" ContinueOnError="true" /> 
 		<!-- Zip doesn't seem to retain the permission bits we need. -->

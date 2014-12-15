@@ -377,3 +377,30 @@ To build for installer, just type in the windows command prompt:
 										the windows command prompt as above, you will need to
 										execute this command in a bash window.)
 	TestBulild.bat Release Installer	(to build an Release version of Installer)
+	
+11.0 BUILDING FOR MAC (EXPERIMENTAL)
+
+Get the latest Xamarin: 
+
+Get a copy of the Mac experimental source for this fork of WeSay:
+https://github.com/davyLSDev/wesay.git
+Then, checkout the 'topic/nogecko' branch.
+
+Dependencies:
+Make sure to copy Mercurial-Darwin-x86_64.zip from Google Drive in lib/common, also
+you need to have icu54.zip in lib/Debug. The rest of the dependencies can be had using
+the buildupdate.mono.sh in the build directory.
+
+There are forks of libpalaso, and chorus that Mac developers can share code on. These
+are available at: 
+https://github.com/davyLSDev/libpalaso.git
+https://github.com/davyLSDev/chorus.git
+ 
+Sourctree is a graphical tool that allows you to do most of your git work and it
+plays nicely on the Mac.
+
+
+11.1 RUNNING WESAY ON A MAC (EXPERIMENTAL)
+
+The only thing that works right now is "Chorus.exe", everything else crashes.
+	
