@@ -12,7 +12,7 @@ fi
 XULRUNNER=/Library/Frameworks/XUL.framework/Versions/Current
 #/usr/lib/xulrunner-geckofx-29
 if [ ! -d ${XULRUNNER} ]; then XULRUNNER=/usr/lib/xulrunner-29; fi
-LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
+DYLD_LIBRARY_PATH="${XULRUNNER}:${DYLD_LIBRARY_PATH}"
 GECKOFX=/Library/Frameworks/GeckoFx.framework/
 #"$(pkg-config --variable assemblies_dir Geckofx-Core)"
 # delete for now: LD_PRELOAD=${GECKOFX}/geckofix.so

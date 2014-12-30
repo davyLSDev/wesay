@@ -35,12 +35,12 @@ fi
 if [ "$RUNMODE" = "INSTALLED" ]
 then
 	# Add the installation directory to the library paths
-	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
+	DYLD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
 	MONO_PATH="${BASE}:${MONO_PATH}"
 else
 	# Add the build output to paths
 	PATH="${BASE}/output/${BUILD}:${PATH}"
-	LD_LIBRARY_PATH="${BASE}/output/${BUILD}:${LD_LIBRARY_PATH}"
+	DYLD_LIBRARY_PATH="${BASE}/output/${BUILD}:${LD_LIBRARY_PATH}"
 	MONO_PATH="${BASE}/output/${BUILD}:${MONO_PATH}"
 fi
 
@@ -48,7 +48,7 @@ fi
 
 # Add locally-built (or packaged!) mono items to paths
 PATH="${MONO_PREFIX}/bin:${PATH}"
-LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
+DYLD_LIBRARY_PATH="${MONO_PREFIX}/lib:${DYLD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_PREFIX}:/usr"
 
@@ -59,9 +59,11 @@ MONO_TRACE_LISTENER="Console.Out"
 MONO_MWF_SCALING=disable
 # if debugging for performance unset DEBUG_ENABLE_PTR_VALIDATION env var.
 #export DEBUG_ENABLE_PTR_VALIDATION=1
+# note, the LD_PRELOAD is not used on a Mac, but you could use: DYLD_INSERT_LIBRARIES
+# if needed
 
 export \
-	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH LD_PRELOAD \
+	PATH DYLD_LIBRARY_PATH PKG_CONFIG_PATH  \
 	MONO_PATH \
 	MONO_RUNTIME MONO_PREFIX MONO_GAC_PREFIX \
 	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING \
