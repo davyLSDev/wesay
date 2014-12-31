@@ -38,7 +38,9 @@ namespace WeSay.App
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			using (new Palaso.PalasoSetup())
+#if !NO_GECKO
+/* not really NO_GECKO, but using this flag to temp. get omit stuff that dies in runtime on Mac		
+		using (new Palaso.PalasoSetup())
 			{
 				try
 				{
@@ -54,6 +56,10 @@ namespace WeSay.App
 					ReleaseMutexForThisProject();
 				}
 			}
+#else			
+			var app = new WeSayApp(args);
+			app.Run();
+#endif			
 		}
 
 		public WeSayApp(string[] args)
