@@ -39,7 +39,10 @@ namespace WeSay.ConfigTool
 			SetUpReporting();
 
 			Settings.Default.Save();
-
+			
+#if !NO_GECKO 
+/* Temp hack which has nothing to do with NO_GECKO, just trying to get this to run better
+on a Mac */
 			using (new Palaso.PalasoSetup())
 			{
 				try
@@ -53,7 +56,12 @@ namespace WeSay.ConfigTool
 					Palaso.UI.WindowsForms.Keyboarding.KeyboardController.Shutdown();
 				}
 			}
+#else
+			Application.Run(new ConfigurationWindow(args));
+#endif						
 		}
+
+					
 
 #if !NO_GECKO
 		public static void SetUpXulRunner()
