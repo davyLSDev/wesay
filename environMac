@@ -35,12 +35,12 @@ fi
 if [ "$RUNMODE" = "INSTALLED" ]
 then
 	# Add the installation directory to the library paths
-	DYLD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
+	DYLD_LIBRARY_PATH="${BASE}:${DYLD_LIBRARY_PATH}"
 	MONO_PATH="${BASE}:${MONO_PATH}"
 else
 	# Add the build output to paths
 	PATH="${BASE}/output/${BUILD}:${PATH}"
-	DYLD_LIBRARY_PATH="${BASE}/output/${BUILD}:${LD_LIBRARY_PATH}"
+	DYLD_LIBRARY_PATH="${BASE}/output/${BUILD}:/opt/local:/Library/Frameworks/Mono.framework/Versions/Current/:${DYLD_LIBRARY_PATH}"
 	MONO_PATH="${BASE}/output/${BUILD}:${MONO_PATH}"
 fi
 
